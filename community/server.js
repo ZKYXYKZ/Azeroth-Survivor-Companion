@@ -10,6 +10,9 @@ const PUBLIC = path.join(__dirname, "public");
 const MAX_BODY = 64 * 1024;
 const LIMIT_IP = 60;
 const LIMIT_INSTALL = 30;
+const LIMIT_DETAILS = 150;
+const HELD_LEVEL = 70;
+const HELD_KILLS = 20000;
 const RECENT = 50;
 const MAX_BUILDS = 5000;
 const MIN_VICTORY = 15 * 60;
@@ -84,7 +87,7 @@ function clean(r, ip) {
   return run;
 }
 
-let stats, open = new Map();
+let stats, open = new Map(), held = new Set();
 const LIMITS = { dmg: 1000, crit: 10, cm: 100, area: 100, echo: 10, cnt: 100, reg: 1e6, spd: 10 };
 function cheated(detail) {
   const f = detail.split("|");
@@ -100,18 +103,22 @@ function cheated(detail) {
   return false;
 }
 function detailKeys() {
-  const ids = new Set(), olds = new Set();
+  const ids = new Set(), olds = new Set(), seen = new Set();
   for (const f of fs.readdirSync(DATA).filter((n) => /^details-\d{4}-\d{2}.ndjson$/.test(n)))
     for (const line of fs.readFileSync(path.join(DATA, f), "utf8").split("\n")) {
       if (!line) continue;
       try {
         const d = JSON.parse(line);
+        if (d.runId) seen.add(d.install + "|" + d.runId);
         if (!cheated(d.detail)) continue;
         if (d.runId) ids.add(d.install + "|" + d.runId);
         else olds.add(d.install + "|" + d.level + "|" + d.kills);
       } catch (e) {}
     }
-  return { ids, olds };
+  return { ids, olds, seen };
+}
+function outsized(r) {
+  return r.level >= HELD_LEVEL || r.kills > HELD_KILLS;
 }
 function heroicOf(detail) {
   const h = +((detail.split("|")[1] || "").split(",")[3]);
@@ -179,6 +186,7 @@ function files() {
 function rebuild() {
   stats = emptyStats();
   open = new Map();
+  held = new Set();
   const runs = [], patch = new Map();
   for (const f of files())
     for (const line of fs.readFileSync(path.join(DATA, f), "utf8").split("\n")) {
@@ -191,7 +199,8 @@ function rebuild() {
     if ((r.runId && bad.ids.has(k)) || bad.olds.has(r.install + "|" + r.level + "|" + r.kills)) r.suspect = true;
     if (r.runId && patch.has(k)) r.difficulty = patch.get(k);
     if (r.runId && r.difficulty == null) open.set(k, r.at.slice(0, 7));
-    add(r);
+    if (outsized(r) && !bad.seen.has(k)) held.add(k);
+    else add(r);
   }
   cache = null;
 }
@@ -270,14 +279,15 @@ const server = http.createServer((req, res) => {
       fs.appendFile(path.join(DATA, "runs-" + month + ".ndjson"), JSON.stringify(r) + "\n", (err) => {
         if (err) return send(res, 500, '{"error":"store"}');
         if (r.runId && r.difficulty == null && !detail) open.set(r.install + "|" + r.runId, month);
-        add(r);
+        if (outsized(r) && !detail) held.add(r.install + "|" + r.runId);
+        else add(r);
         send(res, 201, '{"ok":true}');
       });
     });
     return;
   }
   if (req.method === "POST" && url === "/api/details") {
-    if (limited("ip:" + ip, LIMIT_IP)) return send(res, 429, '{"error":"too many"}');
+    if (limited("dip:" + ip, LIMIT_DETAILS)) return send(res, 429, '{"error":"too many"}');
     let size = 0;
     const chunks = [];
     req.on("data", (c) => {
@@ -297,7 +307,7 @@ const server = http.createServer((req, res) => {
       const ok = d && d.v === 1 && install && install.length >= 16 && typeof d.runId === "string" && /^[0-9a-f]{16}$/.test(d.runId) && CLASSES.includes(d.class) && typeof d.detail === "string" && d.detail.startsWith("AZD1|") && d.detail.length <= 1000000 && !CTRL.test(d.detail);
       if (!ok) return send(res, 400, '{"error":"invalid"}');
       const who = hash(install);
-      if (limited("in:" + who, LIMIT_INSTALL)) return send(res, 429, '{"error":"too many"}');
+      if (limited("din:" + who, LIMIT_DETAILS)) return send(res, 429, '{"error":"too many"}');
       if (!quota(d.detail.length + 200)) return send(res, 503, '{"error":"busy"}');
       const at = new Date().toISOString();
       fs.appendFile(path.join(DATA, "details-" + at.slice(0, 7) + ".ndjson"), JSON.stringify({ at, install: who, runId: d.runId, class: d.class, level: num(d.level, 0, 500), kills: num(d.kills, 0, 1e7), detail: d.detail }) + "\n", (err) => {
@@ -308,6 +318,7 @@ const server = http.createServer((req, res) => {
           open.delete(k);
           fs.appendFile(path.join(DATA, "runs-" + month + ".ndjson"), JSON.stringify({ patch: d.runId, install: who, difficulty: h }) + "\n", () => rebuild());
         }
+        else if (held.has(k)) rebuild();
         send(res, 201, '{"ok":true}');
       });
     });

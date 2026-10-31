@@ -1,6 +1,6 @@
 const SIM_STR = {
   fr: {
-    title: "Simulateur", experimental: "Expérimental, en attente de plus de données : les chiffres servent à comparer deux builds, pas à prédire vos dégâts réels. Le simulateur sera calé sur les parties partagées.", intro: "Dégâts théoriques d'un build : sorts et rangs, talents, bijoux, race et densité d'ennemis. Les chiffres viennent des cartes du jeu ; les effets marqués « non simulé » ne sont pas comptés.",
+    title: "Simulateur", experimental: "Expérimental : les parties simulées sont calées sur les parties partagées, mais un build précis peut s'écarter du réel d'un facteur 2 ou plus. L'équipement de départ est la médiane des joueurs, à remplacer par le vôtre.", intro: "Dégâts théoriques d'un build : sorts et rangs, talents, bijoux, race et densité d'ennemis. Les chiffres viennent des cartes du jeu ; les effets marqués « non simulé » ne sont pas comptés.",
     build: "Build", fromBuild: "Charger depuis", race: "Race", level: "Rangs des sorts", rarity: "Rareté moyenne des cartes", density: "Ennemis à moins de 10 m", boss: "Temps sur les boss",
     spells: "Sorts", rank: "Rang", jewels: "Bijoux", rings: "Anneaux", trinkets: "Bijoux", amulet: "Amulette", none: "Aucun",
     total: "DPS total", pack: "En meute", single: "Sur un boss", share: "Part", perCast: "par lancer", every: "toutes les {v} s",
@@ -10,7 +10,7 @@ const SIM_STR = {
     rarities: ["Commun", "Inhabituel", "Rare", "Épique", "Légendaire"], toBuild: "Créer le build", mcTitle: "Parties simulées", runs: "parties", simulate: "Simuler", running: "Simulation…", mcHelp: "Rejoue des parties complètes : montées de niveau, cartes tirées selon la chance, choix du compagnon, coffres.", mcMean: "DPS moyen sur la partie", mcRange: "Pire 10 % / meilleur 10 %", mcLevel: "Niveau final moyen", mcDist: "répartition des parties", mcHave: "Obtenu", mcRank: "Rang moyen", mcWin: "Le build B fait mieux que le A dans {v} % des parties.", mcDone: "{n} parties simulées en {ms} ms.", gear: "Équipement et collection", group: "Groupe (coop)", noAlly: "Pas d'allié", allyShout: "Cri de guerre d'un guerrier : +{v} % de dégâts en moyenne", allyMark: "Marque du chasseur : la cible subit +{v} % de dégâts", pets: "Familiers et démons", kills: "Explosions à la mort", procs: "Effets déclenchés", procNote: "dont {v} lancers gratuits par seconde", amuletUps: "amulette améliorée {v} fois", amuletNoUp: "amulette sans amélioration",
   },
   en: {
-    title: "Simulator", experimental: "Experimental, waiting for more data: the numbers compare two builds, they don't predict your real damage. The simulator will be calibrated on shared runs.", intro: "Theoretical damage of a build: spells and ranks, talents, jewelry, race and enemy density. Numbers come from the game's cards; effects marked \"not simulated\" are left out.",
+    title: "Simulator", experimental: "Experimental: simulated runs are calibrated on shared runs, but a given build can differ from reality by a factor of 2 or more. Starting gear is the players' median, replace it with yours.", intro: "Theoretical damage of a build: spells and ranks, talents, jewelry, race and enemy density. Numbers come from the game's cards; effects marked \"not simulated\" are left out.",
     build: "Build", fromBuild: "Load from", race: "Race", level: "Spell ranks", rarity: "Average card rarity", density: "Enemies within 10 yd", boss: "Time on bosses",
     spells: "Spells", rank: "Rank", jewels: "Jewelry", rings: "Rings", trinkets: "Trinkets", amulet: "Amulet", none: "None",
     total: "Total DPS", pack: "In a pack", single: "On a boss", share: "Share", perCast: "per cast", every: "every {v} sec",
@@ -59,6 +59,7 @@ const MILESTONES = {
 };
 
 const KILL_SHARE = 0.5;
+const LEVEL_DMG = 3.8;
 const JEWEL_UP = [1, 1.8, 2.5, 3.4, 4.2, 4.9, 5.7, 6.5, 7.2, 7.8, 8.4];
 const AMULET_UP = [1, 1.2, 1.38, 1.54, 1.69, 1.82, 1.94, 2.04, 2.14, 2.23, 2.31];
 
@@ -111,7 +112,7 @@ function simFromBuild(b) {
     rings: (b.rings || []).filter((k) => DATA.rings.some((j) => j.key === k)).slice(0, 2),
     trinkets: (b.trinkets || []).filter((k) => DATA.trinkets.some((j) => j.key === k)).slice(0, 2),
     amulet: (b.amulets || [])[0] || "", amuletUps: 0,
-    race: b.race || "human", rarity: 1.5, density: 6, boss: 25, allies: [], gear: { dmg: 0, crit: 0, critDmg: 0, cdr: 0, echo: 0, area: 0, targets: 0 },
+    race: b.race || "human", rarity: 1.5, density: 6, boss: 25, allies: [], gear: { dmg: 46, crit: 10, critDmg: 15, cdr: 13, echo: 0, area: 19, targets: 0 },
   };
 }
 
@@ -258,6 +259,16 @@ function simulate(sc) {
   if (race.cdMul) fx.cdMul *= race.cdMul;
   fx.crit += race.crit || 0;
   fx.luck += race.luck || 0;
+  fx.dmg += LEVEL_DMG * ((sc.level || 1) - 1);
+  if (sc.real) {
+    fx.dmg = (sc.real.dmg - 1) * 100;
+    fx.crit = sc.real.crit * 100 - 5;
+    fx.critDmg = (sc.real.cm / 2 - 1) * 100;
+    fx.cdr = 0;
+    fx.cdMul = sc.real.cd;
+    fx.echo = sc.real.echo * 100;
+    fx.area = (sc.real.area - 1) * 100;
+  }
   const crit = Math.min(100, 5 + fx.crit) / 100;
   const critMul = 2 * (1 + fx.critDmg / 100);
   const critFactor = 1 + crit * (critMul - 1) + crit * fx.critBleed;
@@ -607,7 +618,8 @@ function renderSim(sec) {
   mcRender();
 }
 
-const MC_LEVEL = [[1, 0], [2, 4], [3, 9], [4, 17], [5, 28], [10, 90], [15, 170], [20, 270], [25, 372], [30, 443], [35, 616], [40, 848], [45, 1000], [50, 1200], [60, 1700]];
+const MC_LEVEL = [[1, 0], [6, 60], [11, 120], [15, 180], [20, 300], [29, 480], [33, 600], [38, 720], [44, 900], [51, 1080], [55, 1200], [70, 1800]];
+const MC_YIELD = [[0, 0.2], [1, 0.23], [2, 0.25], [3, 0.33], [4, 0.41], [5, 0.5], [6, 0.64], [8, 0.86], [10, 1.13], [12, 1.56], [14, 2.09], [16, 2.42], [18, 2.63]];
 const MC_RARITY = [[0, [52, 26.1, 13.2, 6.7, 2]], [60, [38, 25.5, 17.6, 13.2, 5.7]], [105, [26.6, 17.9, 22.4, 19.6, 13.5]], [150, [17.5, 14.3, 23.8, 30.2, 14.3]]];
 const MC_START = { warrior: ["cleave"], paladin: ["consecration"], hunter: ["auto_shot"], rogue: ["sinister_strike"], priest: ["smite"], shaman: ["lightning_bolt"], mage: ["fireball"], warlock: ["shadow_bolt"], druid: ["wrath"] };
 const MC_JEWEL_RATE = 1.92;
@@ -617,7 +629,14 @@ function mcLevelAt(t) {
     const [l1, t1] = MC_LEVEL[i - 1], [l2, t2] = MC_LEVEL[i];
     if (t <= t2) return l1 + ((t - t1) / (t2 - t1)) * (l2 - l1);
   }
-  return 60;
+  return MC_LEVEL[MC_LEVEL.length - 1][0];
+}
+function mcYield(minute) {
+  for (let i = 1; i < MC_YIELD.length; i++) {
+    const [m1, y1] = MC_YIELD[i - 1], [m2, y2] = MC_YIELD[i];
+    if (minute <= m2) return y1 + ((minute - m1) / (m2 - m1)) * (y2 - y1);
+  }
+  return MC_YIELD[MC_YIELD.length - 1][1];
 }
 function mcRarityTable(luck) {
   for (let i = 1; i < MC_RARITY.length; i++) {
@@ -651,7 +670,7 @@ function monteCarlo(sc, iters, minutes) {
   const c = cls(sc.class);
   const weights = {};
   sc.spells.forEach((s, i) => (weights[s.key] = s.w || Math.max(1, 6 - i)));
-  const res = { dps: [], dmg: [], level: 0, ranks: {}, share: {}, have: {}, curve: new Array(minutes).fill(0) };
+  const res = { dps: [], dmg: [], level: 0, ranks: {}, share: {}, have: {}, curve: new Array(minutes).fill(0), track: [] };
   const fxBase = jewelFx(sc, talentFx(sc));
   const luck = fxBase.luck + ((RACE_FX[sc.race] || {}).luck || 0) + ((sc.gear && sc.gear.luck) || 0);
   const table = mcRarityTable(luck);
@@ -713,10 +732,17 @@ function monteCarlo(sc, iters, minutes) {
           }
         }
       }
-      const state = Object.assign({}, sc, { spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps });
+      const state = Object.assign({}, sc, { spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps, level: li + 1 });
       const r = simulate(state);
-      total += r.total * 60;
-      res.curve[minute] += r.total / iters;
+      const dps = r.total * mcYield(minute + 1);
+      total += dps * 60;
+      res.curve[minute] += dps / iters;
+      const tr = (res.track[minute] = res.track[minute] || { dmg: 0, crit: 0, cd: 0, echo: 0, ranks: 0 });
+      tr.dmg += (1 + r.fx.dmg / 100) / iters;
+      tr.crit += r.crit / iters;
+      tr.cd += r.fx.cdMul / (1 + r.fx.cdr / 100) / iters;
+      tr.echo += r.fx.echo / 100 / iters;
+      tr.ranks += Object.values(owned).reduce((a, o) => a + o.rank, 0) / iters;
       if (minute === minutes - 1) for (const row of r.rows) res.share[row.key] = (res.share[row.key] || 0) + row.mix / (r.total || 1);
     }
     res.dmg.push(total);
@@ -728,7 +754,7 @@ function monteCarlo(sc, iters, minutes) {
   const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
   return {
     iters, minutes, luck,
-    mean: res.dps.reduce((a, b) => a + b, 0) / iters, p10: q(0.1), p50: q(0.5), p90: q(0.9), curve: res.curve,
+    mean: res.dps.reduce((a, b) => a + b, 0) / iters, p10: q(0.1), p50: q(0.5), p90: q(0.9), curve: res.curve, track: res.track,
     hist: sorted, level: res.level / iters,
     spells: [...new Set(Object.keys(res.have).concat(Object.keys(res.share)))].map((k) => ({ key: k, have: (res.have[k] || 0) / iters, rank: res.have[k] ? res.ranks[k] / res.have[k] : 0, share: (res.share[k] || 0) / iters })).sort((a, b) => b.share - a.share),
   };

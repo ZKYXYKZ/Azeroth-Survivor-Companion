@@ -96,7 +96,7 @@ local function finish(result)
   local db = SB.DB()
   db.details = db.details or {}
   table.insert(db.details, s)
-  while table.getn(db.details) > 10 do table.remove(db.details, 1) end
+  while table.getn(db.details) > 50 do table.remove(db.details, 1) end
   rec = nil
 end
 

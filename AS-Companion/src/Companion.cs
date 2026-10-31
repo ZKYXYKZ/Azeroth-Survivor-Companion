@@ -2452,12 +2452,27 @@ class Companion : Form
         catch (Exception ex) { Log("share queue failed: " + ex.Message); }
     }
 
+    bool DetailMatches(string[] f, Dictionary<string, object> run)
+    {
+        System.Globalization.CultureInfo inv = System.Globalization.CultureInfo.InvariantCulture;
+        double level = double.Parse(f[3], inv), kills = double.Parse(f[4], inv), time = double.Parse(f[5], inv), runKills = N(G(run, "kills"), -1), runTime = N(G(run, "time"), -1);
+        if (f[1].Split(',')[0] != S(G(run, "class")) || Math.Abs(level - N(G(run, "level"), -1)) >= 1.5) return false;
+        if (runTime < 0) return Math.Abs(kills - runKills) <= 5 + 0.05 * runKills;
+        return Math.Abs(time - runTime) <= 3 || (kills == runKills && kills >= 50);
+    }
+
+    string[] TakeDetail(List<string[]> details, Dictionary<string, object> run)
+    {
+        string[] d = details.LastOrDefault(f => DetailMatches(f, run));
+        if (d != null) details.Remove(d);
+        return d;
+    }
+
     void AttachDetails(string file)
     {
         if (file == null || !File.Exists(file)) return;
         try
         {
-            System.Globalization.CultureInfo inv = System.Globalization.CultureInfo.InvariantCulture;
             List<string[]> details = Regex.Matches(File.ReadAllText(file, Utf8), "\"(AZD1\\|[^\"]*)\"").Cast<Match>().Select(m => m.Groups[1].Value.Split('|')).Where(f => f.Length >= 15).ToList();
             if (details.Count == 0) return;
             string rf = Path.Combine(dataDir, "runs.json");
@@ -2470,7 +2485,7 @@ class Companion : Form
                     string[] head = d[1].Split(',');
                     int hl;
                     if (head.Length < 4 || !int.TryParse(head[3], out hl) || hl <= 0) continue;
-                    Dictionary<string, object> run = runs.Select(D).LastOrDefault(x => x != null && G(x, "heroic") == null && S(G(x, "class")) == head[0] && Math.Abs(N(G(x, "level"), -1) - double.Parse(d[3], inv)) < 1.5 && Math.Abs(N(G(x, "kills"), -1) - double.Parse(d[4], inv)) <= 5 + 0.05 * N(G(x, "kills"), 0));
+                    Dictionary<string, object> run = runs.Select(D).LastOrDefault(x => x != null && G(x, "heroic") == null && DetailMatches(d, x));
                     if (run == null) continue;
                     run["heroic"] = hl;
                     marked++;
@@ -2486,7 +2501,7 @@ class Companion : Form
                 {
                     Dictionary<string, object> run = D(o);
                     if (run == null || G(run, "detail") != null) continue;
-                    string[] d = details.LastOrDefault(f => f[1].Split(',')[0] == S(G(run, "class")) && Math.Abs(double.Parse(f[3], inv) - N(G(run, "level"), -1)) < 1.5 && Math.Abs(double.Parse(f[4], inv) - N(G(run, "kills"), -1)) <= 5 + 0.05 * N(G(run, "kills"), 0));
+                    string[] d = TakeDetail(details, run);
                     if (d == null) continue;
                     run["detail"] = string.Join("|", d);
                     int hl;
@@ -2500,7 +2515,7 @@ class Companion : Form
                 {
                     Dictionary<string, object> run = D(o);
                     if (run == null) continue;
-                    string[] d = details.LastOrDefault(f => f[1].Split(',')[0] == S(G(run, "class")) && Math.Abs(double.Parse(f[3], inv) - N(G(run, "level"), -1)) < 1.5 && Math.Abs(double.Parse(f[4], inv) - N(G(run, "kills"), -1)) <= 5 + 0.05 * N(G(run, "kills"), 0));
+                    string[] d = TakeDetail(details, run);
                     if (d == null) continue;
                     q.Add(new Dictionary<string, object> { { "v", 1 }, { "kind", "detail" }, { "install", InstallId() }, { "runId", G(run, "runId") }, { "class", G(run, "class") }, { "level", G(run, "level") }, { "kills", G(run, "kills") }, { "detail", string.Join("|", d) } });
                     sentRuns.Remove(o);
@@ -2541,15 +2556,23 @@ class Companion : Form
                         bool detail = S(G(D(q[0]), "kind")) == "detail";
                         w.UploadData(url.TrimEnd('/') + (detail ? "/api/details" : "/api/runs"), "POST", ms.ToArray());
                         if (!detail && G(D(q[0]), "detail") == null && G(D(q[0]), "runId") != null)
-                            sentRuns.Add(new Dictionary<string, object> { { "runId", G(D(q[0]), "runId") }, { "class", G(D(q[0]), "class") }, { "level", G(D(q[0]), "level") }, { "kills", G(D(q[0]), "kills") } });
+                            sentRuns.Add(new Dictionary<string, object> { { "runId", G(D(q[0]), "runId") }, { "class", G(D(q[0]), "class") }, { "level", G(D(q[0]), "level") }, { "kills", G(D(q[0]), "kills") }, { "time", G(D(q[0]), "time") } });
                     }
                     q.RemoveAt(0);
                     sent++;
                 }
-                catch (Exception ex) { Log("share failed: " + ex.Message); break; }
+                catch (Exception ex)
+                {
+                    WebException we = ex as WebException;
+                    HttpWebResponse rsp = we == null ? null : we.Response as HttpWebResponse;
+                    int code = rsp == null ? 0 : (int)rsp.StatusCode;
+                    if (code >= 400 && code < 500 && code != 429) { Log("share rejected: " + ex.Message); q.RemoveAt(0); continue; }
+                    Log("share failed: " + ex.Message);
+                    break;
+                }
             }
             File.WriteAllText(qf, json.Serialize(q), Utf8);
-            while (sentRuns.Count > 30) sentRuns.RemoveAt(0);
+            while (sentRuns.Count > 100) sentRuns.RemoveAt(0);
             File.WriteAllText(sf, json.Serialize(sentRuns), Utf8);
             if (sent > 0) Log("shared runs: " + sent);
         }
