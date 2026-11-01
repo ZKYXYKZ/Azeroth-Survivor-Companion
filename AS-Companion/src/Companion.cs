@@ -2071,6 +2071,7 @@ class Companion : Form
                 runStarted = DateTime.Now;
                 runMinutes = new List<object>();
                 runPicks = new List<object>();
+                runCards = new List<object>();
                 runLevel = 1;
                 minuteDmg = 0;
                 minuteTaken = 0;
@@ -2356,6 +2357,7 @@ class Companion : Form
     DateTime runStarted = DateTime.Now;
     List<object> runMinutes = new List<object>();
     List<object> runPicks = new List<object>();
+    List<object> runCards = new List<object>();
     int runLevel = 1;
     double minuteDmg, minuteTaken;
     readonly object shareLock = new object();
@@ -2445,6 +2447,8 @@ class Companion : Form
                 string qf = Path.Combine(dataDir, "share-queue.json");
                 List<object> q = File.Exists(qf) ? A(json.DeserializeObject(File.ReadAllText(qf, Utf8))).ToList() : new List<object>();
                 q.Add(run);
+                if (runCards.Count > 0)
+                    q.Add(new Dictionary<string, object> { { "v", 1 }, { "kind", "cards" }, { "install", install }, { "class", S(heroClass["key"]) }, { "cards", runCards.Take(40).ToList() } });
                 while (q.Count > 200) q.RemoveAt(0);
                 File.WriteAllText(qf, json.Serialize(q), Utf8);
             }
@@ -2553,9 +2557,10 @@ class Companion : Form
                             byte[] raw = Utf8.GetBytes(json.Serialize(q[0]));
                             gz.Write(raw, 0, raw.Length);
                         }
-                        bool detail = S(G(D(q[0]), "kind")) == "detail";
-                        w.UploadData(url.TrimEnd('/') + (detail ? "/api/details" : "/api/runs"), "POST", ms.ToArray());
-                        if (!detail && G(D(q[0]), "detail") == null && G(D(q[0]), "runId") != null)
+                        string kind = S(G(D(q[0]), "kind"));
+                        string route = kind == "detail" ? "/api/details" : kind == "cards" ? "/api/cards" : "/api/runs";
+                        w.UploadData(url.TrimEnd('/') + route, "POST", ms.ToArray());
+                        if (kind != "detail" && kind != "cards" && G(D(q[0]), "detail") == null && G(D(q[0]), "runId") != null)
                             sentRuns.Add(new Dictionary<string, object> { { "runId", G(D(q[0]), "runId") }, { "class", G(D(q[0]), "class") }, { "level", G(D(q[0]), "level") }, { "kills", G(D(q[0]), "kills") }, { "time", G(D(q[0]), "time") } });
                     }
                     q.RemoveAt(0);
@@ -2594,8 +2599,8 @@ class Companion : Form
                 if (File.Exists(qf))
                 {
                     List<object> q = A(json.DeserializeObject(File.ReadAllText(qf, Utf8))).ToList();
-                    Dictionary<string, object> last = q.Count > 0 ? D(q[q.Count - 1]) : null;
-                    if (last != null && S(G(last, "kind")) != "detail") { last["difficulty"] = level; File.WriteAllText(qf, json.Serialize(q), Utf8); }
+                    Dictionary<string, object> last = q.Select(D).LastOrDefault(x => x != null && S(G(x, "kind")) != "detail" && S(G(x, "kind")) != "cards");
+                    if (last != null) { last["difficulty"] = level; File.WriteAllText(qf, json.Serialize(q), Utf8); }
                 }
             }
             Log("heroic " + level + " beaten");
@@ -2733,6 +2738,8 @@ class Companion : Form
         {
             object card = cards[i - 1];
             CardInfo info = Info(card);
+            if (info.Type == "spell" && info.Key != null && (S(G(card, "kind")) == "new" || S(G(card, "kind")) == "upgrade"))
+                runCards.Add(new Dictionary<string, object> { { "name", S(G(card, "name")) ?? info.Key }, { "kind", S(G(card, "kind")) }, { "lines", S(G(card, "lines")) }, { "rarity", N(G(card, "rarity"), 0) }, { "title", S(G(card, "title")) } });
             string replIcon = S(G(card, "replacesIcon")), replText = S(G(card, "replacesText")) ?? "";
             if (replIcon != null && info.Cat == "amulets")
             {

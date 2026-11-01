@@ -6,6 +6,11 @@ const data = JSON.parse(fs.readFileSync(path.join(root, "AS-Companion/web/data.j
 const out = path.join(root, "AS-Companion/web/simdata.json");
 const dirs = process.argv.slice(2).filter((d) => fs.existsSync(d) && fs.statSync(d).isDirectory());
 const botFiles = process.argv.slice(2).filter((f) => /AZBot\.lua$/.test(f) && fs.existsSync(f));
+// Dossier des cards-*.ndjson remontees par le serveur communautaire (POST /api/cards, voir
+// community/server.js et Companion.cs/QueueShare) : un lot de cartes {name,kind,line,rarity,title}
+// par envoi, une ligne par run cote joueur. Complete les captures "choices" locales de dist/research,
+// qui ne couvrent qu'une classe a la fois.
+const cardDirs = process.argv.slice(2).filter((d) => fs.existsSync(d) && fs.statSync(d).isDirectory() && fs.readdirSync(d).some((f) => /^cards-\d{4}-\d{2}\.ndjson$/.test(f)));
 
 const keyOf = {};
 for (const c of data.classes) for (const s of c.spells) keyOf[s.name.en] = keyOf[s.name.fr] = s.key;
@@ -14,31 +19,49 @@ for (const s of data.racials.concat(data.extraSpells)) keyOf[s.name.en] = keyOf[
 const texts = {};
 const upgrades = {};
 const num = (s) => parseFloat(String(s).replace(",", "."));
-for (const dir of dirs)
-  for (const f of fs.readdirSync(dir)) {
-    if (!f.endsWith(".jsonl")) continue;
-    for (const line of fs.readFileSync(path.join(dir, f), "utf8").split("\n")) {
-      if (!line.includes('"choices"')) continue;
-      let e;
-      try { e = JSON.parse(line); } catch (x) { continue; }
-      for (const c of e.data.choices || []) {
-        const k = keyOf[c.name];
-        if (!k) continue;
-        const lines = (c.lines || "").split("\n");
-        if (c.kind === "new" && /\b(yd|Strikes|Hits|Fires|Afflicts|Lands|Marks|Drops|Heals|Absorbs|Increases|Your|Every|For|Makes|Enemies)\b/.test(lines[0])) (texts[k] = texts[k] || []).push(lines[0]);
-        if (c.kind !== "upgrade") continue;
-        for (const ln of lines) {
-          const m = ln.match(/^([-+][\d.,]+)\s*(%?)\s*(damage|cooldown|area|duration|targets|absorb|healing|proc rate)$/);
-          if (!m) continue;
-          const type = m[3];
-          const rk = +(((c.title || "").match(/(?:rank|rang) (\d+)/) || [])[1] || 0);
-          if (!rk) continue;
-          const byR = ((upgrades[type] = upgrades[type] || {})[c.rarity] = upgrades[type][c.rarity] || {});
-          (byR[rk] = byR[rk] || []).push(num(m[1]));
-        }
+
+function* localCards() {
+  for (const dir of dirs)
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith(".jsonl")) continue;
+      for (const line of fs.readFileSync(path.join(dir, f), "utf8").split("\n")) {
+        if (!line.includes('"choices"')) continue;
+        let e;
+        try { e = JSON.parse(line); } catch (x) { continue; }
+        for (const c of e.data.choices || []) yield { name: c.name, kind: c.kind, lines: (c.lines || "").split("\n"), rarity: c.rarity, title: c.title };
       }
     }
+}
+
+function* communityCards() {
+  for (const dir of cardDirs)
+    for (const f of fs.readdirSync(dir)) {
+      if (!/^cards-\d{4}-\d{2}\.ndjson$/.test(f)) continue;
+      for (const line of fs.readFileSync(path.join(dir, f), "utf8").split("\n")) {
+        if (!line) continue;
+        let e;
+        try { e = JSON.parse(line); } catch (x) { continue; }
+        for (const c of e.cards || []) yield { name: c.name, kind: c.kind, lines: [c.line || ""], rarity: c.rarity, title: c.title };
+      }
+    }
+}
+
+for (const c of [...localCards(), ...communityCards()]) {
+  const k = keyOf[c.name];
+  if (!k) continue;
+  const lines = c.lines;
+  if (c.kind === "new" && /\b(yd|Strikes|Hits|Fires|Afflicts|Lands|Marks|Drops|Heals|Absorbs|Increases|Your|Every|For|Makes|Enemies)\b/.test(lines[0])) (texts[k] = texts[k] || []).push(lines[0]);
+  if (c.kind !== "upgrade") continue;
+  for (const ln of lines) {
+    const m = ln.match(/^([-+][\d.,]+)\s*(%?)\s*(damage|cooldown|area|duration|targets|absorb|healing|proc rate)$/);
+    if (!m) continue;
+    const type = m[3];
+    const rk = +(((c.title || "").match(/(?:rank|rang) (\d+)/) || [])[1] || 0);
+    if (!rk) continue;
+    const byR = ((upgrades[type] = upgrades[type] || {})[c.rarity] = upgrades[type][c.rarity] || {});
+    (byR[rk] = byR[rk] || []).push(num(m[1]));
   }
+}
 
 function parse(t) {
   const r = { text: t };

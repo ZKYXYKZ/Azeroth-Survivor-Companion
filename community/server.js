@@ -89,6 +89,22 @@ function clean(r, ip) {
 
 let stats, open = new Map(), held = new Set();
 const LIMITS = { dmg: 1000, crit: 10, cm: 100, area: 100, echo: 10, cnt: 100, reg: 1e6, spd: 10 };
+const LIMIT_CARDS = 120;
+const CARD_KEY = /^[a-z_]{1,40}$/;
+const CARD_KIND = new Set(["new", "upgrade"]);
+function cleanCard(c) {
+  if (!c || typeof c !== "object") return null;
+  const name = str(c.name, 60);
+  const kind = str(c.kind, 10);
+  if (!name || !CARD_KIND.has(kind)) return null;
+  const lines = Array.isArray(c.lines) ? c.lines.slice(0, 1) : typeof c.lines === "string" ? [c.lines] : [];
+  const line = str(lines[0], 200);
+  if (!line || CTRL.test(line)) return null;
+  const rarity = num(c.rarity, 0, 4);
+  const title = str(c.title, 40) || "";
+  if (title && CTRL.test(title)) return null;
+  return { name, kind, line, rarity, title };
+}
 function cheated(detail) {
   const f = detail.split("|");
   for (const block of (f[8] || "").split(";"))
@@ -319,6 +335,40 @@ const server = http.createServer((req, res) => {
           fs.appendFile(path.join(DATA, "runs-" + month + ".ndjson"), JSON.stringify({ patch: d.runId, install: who, difficulty: h }) + "\n", () => rebuild());
         }
         else if (held.has(k)) rebuild();
+        send(res, 201, '{"ok":true}');
+      });
+    });
+    return;
+  }
+  if (req.method === "POST" && url === "/api/cards") {
+    if (limited("ip:" + ip, LIMIT_IP)) return send(res, 429, '{"error":"too many"}');
+    let size = 0;
+    const chunks = [];
+    req.on("data", (c) => {
+      size += c.length;
+      if (size > MAX_BODY) { send(res, 413, '{"error":"too large"}'); req.destroy(); return; }
+      chunks.push(c);
+    });
+    req.on("end", () => {
+      if (size > MAX_BODY) return;
+      let d;
+      try {
+        let body = Buffer.concat(chunks);
+        if ((req.headers["content-encoding"] || "").includes("gzip")) body = zlib.gunzipSync(body, { maxOutputLength: 2 * 1024 * 1024 });
+        d = JSON.parse(body.toString("utf8"));
+      } catch (e) { d = null; }
+      const install = d && str(d.install, 64);
+      const cls = d && str(d.class, 20);
+      if (!d || d.v !== 1 || !install || install.length < 16 || !CLASSES.includes(cls) || !Array.isArray(d.cards)) return send(res, 400, '{"error":"invalid"}');
+      const who = hash(install);
+      if (limited("cin:" + who, LIMIT_CARDS)) return send(res, 429, '{"error":"too many"}');
+      const cards = d.cards.slice(0, 40).map(cleanCard).filter(Boolean);
+      if (!cards.length) return send(res, 201, '{"ok":true}');
+      if (!quota(JSON.stringify(cards).length + 50)) return send(res, 503, '{"error":"busy"}');
+      const at = new Date().toISOString();
+      const line = JSON.stringify({ at, install: who, class: cls, cards }) + "\n";
+      fs.appendFile(path.join(DATA, "cards-" + at.slice(0, 7) + ".ndjson"), line, (err) => {
+        if (err) return send(res, 500, '{"error":"store"}');
         send(res, 201, '{"ok":true}');
       });
     });
