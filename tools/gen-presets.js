@@ -148,29 +148,29 @@ const builds = [
   {
     class: "shaman", name: "Chaman Élémentaire", race: "orc", alt: "gnome",
     talents: T(`concussion:5 convection:5 lightning_overload:1 reverberation:4 call_of_thunder:5 elemental_fury:1 lightning_mastery:5 elemental_devastation:3 storm_reach:1 elemental_mastery:1
-      ancestral_knowledge:5 thundering_strikes:5 windfury:1 two_hand_shaman:4 anticipation_shaman:3 elemental_weapons:2`),
+      ancestral_knowledge:5 shield_spec_shaman:3 thundering_strikes:5 windfury:1 two_hand_shaman:1 anticipation_shaman:3 elemental_weapons:2`),
     spells: SP("chain_lightning:5 lightning_bolt:5 earth_shock:3 frost_shock:3 flame_shock:3 searing_totem:2"), ban: L("healing_wave lightning_shield call_of_flame"),
     rings: L("accuria dragonslayer quick_strike spell_power"), trinkets: L("chosen blackhand earthstrike hoj"), amulets: L("leg:chain_lightning leg:lightning_bolt onyxia_tooth malice_stone"),
-    fr: "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature.",
-    en: "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells.",
+    fr: "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Spécialisation bouclier et Anticipation retirent 24 % des dégâts subis : le Chaman mourait trop vite au moindre pic de dégâts.",
+    en: "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Shield Specialization and Anticipation cut 24% of damage taken: Shamans were dying too fast to burst damage.",
   },
   {
     class: "shaman", name: "Chaman Amélioration", race: "orc", alt: "gnome",
     talents: T(`ancestral_knowledge:5 thundering_strikes:5 windfury:1 two_hand_shaman:5 elemental_weapons:3 anticipation_shaman:2 maelstrom:1 enhancing_totems:3 flurry_shaman:3 parry_shaman:2 stormstrike:1
-      concussion:5 convection:5 lightning_overload:1 reverberation:4 call_of_thunder:5`),
+      concussion:5 convection:5 earths_grasp:3 lightning_overload:1 reverberation:1 call_of_thunder:5`),
     spells: SP("lightning_bolt:5 earth_shock:4 frost_shock:4 chain_lightning:4 flame_shock:3 searing_totem:3"), ban: L("healing_wave call_of_flame fire_nova"),
     rings: L("accuria dragonslayer quick_strike blooddrinker"), trinkets: L("chosen earthstrike hoj blackhand"), amulets: L("leg:lightning_bolt leg:earth_shock malice_stone onyxia_tooth"),
-    fr: "Deux loups spirituels avec Furie-des-vents, Éclair et Horions qui frappent jusqu'à 3 fois, une Chaîne d'éclairs gratuite tous les 5 sorts.",
-    en: "Two spirit wolves with Windfury, Lightning Bolt and shocks striking up to 3 times, a free Chain Lightning every 5th spell.",
+    fr: "Deux loups spirituels avec Furie-des-vents, Éclair et Horions qui frappent jusqu'à 3 fois, une Chaîne d'éclairs gratuite tous les 5 sorts. Étreinte de la terre ajoute 9 % de réduction des dégâts subis, au corps à corps c'est là que ça meurt le plus vite.",
+    en: "Two spirit wolves with Windfury, Lightning Bolt and shocks striking up to 3 times, a free Chain Lightning every 5th spell. Earth's Grasp adds 9% less damage taken, melee range is where it dies fastest.",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",
-    talents: T(`tidal_focus:5 totemic_focus:5 twin_totems:1 restorative_totems:3 natures_guidance:1 tidal_mastery:5 reincarnation:1 purification:4 totemic_mastery:3 ancestral_healing:2 totemic_call:1
+    talents: T(`tidal_focus:5 totemic_focus:5 twin_totems:1 restorative_totems:3 natures_guidance:1 tidal_mastery:5 reincarnation:1 purification:4 totemic_mastery:2 ancestral_healing:3 totemic_call:1
       concussion:5 convection:5 call_of_flame:3 lightning_overload:1 reverberation:1 imp_fire_totems:2 call_of_thunder:3`),
     spells: SP("magma_totem:5 searing_totem:5 fire_nova:4 flame_shock:3 chain_lightning:3 lightning_bolt:2"), ban: L("lightning_shield frost_shock earth_shock"),
     rings: L("accuria spell_power quick_strike blooddrinker"), trinkets: L("chosen earthstrike tep lifegiving"), amulets: L("leg:magma_totem leg:searing_totem fire_lord malice_stone"),
-    fr: "Arbre Restauration joué en totems : chaque totem en pose un second, Totem de magma dès le départ et un Totem incendiaire gratuit toutes les 14 s. Réincarnation sauve une fois toutes les 2 min.",
-    en: "The Restoration tree played with totems: every totem drops a second one, Magma Totem from the start and a free Searing Totem every 14 sec. Reincarnation saves you every 2 min.",
+    fr: "Arbre Restauration joué en totems : chaque totem en pose un second, Totem de magma dès le départ et un Totem incendiaire gratuit toutes les 14 s. Réincarnation sauve une fois toutes les 2 min, Guérison ancestrale au maximum (9 % de réduction des dégâts) contre le pic qui tue le round suivant.",
+    en: "The Restoration tree played with totems: every totem drops a second one, Magma Totem from the start and a free Searing Totem every 14 sec. Reincarnation saves you every 2 min, Ancestral Healing maxed (9% less damage taken) against the burst that kills next.",
   },
   {
     class: "mage", name: "Mage Arcanes", race: "gnome", alt: "",
