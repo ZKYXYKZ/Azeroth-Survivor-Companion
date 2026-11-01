@@ -2781,6 +2781,10 @@ class Companion : Form
                 else if (info.Cat == "amulets")
                 {
                     double wornW = amulet != null ? JewelWeight("amulets", amulet) * (1 + 0.25 * amuletUps) : 0;
+                    // Repli générique : aucune amulette du build n'est sortie, aucune n'est portée, niveau de repli
+                    // atteint. Sans ça le compagnon ignore toute amulette non listée (poids 0 à vie dans
+                    // JewelWeight), alors que n'importe laquelle vaut mieux que rien tant qu'on attend la bonne.
+                    if (w == 0 && amulet == null && !info.Key.StartsWith("leg:") && lvl >= N(G(rules, "fallbackLevel"), 10)) w = 4;
                     if (w > wornW) { baseW = amulet == null && !(idx >= want && lvl < N(G(rules, "fallbackLevel"), 10)) ? w * 1.5 : w; target = idx >= 0 && idx < want; }
                 }
                 else if (jewels.Values.Count(v => v == info.Cat) < 2)
