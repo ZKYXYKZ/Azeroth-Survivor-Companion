@@ -155,13 +155,13 @@ const builds = [
     en: "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Stormguard cut damage taken while Lightning Shield is up.",
   },
   {
-    class: "shaman", name: "Chaman Amélioration", race: "orc", alt: "gnome",
-    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:3 enh_shattering_elements:3 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:3 enh_stormbound_echoes:1
-      concussion:5 convection:5 earths_grasp:3 call_of_flame:1`),
-    spells: SP("rockbiter:5 stormstrike:5 fire_nova:4 lightning_shield:4 flame_shock:3 frost_shock:3"), ban: L("lightning_bolt chain_lightning healing_wave"),
-    rings: L("accuria dragonslayer quick_strike blooddrinker"), trinkets: L("chosen earthstrike hoj blackhand"), amulets: L("leg:rockbiter leg:stormstrike leg:fire_nova onyxia_tooth"),
-    fr: "Spé de mêlée refaite en 0.137 : Arme Croque-roc et Courroux des tempêtes dès le départ, Furie-des-vents dont les frappes relancent tous les effets, Novas de feu et Horions de givre gratuits. Bouclier de foudre à garder actif pour Garde-tempête (15 % de dégâts en moins). Build de départ, à ajuster avec les premières parties.",
-    en: "The melee spec remade in 0.137: Rockbiter Weapon and Stormstrike from the start, Windfury strikes that set off every proc, free Fire Novas and Frost Shocks. Keep Lightning Shield up for Stormguard (15% less damage). A starting build, to adjust with the first runs.",
+    class: "shaman", name: "Chaman Amélioration", race: "tauren", alt: "gnome",
+    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:2 enh_stormbound_echoes:1
+      concussion:5 earths_grasp:3 tidal_focus:5 totemic_focus:5 twin_totems:1 natures_guidance:1`),
+    spells: SP("stormstrike:5 rockbiter:5 magma_totem:5 lightning_shield:4 fire_nova:3 searing_totem:3"), ban: L("lightning_bolt chain_lightning earth_shock"),
+    rings: L("dark_iron blooddrinker quick_strike dragonslayer"), trinkets: L("earthstrike soulstone lifegiving hoj"), amulets: L("leg:magma_totem fallen_dragon steadfast_might animated_chain"),
+    fr: "Refait le 02/11 d'après les vraies parties (mort à 7 min à Naxxramas, 638 PV) : mêlée Croque-roc et Courroux des tempêtes, chaque totem posé en double par l'arbre Restauration, plus de régénération et 6 % de dégâts en moins avec Protection élémentaire. Bouclier de foudre à garder actif (15 % de plus), anneau de vie et Pierre d'âme pour survivre au pic.",
+    en: "Remade on 11/02 from real runs (dead at 7 min in Naxxramas, 638 HP): Rockbiter and Stormstrike melee, every totem dropped twice by the Restoration tree, extra regeneration and 6% less damage from Elemental Warding. Keep Lightning Shield up (15% more), health ring and Soulstone to survive the burst.",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",

@@ -247,11 +247,12 @@
    "en": "Enhancement Shaman"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;shaman;Chaman Amélioration;5531000000000/5533133313331/0000000000000;rockbiter:5,stormstrike:5,magma_totem:4,searing_totem:4,fire_nova:3,lightning_shield:3;chain_lightning,healing_wave,lightning_bolt;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,hoj,tep,war_horn;leg:magma_totem,onyxia_tooth,talvash,malice_stone;50,0,1,3,20,2,1",
+  "race": "tauren",
+  "raceAlt": "gnome",
+  "code": "SB1;shaman;Chaman Amélioration;0530000000000/5510133313321/0551100000000;stormstrike:5,rockbiter:5,magma_totem:5,lightning_shield:4,fire_nova:3,searing_totem:3;chain_lightning,earth_shock,lightning_bolt;dark_iron,blooddrinker,quick_strike,dragonslayer;earthstrike,soulstone,lifegiving,hoj;leg:magma_totem,fallen_dragon,steadfast_might,animated_chain;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Arme Croque-roc, Courroux des tempêtes et Totem de magma en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Rockbiter Weapon, Stormstrike and Magma Totem first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Refait le 02/11 d'après les vraies parties (mort à 7 min à Naxxramas, 638 PV) : mêlée Croque-roc et Courroux des tempêtes, chaque totem posé en double par l'arbre Restauration, plus de régénération et 6 % de dégâts en moins avec Protection élémentaire. Bouclier de foudre à garder actif (15 % de plus), anneau de vie et Pierre d'âme pour survivre au pic.",
+   "en": "Remade on 11/02 from real runs (dead at 7 min in Naxxramas, 638 HP): Rockbiter and Stormstrike melee, every totem dropped twice by the Restoration tree, extra regeneration and 6% less damage from Elemental Warding. Keep Lightning Shield up (15% more), health ring and Soulstone to survive the burst."
   }
  },
  {

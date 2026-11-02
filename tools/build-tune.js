@@ -19,7 +19,7 @@ const sd = sim.get();
 sd.cal = JSON.parse(fs.readFileSync(path.join(web, "simcal.json"), "utf8"));
 const DATA = ctx.DATA;
 const MINUTES = 15, SCREEN = 60, CONFIRM = 300, MIN_MC = 0.03;
-const NO_TALENTS = new Set(["Chaman Amélioration"]); // valeurs des procs inconnues du simulateur
+const HAND = new Set(["Chaman Amélioration"]); // fait main d'après les parties réelles, procs et survie inconnus du simulateur
 const DEF = /damage taken|less damage|damage reduction|maximum health|max health|health per second|would kill|heals? |shield|return to life/i;
 const EXCL = [["soul_devourer", "soul_link"], ["pact_of_the_annihilan", "butcher"], ["leader_of_pack", "cat_form"], ["legion_gate", "demonic_supremacy"]];
 const clone = (x) => JSON.parse(JSON.stringify(x));
@@ -127,7 +127,7 @@ function chooseRace(sc) {
 const presets = JSON.parse(fs.readFileSync(path.join(web, "defaults.json"), "utf8"));
 const out = {};
 presets.forEach((p, idx) => {
-  if (idx % SN !== SI) return;
+  if (idx % SN !== SI || HAND.has(p.name)) return;
   const f = p.code.split(";");
   const c = ctx.cls(p.class);
   const base = decodeBuild(p.code, p.race);
@@ -139,7 +139,7 @@ presets.forEach((p, idx) => {
   const keepR = f[6].split(",").filter((k) => k === "blooddrinker"), keepT = f[7].split(",").filter((k) => ["lifegiving", "soulstone"].includes(k));
   let cur = base, races = null;
   for (let pass = 0; pass < PASSES; pass++) {
-    if (!NO_TALENTS.has(p.name)) cur.talents = tuneTalents(cur, c);
+    cur.talents = tuneTalents(cur, c);
     cur = tuneSpells(cur, c);
     cur = tuneJewels(cur, c, keepR, keepT);
     races = chooseRace(cur);
