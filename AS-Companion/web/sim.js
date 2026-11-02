@@ -227,7 +227,7 @@ function jewelFx(sc, fx) {
     const l = DATA.legendaries[key];
     const sp = spellOf(c, key);
     if (l && sp) {
-      const g = { key, dmg: 0, targets: 0, area: 0, dur: 0, cd: 0, mult: 1 };
+      const g = { key, dmg: 0, targets: 0, area: 0, dur: 0, cd: 0, mult: 1, proc: 0 };
       for (const ln of l.lines.en) {
         let m;
         const t = ln.replace(sp.name.en + ": ", "").replace(sp.name.en + "'s ", "");
@@ -236,13 +236,14 @@ function jewelFx(sc, fx) {
         if ((m = t.match(/^\+([\d.]+)% area/))) g.area += +m[1];
         if ((m = t.match(/^\+([\d.]+)% duration/))) g.dur += +m[1];
         if ((m = t.match(/^-([\d.]+)% cooldown/))) g.cd += +m[1];
+        if ((m = t.match(/^\+([\d.]+)% proc rate/))) g.proc += +m[1];
         if ((m = t.match(/leap to (\d+) more enemies for ([\d.]+)%/))) g.mult *= 1 + (m[1] * m[2]) / 100;
         if ((m = t.match(/([\d.]+)% chance .*strike again for ([\d.]+)%/))) g.mult *= 1 + (m[1] * m[2]) / 10000;
         if ((m = t.match(/burn and bleed for ([\d.]+)% more/))) g.mult *= 1 + m[1] / 100;
         if ((m = t.match(/explode for ([\d.]+)% of their max health/))) { fx.notes.kills = true; fx.killFx.push({ spells: [key], pct: +m[1], r: 6, leg: true }); }
       }
       const up = AMULET_UP[Math.min(AMULET_UP.length - 1, sc.amuletUps || 0)];
-      for (const f of ["dmg", "area", "dur", "cd"]) g[f] *= up;
+      for (const f of ["dmg", "area", "dur", "cd", "proc"]) g[f] *= up;
       g.mult = 1 + (g.mult - 1) * up;
       for (const k of fx.killFx) if (k.leg) k.pct *= up;
       fx.leg = g;
@@ -277,7 +278,7 @@ function specialSpell(key, base, o) {
   switch (key) {
     case "redemption": {
       // 11 % des morts explosent, une explosion peut en relancer une : +30 %, plafond 2 par seconde
-      const rate = Math.min(2 / o.cdk, o.kps * (num(/([\d.]+)% chance/) / 100) * 1.3);
+      const rate = Math.min(2 / o.cdk, o.kps * (num(/([\d.]+)% chance/) / 100) * o.proc * 1.3);
       return out(D * rate * o.n(num(/within ([\d.]+) yd/), o.area), 0);
     }
     case "holy_shield": case "lightning_shield": case "thorns": {
@@ -388,7 +389,7 @@ function simulate(sc) {
     const U = s.ups || null;
     const up = (t) => (U ? U[t] || 0 : upgradeSum(t, ranksFor(t), sc.rarity));
     const ranksFor = (t) => (ups.includes(t) ? Math.floor((s.rank - 1) / per) + (ups.indexOf(t) < (s.rank - 1) % per ? 1 : 0) + 1 : 1);
-    const leg = fx.leg && fx.leg.key === s.key ? fx.leg : { dmg: 0, targets: 0, area: 0, dur: 0, cd: 0, mult: 1 };
+    const leg = fx.leg && fx.leg.key === s.key ? fx.leg : { dmg: 0, targets: 0, area: 0, dur: 0, cd: 0, mult: 1, proc: 0 };
     const school = base.school || ((base.text || "").match(/(Fire|Frost|Arcane|Nature|Shadow|Holy|Physical) damage/) || [])[1];
     let mult = (1 + fx.dmg / 100 + buffDmg) * (1 + (fx.school[school] || 0) / 100) * (1 + (fx.spellDmg[s.key] || 0) / 100) * (1 + up("damage") / 100) * (1 + leg.dmg / 100) * leg.mult * (fx.mult[s.key] || 1);
     if (base.kind === "dot" || base.kind === "ground") mult *= 1 + fx.dot / 100;
@@ -400,7 +401,7 @@ function simulate(sc) {
     const extraT = up("targets") + (fx.spellTargets[s.key] || 0) + leg.targets + (fx.allTargets || 0);
     const durMul = 1 + (up("duration") + leg.dur) / 100;
     if (base.kind === "special") {
-      const sp = specialSpell(s.key, base, { up, mult: mult * critFactor, area, extraT, durMul, cdk: (1 - up("cooldown") / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul, n, kps: sc.density * KILLS_PER_DENSITY / 1200, density: sc.density });
+      const sp = specialSpell(s.key, base, { up, mult: mult * critFactor, area, extraT, durMul, cdk: Math.max(0.25, (1 - up("cooldown") / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul), n, kps: sc.density * KILLS_PER_DENSITY / 1200 * Math.exp(((sc.level || 45) - 45) / 35), proc: 1 + (leg.proc || 0) / 100, density: sc.density });
       if (!sp) { row.note = SM("notSim"); continue; }
       if (sp.late) late.push({ row, sp }); else Object.assign(row, sp);
       row.school = school;
