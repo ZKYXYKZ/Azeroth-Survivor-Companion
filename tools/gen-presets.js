@@ -275,6 +275,30 @@ const ALLOWED = {
   warlock: ["human", "orc", "gnome", "scourge"], druid: ["nightelf", "tauren"],
 };
 
+// Builds optimises sur le simulateur cale (tools/build-tune.js)
+const TUNE = fs.existsSync(path.join(__dirname, "preset-tune.json")) ? JSON.parse(fs.readFileSync(path.join(__dirname, "preset-tune.json"), "utf8")) : {};
+for (const b of builds) {
+  const t = TUNE[b.name];
+  if (!t) continue;
+  const was = b.spells.map((s) => s.key);
+  b.talents = t.talents;
+  b.race = t.race;
+  b.alt = t.alt;
+  b.spells = t.spells.map(([key, w]) => ({ key, w }));
+  const now = b.spells.map((s) => s.key);
+  b.ban = b.ban.filter((k) => !now.includes(k)).concat(was.filter((k) => !now.includes(k))).slice(0, 3);
+  b.rings = t.rings;
+  b.trinkets = t.trinkets;
+  b.amulets = t.amulets;
+  // Description devenue fausse (sort retire encore cite) : texte court regenere
+  const c = data.classes.find((x) => x.key === b.class);
+  const nm = (k, l) => c.spells.find((x) => x.key === k).name[l];
+  if (was.some((k) => !now.includes(k) && (b.fr.includes(nm(k, "fr")) || b.en.includes(nm(k, "en"))))) {
+    const top = (l) => now.slice(0, 3).map((k) => nm(k, l));
+    b.fr = "Optimisé au simulateur calé sur les parties partagées : " + top("fr").slice(0, 2).join(", ") + " et " + top("fr")[2] + " en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.";
+    b.en = "Tuned on the simulator calibrated with shared runs: " + top("en").slice(0, 2).join(", ") + " and " + top("en")[2] + " first, with a shield or heal and a defensive ring to last to the end.";
+  }
+}
 let errors = 0;
 const err = (b, m) => { errors++; console.error(`${b.name}: ${m}`); };
 const EN_NAMES = { "Guerrier Armes": "Arms Warrior", "Guerrier Fureur": "Fury Warrior", "Guerrier Protection": "Protection Warrior", "Paladin Sacré": "Holy Paladin", "Paladin Protection": "Protection Paladin", "Paladin Vindicte": "Retribution Paladin", "Chasseur Maîtrise des bêtes": "Beast Mastery Hunter", "Chasseur Précision": "Marksmanship Hunter", "Chasseur Survie": "Survival Hunter", "Voleur Assassinat": "Assassination Rogue", "Voleur Combat": "Combat Rogue", "Voleur Finesse": "Subtlety Rogue", "Prêtre Discipline": "Discipline Priest", "Prêtre Sacré": "Holy Priest", "Prêtre Ombre": "Shadow Priest", "Chaman Élémentaire": "Elemental Shaman", "Chaman Amélioration": "Enhancement Shaman", "Chaman Totems": "Totem Shaman", "Mage Arcanes": "Arcane Mage", "Mage Feu": "Fire Mage", "Mage Givre": "Frost Mage", "Démoniste Affliction": "Affliction Warlock", "Démoniste Démonologie": "Demonology Warlock", "Démoniste Destruction": "Destruction Warlock", "Druide Équilibre": "Balance Druid", "Druide Félin": "Feral Cat Druid", "Druide Ours": "Feral Bear Druid", "Druide Restauration": "Restoration Druid" };

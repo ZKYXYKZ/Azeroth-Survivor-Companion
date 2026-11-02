@@ -404,6 +404,92 @@ const tiers = Array.from({ length: 6 }, (_, i) => ({
   starMult: [0, 1, 2, 3, 4, 5].map((s) => clean(1 + starMult(i, s))),
   set4: asObj(SET4[i]), set4Label: SET4[i].map(bonusLabel),
 }));
+// --- Butin des boss par zone (lu sur 0.139.0) -------------------------------------------------
+// Table de butin d'un boss : fn(classe dl, zone r8, boss r9) commence par cmp r8,NZ ; setb al ; cmp r9,NB ; setb cl.
+// Boss final (octet drapeau) : toutes les armes de la classe. Autres boss : les boss non finaux des zones de meme
+// palier, dans l'ordre zone puis boss, se partagent les 8 pieces d'armure (piece i -> boss de rang i % n).
+const lootHits = find([0x49, 0x83, 0xf8], (o) => b[o + 4] === 0x0f && b[o + 5] === 0x92 && b[o + 6] === 0xc0 && same(o + 7, [0x49, 0x83, 0xf9]) && same(o + 11, [0x0f, 0x92, 0xc1]));
+const drops = (() => {
+  if (lootHits.length !== 1) { console.error("gear-extract : table de butin : " + lootHits.length + " candidats, drops = null"); return null; }
+  const NZ = b[lootHits[0] + 3], NB = b[lootHits[0] + 10];
+  const L = decodeFn(toTextVA(lootHits[0]));
+  const iZ = idx(L, /^imul rcx,r8,[0-9A-F]+h?$/);
+  const hexImm = (t) => { const m = /,([0-9A-F]+)(h?)$/.exec(t); return parseInt(m[1], m[2] ? 16 : 10); };
+  const negDisp = (t) => { const m = /-([0-9A-F]+)(h?)\]$/.exec(t); return parseInt(m[1], m[2] ? 16 : 10); };
+  const ZSTRIDE = hexImm(L[iZ].t);
+  const ZONES = L[idx(L, /^lea rax,\[/, iZ)].rip;
+  const iBp = idx(L, /^mov rcx,\[rcx\+rax\+[0-9A-F]+h\]$/, iZ);
+  const BOSS_PTR = parseInt(/\+([0-9A-F]+)h\]$/.exec(L[iBp].t)[1], 16);
+  const iBs = idx(L, /^imul r10,r9,[0-9A-F]+h?$/, iBp);
+  const BSTRIDE = hexImm(L[iBs].t);
+  const iTier = idx(L, /^lea r11,\[/, iBs);
+  const TIER_VA = L[iTier].rip, CHANCE_VA = L[idx(L, /^lea r11,\[/, iTier + 1)].rip;
+  const FINAL = parseInt(/\+([0-9A-F]+)h\],0$/.exec(L[idx(L, /^cmp byte \[rcx\+r10\+[0-9A-F]+h\],0$/, iTier)].t)[1], 16);
+  const zoneTier = Array.from({ length: NZ }, (_, z) => u64(TIER_VA + z * 8));
+  const NT = Math.max(...zoneTier) + 1;
+  const chance = f32s(CHANCE_VA, NT).map(clean);
+  // cle de zone : premiere chaine en minuscules du bloc
+  let KEY = -1;
+  for (let k = 0; k < 0x40 && KEY < 0; k += 8) { const s = P.str(off(ZONES + k), 40); if (s && /^[a-z_]+$/.test(s)) KEY = k; }
+  if (KEY < 0) die("cle de zone introuvable");
+  const zones = Array.from({ length: NZ }, (_, z) => {
+    const zb = ZONES + z * ZSTRIDE;
+    const key = strAt(zb + KEY);
+    const bp = u64(zb + BOSS_PTR), bn = Math.min(u64(zb + BOSS_PTR + 8), NB);
+    const bosses = Array.from({ length: bn }, (_, i) => ({ idx: i, raw: strAt(bp + i * BSTRIDE), id: u32(bp + i * BSTRIDE + 64), final: b[off(bp + i * BSTRIDE + FINAL)] !== 0 }));
+    return { idx: z, key, tier: zoneTier[z], bosses };
+  });
+  for (let t = 0; t < NT; t++) { // repartition des pieces d'armure, comme la closure 0x145f99b80 (0.139.0)
+    const list = [];
+    for (const z of zones) if (z.tier === t) for (const bo of z.bosses) if (!bo.final) list.push(bo);
+    list.forEach((bo, pos) => { bo.pieces = [...Array(8).keys()].filter((i) => i % list.length === pos); });
+  }
+  // Tirage (0x145ee3370 sur 0.139.0) : (chance + bonus de la partie + echecs * k) * mult heroique > aleatoire.
+  // movzx ecx,byte [rsi+niveau] ; lea edx,[rcx-6] ; cmp dl,0FBh ; setb r8b : niveaux 1..5 lus dans une table.
+  const heroHits = find([0x8d, 0x51, 0xfa, 0x80, 0xfa, 0xfb, 0x41, 0x0f, 0x92, 0xc0], (o) => same(o + 10, [0x48, 0x8d, 0x14, 0x49, 0xc1, 0xe2, 0x04, 0x48, 0x8d, 0x0d]));
+  let heroic = null, pity = null;
+  if (heroHits.length === 1) {
+    const H = decodeFn(toTextVA(heroHits[0]));
+    const at = H.findIndex((i) => i.ip === toTextVA(heroHits[0]));
+    const NH = 0x100 - b[heroHits[0] + 5];
+    const stride = /^shl edx,4$/.test(H[at + 4].t) && /^lea rdx,\[rcx\+rcx\*2\]$/.test(H[at + 3].t) ? 48 : null;
+    const HT = H[idx(H, /^lea rcx,\[/, at)].rip;
+    const iXp = idx(H, /^movss xmm0,\[/, at);
+    const XP_NORMAL = f32(H[iXp].rip);
+    const xpOff = stride - negDisp(H[idx(H, /^movss xmm0,\[rcx-[0-9A-F]+h?\]$/, at)].t);
+    const iLoot = idx(H, /^movss xmm7,\[/, at);
+    const LOOT_NORMAL = f32(H[iLoot].rip);
+    const lootOff = stride - negDisp(H[idx(H, /^movss xmm7,\[rcx-[0-9A-F]+h?\]$/, iLoot)].t);
+    const iCall = H.findIndex((i, n) => n > iLoot && i.mn === Mnemonic.Call);
+    pity = clean(f32(H[idx(H, /^movss xmm9,\[/, iCall)].rip));
+    if (stride) heroic = {
+      normal: { lootMult: clean(LOOT_NORMAL), xpMult: clean(XP_NORMAL) },
+      levels: Array.from({ length: NH }, (_, h) => {
+        const e = HT + h * stride;
+        const aff = [P.str(off(e), 200), P.str(off(e + 16), 200)];
+        return { level: h + 1, lootMult: clean(f32(e + lootOff)), xpMult: clean(f32(e + xpOff)), affixes: aff.map((s) => (s == null ? null : tr(s, s))) };
+      }),
+    };
+  } else console.error("gear-extract : table heroique : " + heroHits.length + " candidats, heroic = null");
+  const bonusText = ["Bosses are 5% more likely to drop each piece.", "Bosses are 10% more likely to drop each piece."].filter((s) => b.indexOf(Buffer.from(s)) >= 0);
+  return {
+    source: "fonction de butin (cmp r8," + NZ + " ; cmp r9," + NB + ") et tirage du boss, lecture statique",
+    rules: {
+      perPiece: true, duplicateAddsNothing: true, chanceByTier: chance,
+      formula: "(chance du palier + bonus de la partie + echecs * pityPerMiss) * lootMult heroique > aleatoire [0,1)",
+      pityPerMiss: pity,
+      runBonus: { values: null, texts: bonusText.map((s) => tr(s, s)), note: "bonus additif de la partie, source exacte non retrouvee" },
+      finalBoss: "toutes les armes de la classe (weaponSlots)", otherBosses: "les 8 pieces d'armure du palier, partagees entre les boss non finaux des zones de ce palier",
+    },
+    heroic: heroic && { ...heroic, sameDrops: true, note: "le Heroique ne change ni le palier ni les pieces, seulement la chance (lootMult) ; il ouvre aussi les etoiles (armory.star_cap_none)" },
+    zones: zones.map((z) => ({
+      idx: z.idx, key: z.key, name: tr("zone." + z.key + ".name"), tier: z.tier, rarity: tr("rarity." + z.tier), chance: chance[z.tier],
+      pieces: z.bosses.flatMap((bo) => bo.pieces || []).sort((x, y) => x - y), weapons: z.bosses.some((bo) => bo.final),
+      bosses: z.bosses.map((bo) => ({ idx: bo.idx, id: bo.id, name: tr(LOC_EN["boss." + bo.id + ".name"] === bo.raw ? "boss." + bo.id + ".name" : bo.raw, bo.raw), final: bo.final, pieces: bo.final ? [] : bo.pieces, weapons: bo.final })),
+    })),
+  };
+})();
+
 const data = {
   meta: {
     gameVersion: VER, exeBytes: b.length, source: "tools/gear-extract.js (lecture statique de gear.rs)",
@@ -418,7 +504,7 @@ const data = {
   },
   armorSlots: ARMOR_BASE.map((l, i) => ({ idx: i, slot: SLOT_IDS[i], slotName: tr("slot." + SLOT_IDS[i]), base: asObj(l) })),
   themes: THEMES.map(asObj),
-  tiers, classes,
+  tiers, classes, drops,
 };
 fs.writeFileSync(out, JSON.stringify(data));
 console.log("ecrit", out, (fs.statSync(out).size / 1024).toFixed(0) + " Ko", "version", VER, Object.keys(classes).length, "classes");

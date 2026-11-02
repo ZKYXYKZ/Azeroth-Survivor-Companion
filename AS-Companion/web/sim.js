@@ -7,7 +7,7 @@ const SIM_STR = {
     noData: "pas encore de données pour ce sort", estCd: "recharge estimée", notSim: "Non simulé", compare: "Comparer avec un second build", copyA: "Copier le build A",
     optimize: "Suggestions", optimizeHelp: "Gain de DPS si l'on remplace un élément, à rangs égaux.", replace: "Remplacer {a} par {b}", stats: "Statistiques du build",
     dmg: "Dégâts", cdr: "Recharges", crit: "Critique", critDmg: "Dégâts critiques", echo: "Échos", luck: "Chance", targets: "Cibles en plus", area: "Zone",
-    rarities: ["Commun", "Inhabituel", "Rare", "Épique", "Légendaire"], toBuild: "Créer le build", mcTitle: "Parties simulées", runs: "parties", simulate: "Simuler", running: "Simulation…", mcHelp: "Rejoue des parties complètes : montées de niveau, cartes tirées selon la chance, choix du compagnon, coffres.", mcMean: "DPS moyen sur la partie", mcRange: "Pire 10 % / meilleur 10 %", mcLevel: "Niveau final moyen", mcDist: "répartition des parties", mcHave: "Obtenu", mcRank: "Rang moyen", mcWin: "Le build B fait mieux que le A dans {v} % des parties.", mcDone: "{n} parties simulées en {ms} ms.", gear: "Équipement et collection", gearSet: "Stuff complet", gearManual: "Saisie libre", gearStars: "Étoiles", gearHint: "Remplit les chiffres avec le stuff du jeu (8 pièces, armes, bonus de set), sans la collection", group: "Groupe (coop)", noAlly: "Pas d'allié", allyShout: "Cri de guerre d'un guerrier : +{v} % de dégâts en moyenne", allyMark: "Marque du chasseur : la cible subit +{v} % de dégâts", pets: "Familiers et démons", kills: "Explosions à la mort", procs: "Effets déclenchés", procNote: "dont {v} lancers gratuits par seconde", amuletUps: "amulette améliorée {v} fois", amuletNoUp: "amulette sans amélioration",
+    rarities: ["Commun", "Inhabituel", "Rare", "Épique", "Légendaire"], toBuild: "Créer le build", mcTitle: "Parties simulées", runs: "parties", simulate: "Simuler", running: "Simulation…", mcHelp: "Rejoue des parties complètes : montées de niveau, cartes tirées selon la chance, choix du compagnon, coffres.", mcMean: "DPS moyen sur la partie", mcRange: "Pire 10 % / meilleur 10 %", mcLevel: "Niveau final moyen", mcDist: "répartition des parties", mcHave: "Obtenu", mcRank: "Rang moyen", mcWin: "Le build B fait mieux que le A dans {v} % des parties.", mcDone: "{n} parties simulées en {ms} ms.", procs: "Effets déclenchés", killsRun: "Kills sur 20 min", zone: "Zone", zoneAny: "Toutes", gear: "Équipement et collection", gearSet: "Stuff complet", gearManual: "Saisie libre", gearStars: "Étoiles", gearPieces: "Pièces portées", gearHint: "Remplit les chiffres avec le stuff du jeu (8 pièces, armes, bonus de set), sans la collection", group: "Groupe (coop)", noAlly: "Pas d'allié", allyShout: "Cri de guerre d'un guerrier : +{v} % de dégâts en moyenne", allyMark: "Marque du chasseur : la cible subit +{v} % de dégâts", pets: "Familiers et démons", kills: "Explosions à la mort", procs: "Effets déclenchés", procNote: "dont {v} lancers gratuits par seconde", amuletUps: "amulette améliorée {v} fois", amuletNoUp: "amulette sans amélioration",
   },
   en: {
     title: "Simulator", experimental: "Experimental: simulated runs are calibrated on shared runs, but a given build can differ from reality by a factor of 2 or more. Starting gear is the players' median, replace it with yours.", intro: "Theoretical damage of a build: spells and ranks, talents, jewelry, race and enemy density. Numbers come from the game's cards; effects marked \"not simulated\" are left out.",
@@ -17,7 +17,7 @@ const SIM_STR = {
     noData: "no data yet for this spell", estCd: "estimated cooldown", notSim: "Not simulated", compare: "Compare with a second build", copyA: "Copy build A",
     optimize: "Suggestions", optimizeHelp: "DPS gain from swapping one element, at equal ranks.", replace: "Replace {a} with {b}", stats: "Build stats",
     dmg: "Damage", cdr: "Cooldowns", crit: "Crit", critDmg: "Crit damage", echo: "Echoes", luck: "Luck", targets: "Extra targets", area: "Area",
-    rarities: ["Common", "Uncommon", "Rare", "Epic", "Legendary"], toBuild: "Create the build", mcTitle: "Simulated runs", runs: "runs", simulate: "Simulate", running: "Simulating…", mcHelp: "Replays full runs: level-ups, cards drawn by luck, the companion picks, caches.", mcMean: "Average DPS over the run", mcRange: "Worst 10% / best 10%", mcLevel: "Average final level", mcDist: "run spread", mcHave: "Obtained", mcRank: "Avg rank", mcWin: "Build B beats build A in {v}% of runs.", mcDone: "{n} runs simulated in {ms} ms.", gear: "Gear and collection", gearSet: "Full set", gearManual: "Manual", gearStars: "Stars", gearHint: "Fills the numbers with the game's gear (8 pieces, weapons, set bonuses), without the collection", group: "Group (co-op)", noAlly: "No ally", allyShout: "A warrior's Battle Shout: +{v}% damage on average", allyMark: "Hunter's Mark: the target takes +{v}% damage", pets: "Pets and demons", kills: "Death explosions", procs: "Triggered effects", procNote: "including {v} free casts per second", amuletUps: "amulet upgraded {v} times", amuletNoUp: "amulet not upgraded",
+    rarities: ["Common", "Uncommon", "Rare", "Epic", "Legendary"], toBuild: "Create the build", mcTitle: "Simulated runs", runs: "runs", simulate: "Simulate", running: "Simulating…", mcHelp: "Replays full runs: level-ups, cards drawn by luck, the companion picks, caches.", mcMean: "Average DPS over the run", mcRange: "Worst 10% / best 10%", mcLevel: "Average final level", mcDist: "run spread", mcHave: "Obtained", mcRank: "Avg rank", mcWin: "Build B beats build A in {v}% of runs.", mcDone: "{n} runs simulated in {ms} ms.", procs: "Triggered effects", killsRun: "Kills over 20 min", zone: "Zone", zoneAny: "All", gear: "Gear and collection", gearSet: "Full set", gearManual: "Manual", gearStars: "Stars", gearPieces: "Pieces worn", gearHint: "Fills the numbers with the game's gear (8 pieces, weapons, set bonuses), without the collection", group: "Group (co-op)", noAlly: "No ally", allyShout: "A warrior's Battle Shout: +{v}% damage on average", allyMark: "Hunter's Mark: the target takes +{v}% damage", pets: "Pets and demons", kills: "Death explosions", procs: "Triggered effects", procNote: "including {v} free casts per second", amuletUps: "amulet upgraded {v} times", amuletNoUp: "amulet not upgraded",
   },
 };
 const SM = (k, vars) => {
@@ -32,7 +32,7 @@ const SIMS = { a: null, b: null, compare: false };
 const UP_BASE = { damage: [18, 25, 34, 46, 65], cooldown: [7, 10, 13, 17, 23], area: [12, 18, 25, 35, 50], duration: [15, 22, 30, 40, 58], targets: [1, 1, 1, 2, 2] };
 const KIND_CD = { single: 6, multi: 6, missiles: 5, chain: 6, nova: 6, cone: 6, ground: 10, dot: 8, totem: 20, buff: 30, mark: 15, special: 8 };
 const RACE_FX = {
-  human: { dmg: 0.05 }, orc: { dmg: 0.105 }, dwarf: { dmg: 0.06 }, nightelf: {}, scourge: {}, tauren: {},
+  human: { dmg: 0.05, xp: 1.05 }, orc: { dmg: 0.105 }, dwarf: { dmg: 0.06 }, nightelf: {}, scourge: {}, tauren: {},
   gnome: { cdMul: 0.92, luck: 20 }, troll: { cdr: 0.086, crit: 3 },
 };
 const CAPSTONES = {
@@ -62,13 +62,14 @@ const MILESTONES = {
 };
 
 const KILL_SHARE = 0.5;
+const KILLS_PER_DENSITY = 1020;
 const LEVEL_DMG = 3.8;
 const JEWEL_UP = [1, 1.8, 2.5, 3.4, 4.2, 4.9, 5.7, 6.5, 7.2, 7.8, 8.4];
 const AMULET_UP = [1, 1.2, 1.38, 1.54, 1.69, 1.82, 1.94, 2.04, 2.14, 2.23, 2.31];
 
 function simLoad() {
   if (SIMDATA) return Promise.resolve(SIMDATA);
-  return Promise.all([fetch("simdata.json").then((r) => r.json()), fetch("gamedb.json").then((r) => r.json()).catch(() => null), fetch("jewelups.json").then((r) => r.json()).catch(() => null), fetch("gear.json").then((r) => r.json()).catch(() => null)]).then(([d, g, j, s]) => { SIMDATA = g ? withGameDb(d, g) : d; SIMDATA.jewelUps = j || {}; SIMDATA.gear = s; return SIMDATA; });
+  return Promise.all([fetch("simdata.json").then((r) => r.json()), fetch("gamedb.json").then((r) => r.json()).catch(() => null), fetch("jewelups.json").then((r) => r.json()).catch(() => null), fetch("gear.json").then((r) => r.json()).catch(() => null), fetch("simcal.json").then((r) => r.json()).catch(() => null)]).then(([d, g, j, s, c]) => { SIMDATA = g ? withGameDb(d, g) : d; SIMDATA.jewelUps = j || {}; SIMDATA.gear = s; SIMDATA.cal = c; return SIMDATA; });
 }
 
 function withGameDb(d, g) {
@@ -107,10 +108,10 @@ function withGameDb(d, g) {
 }
 
 // Stuff complet d'un palier : 8 pieces et armes a n etoiles, bonus 4 pieces (1 etoile ou plus)
-function gearFromSet(classKey, tier, stars) {
+function gearFromSet(classKey, tier, stars, pieces = 8) {
   const s = SIMDATA.gear.classes[classKey].sets[tier];
-  const set4 = stars >= 1 ? SIMDATA.gear.tiers[tier].set4 : {};
-  const k = (x) => (s.totals[stars][x] || 0) + (s.totalsWeapons[stars][x] || 0) + (set4[x] || 0);
+  const set4 = stars >= 1 && pieces >= 4 ? SIMDATA.gear.tiers[tier].set4 : {};
+  const k = (x) => ((s.totals[stars][x] || 0) * pieces) / 8 + (s.totalsWeapons[stars][x] || 0) + (set4[x] || 0);
   const pct = (x) => +(k(x) * 100).toFixed(1);
   return { dmg: pct("dmg"), crit: pct("crit"), critDmg: pct("critDmg"), cdr: pct("cdr"), echo: pct("echo"), area: pct("area"), targets: k("targets") };
 }
@@ -177,7 +178,7 @@ function talentFx(sc) {
       if (special.critProc) fx.critProc = special.critProc;
     }
   // Bonus 8 pieces : 3 etoiles ou plus, renforce a 5. Seuls les degats et cibles se lisent dans le texte, le reste part en note.
-  const set = sc.gearSet && SIMDATA && SIMDATA.gear && sc.gearSet.stars >= 3 ? SIMDATA.gear.classes[sc.class].sets[sc.gearSet.tier].set8 : null;
+  const set = sc.gearSet && SIMDATA && SIMDATA.gear && sc.gearSet.stars >= 3 && (sc.gearSet.pieces || 8) === 8 ? SIMDATA.gear.classes[sc.class].sets[sc.gearSet.tier].set8 : null;
   if (set) {
     const txt = (sc.gearSet.stars >= 5 ? set.empowered : set).text.en;
     const key = names[set.abilityName.en];
@@ -295,7 +296,7 @@ function simulate(sc) {
   const critMul = 2 * (1 + fx.critDmg / 100);
   const critFactor = 1 + crit * (critMul - 1) + crit * fx.critBleed;
   const echo = 1 + fx.echo / 100;
-  const n = (radius, areaPct) => Math.min(30, Math.max(1, sc.density * Math.pow(radius / 10, 2) * (1 + areaPct / 100)));
+  const n = (radius, areaPct) => Math.min(Math.max(30, sc.density * 1.5), Math.max(1, sc.density * Math.pow(radius / 10, 2) * (1 + areaPct / 100)));
   let buffDmg = 0, bossTaken = 0;
   const allyNotes = [];
   for (const a of sc.allies || []) {
@@ -394,6 +395,14 @@ function simulate(sc) {
     expl += (k.pct / 100) * n(k.r, fx.area) * trig * KILL_SHARE * (k.scale || 1);
   }
   if (expl > 0) rows.push({ key: "explosions", name: SM("kills"), icon: "Spell_Shadow_CorpseExplode", rank: 0, pack: expl, single: 0, note: "" });
+  // Calage sur les parties partagees (tools/sim-tune.js) : facteur par sort, procs des talents en part du reste
+  const cal = SIMDATA.cal;
+  if (cal) {
+    for (const r of rows) { const k = cal.spells[r.key]; if (k) { r.pack *= k; r.single *= k; } }
+    let share = 0;
+    for (const tree of c.trees) for (const t of tree.talents) if (cal.talents[t.key] && sc.talents[t.key]) share += cal.talents[t.key] * sc.talents[t.key] / t.max;
+    if (share > 0) rows.push({ key: "procs", name: SM("procs"), icon: "Spell_Nature_WispSplode", rank: 0, pack: rows.reduce((a, r) => a + r.pack, 0) * share, single: rows.reduce((a, r) => a + r.single, 0) * share, note: "" });
+  }
   const bossShare = sc.boss / 100;
   for (const r of rows) r.mix = r.pack * (1 - bossShare) + r.single * bossShare;
   const total = rows.reduce((a, r) => a + r.mix, 0);
@@ -473,16 +482,19 @@ function simPanel(sc, which) {
     return w;
   };
   field(SM("rarity"), range(0, 4, 0.25, () => sc.rarity, (v) => (sc.rarity = v), (v) => SM("rarities")[Math.round(v)]));
-  field(SM("density"), range(1, 20, 1, () => sc.density, (v) => (sc.density = v), (v) => String(v)));
+  // Densite 6 = mediane reelle, environ 6 100 kills en 20 min
+  field(SM("killsRun"), range(2000, 60000, 1000, () => Math.round(sc.density * KILLS_PER_DENSITY / 1000) * 1000, (v) => (sc.density = v / KILLS_PER_DENSITY), (v) => v.toLocaleString()));
   field(SM("boss"), range(0, 100, 5, () => sc.boss, (v) => (sc.boss = v), (v) => v + " %"));
+  if (SIMDATA && SIMDATA.cal && SIMDATA.cal.zones) field(SM("zone"), simSelect([["", SM("zoneAny")]].concat(Object.keys(SIMDATA.cal.zones).map((z) => [z, z])), sc.zone || "", (v) => { sc.zone = v; renderSim(); }));
   box.appendChild(opts);
   box.appendChild(el("h3", "", esc(SM("gear"))));
   if (SIMDATA && SIMDATA.gear) {
-    const pick = sc.gearSet || { tier: -1, stars: 3 };
-    const apply = () => { if (pick.tier >= 0) { sc.gearSet = pick; sc.gear = gearFromSet(sc.class, pick.tier, pick.stars); } else delete sc.gearSet; renderSim(); };
+    const pick = sc.gearSet || { tier: -1, stars: 3, pieces: 8 };
+    const apply = () => { if (pick.tier >= 0) { sc.gearSet = pick; sc.gear = gearFromSet(sc.class, pick.tier, pick.stars, pick.pieces); } else delete sc.gearSet; renderSim(); };
     const sets = SIMDATA.gear.classes[sc.class].sets.map((s, i) => [String(i), SM("rarities")[i] ? SM("rarities")[i] + " " + (L(s.name) || "") : L(s.name) || "PvP"]);
     field(SM("gearSet"), simSelect([["-1", SM("gearManual")]].concat(sets), String(pick.tier), (v) => { pick.tier = +v; apply(); }));
     field(SM("gearStars"), simSelect([0, 1, 2, 3, 4, 5].map((n) => [String(n), String(n)]), String(pick.stars), (v) => { pick.stars = +v; apply(); }));
+    field(SM("gearPieces"), simSelect([1, 2, 3, 4, 5, 6, 7, 8].map((n) => [String(n), String(n)]), String(pick.pieces || 8), (v) => { pick.pieces = +v; apply(); }));
     box.appendChild(el("small", "", esc(SM("gearHint"))));
   }
   const gear = el("div", "simgear");
@@ -713,7 +725,8 @@ function monteCarlo(sc, iters, minutes) {
     const jew = { rings: [], trinkets: [], amulet: "", ups: 0, jewelUps: {} };
     let level = 1, total = 0, nextJewel = (-Math.log(Math.random()) / MC_JEWEL_RATE) * 60;
     const levelUps = [];
-    for (let t = 0; t < end; t += 1) { const l = Math.floor(mcLevelAt(t)); while (level < l) { level++; levelUps.push(t); } }
+    const xpMul = (RACE_FX[sc.race] || {}).xp || 1;
+    for (let t = 0; t < end; t += 1) { const l = Math.floor(mcLevelAt(t * xpMul)); while (level < l) { level++; levelUps.push(t); } }
     let li = 0;
     for (let minute = 0; minute < minutes; minute++) {
       const tEnd = (minute + 1) * 60;
@@ -765,7 +778,7 @@ function monteCarlo(sc, iters, minutes) {
       }
       const state = Object.assign({}, sc, { spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps, level: li + 1 });
       const r = simulate(state);
-      const dps = r.total * mcYield(minute + 1);
+      const dps = r.total * mcYield(minute + 1) * ((SIMDATA.cal && SIMDATA.cal.zones && SIMDATA.cal.zones[sc.zone]) || 1);
       total += dps * 60;
       res.curve[minute] += dps / iters;
       const tr = (res.track[minute] = res.track[minute] || { dmg: 0, crit: 0, cd: 0, echo: 0, ranks: 0 });
@@ -800,7 +813,7 @@ function mcRender() {
   const bar = el("div", "simmcbar");
   bar.appendChild(el("b", "", esc(SM("mcTitle"))));
   bar.appendChild(simSelect([100, 500, 2000, 5000].map((v) => [String(v), v + " " + SM("runs")]), String(MC.iters), (v) => (MC.iters = +v)));
-  bar.appendChild(simSelect([5, 10, 15, 20, 30].map((v) => [String(v), v + " min"]), String(MC.minutes), (v) => (MC.minutes = +v)));
+  bar.appendChild(simSelect([5, 10, 15, 20, 25, 30].map((v) => [String(v), v + " min"]), String(MC.minutes), (v) => (MC.minutes = +v)));
   const go = el("button", "primary", esc(SM("simulate")));
   go.onclick = () => {
     go.disabled = true;

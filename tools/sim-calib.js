@@ -13,7 +13,7 @@ const json = (f) => JSON.parse(fs.readFileSync(path.join(web, f), "utf8"));
 const DATA = json("data.json");
 const ctx = { DATA, Math, console, performance: { now: () => 0 }, lang: () => "en", L: (o) => (o && typeof o === "object" ? o.en : o), cls: (k) => DATA.classes.find((c) => c.key === k), spellOf: (c, k) => c.spells.find((s) => s.key === k), esc: (s) => s };
 vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(process.env.SIM_FILE || path.join(web, "sim.js"), "utf8") + ";globalThis.API={simulate,monteCarlo,set(d){SIMDATA=d},withGameDb};", ctx);
+vm.runInContext(fs.readFileSync(process.env.SIM_FILE || path.join(web, "sim.js"), "utf8") + ";globalThis.API={simulate,monteCarlo,set(d){SIMDATA=d},get(){return SIMDATA},withGameDb};globalThis.mcYield=mcYield;globalThis.mcLevelAt=mcLevelAt;", ctx);
 const sim = ctx.API;
 const sd = sim.withGameDb(json("simdata.json"), json("gamedb.json"));
 sd.jewelUps = json("jewelups.json");
