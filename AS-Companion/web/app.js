@@ -469,6 +469,47 @@ function stalePreset(p) {
   return old && encode(Object.assign({}, old, { name: p.name })) !== p.code ? old : null;
 }
 
+// Builds suggeres presents d'office : ajoutes une fois (pas de retour apres suppression), mis a jour tant que le joueur
+// ne les a pas modifies ; un build modifie garde ses changements et affiche « Mis a jour » dans les builds proposes.
+function syncPresets() {
+  STATE.presetsSeen = STATE.presetsSeen || {};
+  let changedAny = false;
+  for (const p of PRESETS) {
+    if (!cls(p.class)) continue;
+    const key = p.class + "|" + p.name, nm = p.names ? L(p.names) : p.name;
+    const code = (b) => encode(Object.assign({}, b, { name: p.name }));
+    let b = STATE.builds.find((x) => x.preset === key) || builds(p.class).find((x) => x.name === nm || x.name === p.name);
+    if (!b) {
+      if (STATE.presetsSeen[key]) continue;
+      const was = STATE.active[p.class];
+      b = decode(p.code);
+      if (!b) continue;
+      b.name = nm;
+      if (p.race) b.race = p.race;
+      if (p.raceAlt) b.raceAlt = p.raceAlt;
+      if (was) STATE.active[p.class] = was;
+      b.preset = key;
+      b.presetCode = p.code;
+      changedAny = true;
+    } else {
+      if (!b.preset) { b.preset = key; b.presetCode = code(b); changedAny = true; }
+      if (b.presetCode !== p.code && code(b) === b.presetCode) {
+        const was = STATE.active[p.class], fresh = decode(p.code);
+        if (fresh) {
+          STATE.builds.splice(STATE.builds.indexOf(fresh), 1);
+          Object.assign(b, fresh, { id: b.id, name: b.name, preset: key, presetCode: p.code });
+          if (p.race) b.race = p.race;
+          b.raceAlt = p.raceAlt;
+          STATE.active[p.class] = was || b.id;
+          changedAny = true;
+        }
+      }
+    }
+    if (!STATE.presetsSeen[key]) { STATE.presetsSeen[key] = 1; changedAny = true; }
+  }
+  if (changedAny) save();
+}
+
 function showPresets() {
   $("presetTitle").textContent = T("presetsTitle", { c: L(cls(CLASS).name) });
   $("presetClose").textContent = T("close");
@@ -493,6 +534,7 @@ function showPresets() {
         const id = stale.id;
         b = Object.assign(stale, b, { id });
         STATE.active[p.class] = id;
+        b.presetCode = p.code;
       }
       b.name = p.names ? L(p.names) : p.name;
       if (p.race) b.race = p.race;
@@ -697,6 +739,7 @@ async function init() {
   STATE.active = STATE.active || {};
   STATE.settings = STATE.settings || {};
   STATE.nextId = STATE.nextId || 1;
+  syncPresets();
   CLASS = STATE.lastClass || "warrior";
   const qp = new URLSearchParams(location.search);
   if (["builds", "stats", "sim", "addons", "options"].includes(qp.get("page"))) PAGE = qp.get("page");
