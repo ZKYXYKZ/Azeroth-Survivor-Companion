@@ -70,7 +70,7 @@ function tuneTalents(base, c) {
 
 function tuneSpells(base, c) {
   let cur = clone(base), curD = mc(cur, SCREEN * 2);
-  const dealt = (k) => { const b = sd.spells[k]; return b && !["defense", "buff", "special"].includes(b.kind); };
+  const dealt = (k) => { const b = sd.spells[k]; return b && !["defense", "buff"].includes(b.kind); };
   base.spells.forEach((_, i) => {
     const s = cur.spells[i];
     if (!dealt(s.key)) return;

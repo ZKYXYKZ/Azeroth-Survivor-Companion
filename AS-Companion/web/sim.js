@@ -265,6 +265,61 @@ function upgradeSum(type, ranks, rarity) {
   return s;
 }
 
+// Sorts "special" : chiffres lus dans le texte du jeu, renvoie { pack, single } par seconde avant calage
+function specialSpell(key, base, o) {
+  const t = base.text || "";
+  const num = (re) => { const m = t.match(re); return m ? +m[1] : 0; };
+  const dmg = num(/dealing ([\d.]+)/) || num(/for ([\d.]+) \w+ damage/) || num(/take ([\d.]+) damage/);
+  const D = dmg * o.mult;
+  const out = (pack, single, note) => ({ pack, single, rate: 0, hits: 0, note: note || "", kind: "special" });
+  // coups de mêlée encaissés par seconde : la plupart des héros gardent leurs distances
+  const melee = { pack: Math.min(4, o.density * 0.25), single: 0.7 };
+  switch (key) {
+    case "redemption": {
+      // 11 % des morts explosent, une explosion peut en relancer une : +30 %, plafond 2 par seconde
+      const rate = Math.min(2 / o.cdk, o.kps * (num(/([\d.]+)% chance/) / 100) * 1.3);
+      return out(D * rate * o.n(num(/within ([\d.]+) yd/), o.area), 0);
+    }
+    case "holy_shield": case "lightning_shield": case "thorns": {
+      // relancé dès qu'il expire : présent presque tout le temps
+      return out(D * melee.pack, D * melee.single);
+    }
+    case "lightwell": {
+      const every = num(/Every ([\d.]+) sec/) * o.cdk, dur = num(/For ([\d.]+) sec/) * o.durMul;
+      const r = D * Math.min(1, dur / every);
+      return out(r * (1 + o.extraT), r);
+    }
+    case "bloodrage": {
+      const r = num(/within ([\d.]+) yd/) || 10;
+      const per = (k) => (h) => D * (k === "pack" ? o.n(r, o.area) : 1) / Math.max(8 * o.cdk, 100 / Math.min(12, 2 * h));
+      return { kind: "special", note: "", late: (x) => ({ pack: per("pack")(x.hitRate("pack")), single: per("single")(x.hitRate("single")) }) };
+    }
+    case "seal_fate": {
+      const cap = num(/at most ([\d.]+) a second/);
+      // un point par sort lancé, deux sur critique ; double dégâts sous 30 % : x1,3 en moyenne
+      const rate = (x) => Math.min(cap, x.casts * (1 + x.crit)) / 5;
+      return { kind: "special", note: "", late: (x) => ({ pack: D * 1.3 * (1 + o.extraT) * rate(x), single: D * 1.3 * rate(x) }) };
+    }
+    case "soul_fire": {
+      // une âme par mort, au plus une par seconde ; sur un boss seul il reste les adds
+      const every = 5 / Math.min(1 / o.cdk, o.kps);
+      return out(D * (1 + o.extraT) / every, D / (5 / Math.min(1 / o.cdk, o.kps * 0.4)));
+    }
+    case "polymorph": {
+      // 12 % des coups, au plus un mouton toutes les 3 s, éclat plafonné (les mobs ont plus de vie que le plafond)
+      const capDmg = num(/up to ([\d.]+)/) * o.mult, pct = num(/([\d.]+)% chance/) / 100;
+      return { kind: "special", note: "", late: (x) => ({ pack: capDmg * o.n(num(/within ([\d.]+) yd/), o.area) * Math.min(1 / 3, x.hitRate("pack") * pct), single: 0 }) };
+    }
+    case "faerie_fire": {
+      // la marque reçoit surtout les sorts à cible unique ; l'arc touche 2 voisins (+cibles), au plus 4 fois par seconde
+      const pct = num(/arc ([\d.]+)%/) / 100, capDmg = num(/up to ([\d.]+)/) * o.mult;
+      const voisins = Math.min(2 + o.extraT, Math.max(0, o.n(num(/within ([\d.]+) yd/) || 8.8, o.area) - 1));
+      return { kind: "special", note: "", late: (x) => { const r = Math.min(4, x.casts); const hit = x.casts ? x.single / x.casts : 0; return { pack: r * Math.min(capDmg, hit * pct * (1 + o.up("damage") / 100)) * voisins, single: 0 }; } };
+    }
+  }
+  return null;
+}
+
 function simulate(sc) {
   const c = cls(sc.class);
   const fx = jewelFx(sc, talentFx(sc));
@@ -297,7 +352,7 @@ function simulate(sc) {
   const critFactor = 1 + crit * (critMul - 1) + crit * fx.critBleed;
   const echo = 1 + fx.echo / 100;
   const n = (radius, areaPct) => Math.min(Math.max(30, sc.density * 1.5), Math.max(1, sc.density * Math.pow(radius / 10, 2) * (1 + areaPct / 100)));
-  let buffDmg = 0, bossTaken = 0;
+  let buffDmg = 0, buffCdr = 0, bossTaken = 0;
   const allyNotes = [];
   for (const a of sc.allies || []) {
     if (a === "warrior" && SIMDATA.spells.battle_shout) {
@@ -311,7 +366,7 @@ function simulate(sc) {
       allyNotes.push(SM("allyMark", { v: Math.round(SIMDATA.spells.hunters_mark.value * 100) }));
     }
   }
-  const rows = [];
+  const rows = [], late = [];
   const pre = sc.spells.map((s) => ({ s, base: SIMDATA.spells[s.key], def: spellOf(c, s.key) })).filter((x) => x.def);
   for (const { s, base, def } of pre) {
     if (!base || base.kind !== "buff") continue;
@@ -321,13 +376,13 @@ function simulate(sc) {
     const dur = base.dur * (1 + upgradeSum("duration", k("duration"), sc.rarity) / 100);
     const cd = (base.cd || KIND_CD.buff) * (1 - upgradeSum("cooldown", k("cooldown"), sc.rarity) / 100) / (1 + fx.cdr / 100) * fx.cdMul;
     if (base.stat === "dmg") buffDmg += base.value * Math.min(1, dur / cd);
+    if (base.stat === "cdr") buffCdr += base.value * 100 * Math.min(1, dur / cd);
   }
   for (const { s, base, def } of pre) {
     const row = { key: s.key, name: L(def.name), icon: def.icon, rank: s.rank, pack: 0, single: 0, note: "" };
     rows.push(row);
     if (!base) { row.note = SM("noData"); continue; }
     if (base.kind === "defense" || base.kind === "buff") { row.note = base.kind === "buff" ? "+" + Math.round(base.value * 100) + "% " + (base.stat === "dmg" ? SM("dmg").toLowerCase() : base.stat) : ""; row.utility = true; continue; }
-    if (base.kind === "special") { row.note = SM("notSim"); continue; }
     const ups = (def.upgrades || []).filter((u) => UP_BASE[u]);
     const per = Math.max(1, ups.length);
     const U = s.ups || null;
@@ -339,11 +394,18 @@ function simulate(sc) {
     if (base.kind === "dot" || base.kind === "ground") mult *= 1 + fx.dot / 100;
     const cdBase = base.cd || KIND_CD[base.kind] || 6;
     row.estCd = !base.cd;
-    let cd = cdBase * (1 - up("cooldown") / 100) * (1 - (fx.spellCd[s.key] || 0) / 100) * (1 - leg.cd / 100) / (1 + fx.cdr / 100) * fx.cdMul;
+    let cd = cdBase * (1 - up("cooldown") / 100) * (1 - (fx.spellCd[s.key] || 0) / 100) * (1 - leg.cd / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul;
     cd = Math.max(0.3, cd);
     const area = fx.area + up("area") + leg.area;
     const extraT = up("targets") + (fx.spellTargets[s.key] || 0) + leg.targets + (fx.allTargets || 0);
     const durMul = 1 + (up("duration") + leg.dur) / 100;
+    if (base.kind === "special") {
+      const sp = specialSpell(s.key, base, { up, mult: mult * critFactor, area, extraT, durMul, cdk: (1 - up("cooldown") / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul, n, kps: sc.density * KILLS_PER_DENSITY / 1200, density: sc.density });
+      if (!sp) { row.note = SM("notSim"); continue; }
+      if (sp.late) late.push({ row, sp }); else Object.assign(row, sp);
+      row.school = school;
+      continue;
+    }
     let hitsPack = 1, hitsBoss = 1, dmg = base.dmg || 0;
     switch (base.kind) {
       case "single": hitsPack = 1 + extraT; hitsBoss = 1; break;
@@ -389,6 +451,11 @@ function simulate(sc) {
     }
     procRow.note = SM("procNote", { v: Math.round(Math.min(cp.max, fed("pack") / cp.every) * 10) / 10 });
   }
+  // Sorts nourris par les coups des autres sorts (rage, points de combo, moutons, marque)
+  const hitRate = (k) => rows.filter((r) => r.rate && !r.utility).reduce((a, r) => a + r.rate * r.ticks * (k === "pack" ? r.hits : r.hitsBoss), 0);
+  const casts = rows.filter((r) => r.rate && !r.utility && r.kind !== "dot" && r.kind !== "ground" && r.kind !== "totem").reduce((a, r) => a + r.rate, 0);
+  const single = rows.reduce((a, r) => a + (r.single || 0), 0);
+  for (const { row, sp } of late) Object.assign(row, sp.late({ hitRate, casts, single, crit }));
   let expl = 0;
   for (const k of fx.killFx || []) {
     const trig = rows.filter((x) => x.pack && (k.spells ? k.spells.includes(x.key) : k.school ? x.school === k.school : k.dots ? x.kind === "dot" || x.kind === "ground" : false)).reduce((a, x) => a + x.pack, 0);
