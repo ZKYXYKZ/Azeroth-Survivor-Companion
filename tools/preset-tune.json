@@ -529,8 +529,8 @@
    "chosen"
   ],
   "amulets": [
-   "south_seas_kelp",
    "leg:sw_pain",
+   "south_seas_kelp",
    "onyxia_tooth",
    "leg:smite"
   ],
@@ -1065,10 +1065,10 @@
    "hoj"
   ],
   "amulets": [
+   "leg:holy_shock",
    "leg:consecration",
    "south_seas_kelp",
-   "leg:hammer_of_wrath",
-   "vek_nilash"
+   "leg:hammer_of_wrath"
   ],
   "race": "human",
   "alt": ""
@@ -1332,9 +1332,9 @@
    "tep"
   ],
   "amulets": [
+   "leg:insect_swarm",
    "leg:hurricane",
    "leg:moonfire",
-   "leg:insect_swarm",
    "prestor"
   ],
   "race": "nightelf",
@@ -1599,8 +1599,8 @@
    "earthstrike"
   ],
   "amulets": [
-   "leg:curse_of_agony",
    "leg:corruption",
+   "leg:curse_of_agony",
    "leg:searing_pain",
    "onyxia_tooth"
   ],

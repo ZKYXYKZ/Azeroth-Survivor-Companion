@@ -53,7 +53,7 @@
   },
   "author": "AS Companion",
   "race": "human",
-  "code": "SB1;paladin;Paladin Sacré;5105135315011/00000000000000/5531105000000;holy_shock:5,holy_wrath:5,judgement:4,consecration:4,hammer_of_wrath:3,holy_shield:3;exorcism,holy_light,redemption;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,hoj;leg:consecration,south_seas_kelp,leg:hammer_of_wrath,vek_nilash;50,0,1,3,20,2,1",
+  "code": "SB1;paladin;Paladin Sacré;5105135315011/00000000000000/5531105000000;holy_shock:5,holy_wrath:5,judgement:4,consecration:4,hammer_of_wrath:3,holy_shield:3;exorcism,holy_light,redemption;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,hoj;leg:holy_shock,leg:consecration,south_seas_kelp,leg:hammer_of_wrath;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Horion sacré dès le départ (rebonds), ses critiques font tomber Colère divine, et l'apogée en lance une toutes les 14 s. Sceau d'autorité ajoute Jugement.",
    "en": "Holy Shock from the start (leaping bolts), its crits call down Holy Wrath, and the capstone adds one every 14 sec. Seal of Command adds Judgement."
@@ -204,7 +204,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;priest;Prêtre Sacré;0505150400000/5053113511231/0000000000000;smite:5,holy_nova:5,sw_pain:4,mind_flay:3,pw_shield:3,renew:2;devouring_plague,holy_fire,psychic_scream;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,earthstrike,chosen;south_seas_kelp,leg:sw_pain,onyxia_tooth,leg:smite;50,0,1,3,20,2,1",
+  "code": "SB1;priest;Prêtre Sacré;0505150400000/5053113511231/0000000000000;smite:5,holy_nova:5,sw_pain:4,mind_flay:3,pw_shield:3,renew:2;devouring_plague,holy_fire,psychic_scream;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,earthstrike,chosen;leg:sw_pain,south_seas_kelp,onyxia_tooth,leg:smite;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Châtiment touche 2 ennemis et chaque critique déclenche un Nova sacré gratuit : tout mise sur le critique (Spécialisation sacrée, Troll).",
    "en": "Smite hits 2 enemies and every crit sets off a free Holy Nova: everything goes into crit (Holy Specialization, Troll)."
@@ -342,7 +342,7 @@
   },
   "author": "AS Companion",
   "race": "human",
-  "code": "SB1;warlock;Démoniste Démonologie;0535110500000/55053033102301/0000000000000;demonic_empowerment:5,shadow_bolt:4,corruption:4,searing_pain:3,immolate:3,curse_of_agony:3;drain_life,fear,hellfire;quick_strike,dragonslayer,blooddrinker,seal_damned;blackhand,carrot,chosen,earthstrike;leg:curse_of_agony,leg:corruption,leg:searing_pain,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;warlock;Démoniste Démonologie;0535110500000/55053033102301/0000000000000;demonic_empowerment:5,shadow_bolt:4,corruption:4,searing_pain:3,immolate:3,curse_of_agony:3;drain_life,fear,hellfire;quick_strike,dragonslayer,blooddrinker,seal_damned;blackhand,carrot,chosen,earthstrike;leg:corruption,leg:curse_of_agony,leg:searing_pain,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Une armée : diablotin et chasseur corrompu permanents, démons mineurs toutes les 4 s, gangregarde toutes les 30 s (plus vite avec les temps de recharge). Les démons font l'essentiel des dégâts.",
    "en": "An army: permanent Imp and Felhunter, lesser demons every 4 sec, a Felguard every 30 sec (faster with cooldown reduction). Demons deal most of the damage."
@@ -421,7 +421,7 @@
   "author": "AS Companion",
   "race": "nightelf",
   "raceAlt": "troll",
-  "code": "SB1;druid;Druide Restauration;2351150300000/00000000000000/5055005015131;rejuvenation:5,regrowth:5,insect_swarm:4,moonfire:3,hurricane:3,thorns:2;shred,starfire,wrath;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,eldre_thalas,earthstrike,tep;leg:hurricane,leg:moonfire,leg:insect_swarm,prestor;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Restauration;2351150300000/00000000000000/5055005015131;rejuvenation:5,regrowth:5,insect_swarm:4,moonfire:3,hurricane:3,thorns:2;shred,starfire,wrath;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,eldre_thalas,earthstrike,tep;leg:insect_swarm,leg:hurricane,leg:moonfire,prestor;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Tranquillité : chaque soin frappe les ennemis à 12 m pour 300 % du soin. Récupération et Rétablissement servent d'armes, et le surplus de soin devient un bouclier.",
    "en": "Tranquility: every heal strikes enemies within 12 yd for 300% of the healing. Rejuvenation and Regrowth become weapons, and overhealing turns into a shield."

@@ -50,6 +50,10 @@ presets.forEach((p, idx) => {
   const rank = (cat, list) => list.filter((j) => !SURVIE.has(j)).map((j) => { const t = clone(sc); if (cat === "amulet") t.amulet = j; else t[cat] = [j]; return [j, mc(t, SCREEN)]; }).sort((a, b) => b[1] - a[1]).map((x) => x[0]);
   const legs = sc.spells.filter((s) => DATA.legendaries[s.key] && DATA.legendaries[s.key].lines.en.length).map((s) => "leg:" + s.key);
   const amulets = rank("amulet", legs.concat(DATA.amulets.map((j) => j.key))).slice(0, 4);
+  // Regle de joueur (02/11) : la premiere amulette est une legendaire d'un des 3 sorts principaux
+  const main = (k) => k.startsWith("leg:") && sc.spells.slice(0, 3).some((x) => "leg:" + x.key === k);
+  const lead = amulets.find(main) || legs.find(main);
+  if (lead) amulets.splice(0, amulets.length, ...[lead].concat(amulets.filter((k) => k !== lead)).slice(0, 4));
   sc.amulet = amulets[0];
   const ringsR = rank("rings", DATA.rings.map((j) => j.key));
   sc.rings = ringsR.slice(0, 2);
