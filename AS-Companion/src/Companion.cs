@@ -1118,6 +1118,8 @@ class Companion : Form
     Dictionary<string, List<Dictionary<string, object>>> gatewayAll = new Dictionary<string, List<Dictionary<string, object>>>();
     int gamePick = -1;
     string pickActive;
+    // Talents posés dans l'Armurerie par le compagnon : la spé jouée, prioritaire sur un choix du jeu d'un autre arbre
+    volatile Dictionary<string, object> appliedTalents;
     static readonly Dictionary<string, KeyValuePair<string, int>> CapLog = new Dictionary<string, KeyValuePair<string, int>>
     {
         { "Noxious Cloud", new KeyValuePair<string, int>("rogue", 0) },
@@ -1170,7 +1172,13 @@ class Companion : Form
             Dictionary<string, object> g = sent[gamePick - 1];
             pick = A(G(state, "builds")).Select(D).FirstOrDefault(b => G(g, "id") != null && S(G(b, "id")) == S(G(g, "id"))) ?? g;
         }
-        if (pick != null)
+        Dictionary<string, object> applied = appliedTalents;
+        if (pick != null && applied != null && S(G(applied, "class")) == ck && SpecIndex(pick) != SpecIndex(applied))
+        {
+            Log("in-game pick " + S(G(pick, "name")) + " ignored: talents applied for " + S(G(applied, "name")));
+            pick = A(G(state, "builds")).Select(D).FirstOrDefault(b => G(applied, "id") != null && S(G(b, "id")) == S(G(applied, "id"))) ?? applied;
+        }
+        if (pick != null && gamePick > 0)
         {
             Dictionary<string, object> lp = LastPicks();
             lp[ck] = new Dictionary<string, object> { { "name", S(G(pick, "name")) }, { "active", S(G(ActiveBuild(state, ck), "id")) ?? "" } };
@@ -1346,6 +1354,7 @@ class Companion : Form
             for (int i = 0; i < e[3]; i++)
                 if (!click(116 + 480 * e[0] + 108 * e[2], 241 + 89 * e[1], 40)) return "focus";
         Log("talents applied: " + S(G(b, "name")) + ", " + order.Count + " talents");
+        appliedTalents = D(b);
         return "ok";
     }
 
@@ -1792,7 +1801,7 @@ class Companion : Form
             foreach (object tree in A(G(c, "trees")))
             {
                 tn++;
-                foreach (object t in A(G(tree, "talents")).Where(x => N(G(x, "row"), 0) == 6 && S(G(x, "icon")) != null))
+                foreach (object t in A(G(tree, "talents")).Where(x => N(G(x, "row"), 0) == 6 && S(G(x, "icon")) != null && !A(G(c, "spells")).Any(sp => string.Equals(S(G(sp, "icon")), S(G(x, "icon")), StringComparison.OrdinalIgnoreCase))))
                     icons.Add("[" + LuaStr(S(G(t, "icon")).ToLowerInvariant()) + "] = " + tn);
             }
             L.Append("        icons = { " + string.Join(", ", icons) + " },\n");
