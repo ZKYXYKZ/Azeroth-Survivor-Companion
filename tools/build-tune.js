@@ -20,6 +20,7 @@ sd.cal = JSON.parse(fs.readFileSync(path.join(web, "simcal.json"), "utf8"));
 const DATA = ctx.DATA;
 const MINUTES = 15, SCREEN = 60, CONFIRM = 300, MIN_MC = 0.03;
 const HAND = new Set(["Chaman Amélioration"]); // fait main d'après les parties réelles, procs et survie inconnus du simulateur
+const NOSIM = /pickup|experience|gold|movement speed|buffs are/i; // effets absents du simulateur, gain de pur hasard
 const DEF = /damage taken|less damage|damage reduction|maximum health|max health|health per second|would kill|heals? |shield|return to life/i;
 const EXCL = [["soul_devourer", "soul_link"], ["pact_of_the_annihilan", "butcher"], ["leader_of_pack", "cat_form"], ["legion_gate", "demonic_supremacy"]];
 const clone = (x) => JSON.parse(JSON.stringify(x));
@@ -104,8 +105,9 @@ function tuneJewels(base, c, keepRing, keepTrinket) {
     cur[cat] = scored.slice(0, 2);
     cur[cat + "List"] = scored.slice(0, 4 - keep.length).concat(keep).concat(top).filter((k, i, a) => a.indexOf(k) === i).slice(0, 4);
   };
-  pick("rings", DATA.rings, keepRing);
-  pick("trinkets", DATA.trinkets, keepTrinket);
+  const sim = (j) => !j.desc.en.every((l) => NOSIM.test(l));
+  pick("rings", DATA.rings.filter(sim), keepRing);
+  pick("trinkets", DATA.trinkets.filter(sim), keepTrinket);
   return cur;
 }
 

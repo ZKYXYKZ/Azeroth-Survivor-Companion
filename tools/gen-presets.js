@@ -275,6 +275,12 @@ const ALLOWED = {
   warlock: ["human", "orc", "gnome", "scourge"], druid: ["nightelf", "tauren"],
 };
 
+// Bijoux dont le simulateur ne modelise pas l'effet (ramassage, experience, or, vitesse, buffs) : sortis au hasard des tirages
+const NOSIM = /pickup|experience|gold|movement speed|buffs are/i;
+const USELESS = new Set(["rings", "trinkets", "amulets"].flatMap((c) => data[c].filter((j) => j.desc.en.every((l) => NOSIM.test(l))).map((j) => j.key)));
+const FILL = { rings: L("accuria quick_strike dragonslayer blooddrinker"), trinkets: L("earthstrike hoj blackhand tep chosen") };
+const useful = (list, cat) => list.filter((k) => !USELESS.has(k)).concat(FILL[cat] || []).filter((k, i, x) => x.indexOf(k) === i).slice(0, list.length);
+
 // Builds optimises sur le simulateur cale (tools/build-tune.js)
 const TUNE = fs.existsSync(path.join(__dirname, "preset-tune.json")) ? JSON.parse(fs.readFileSync(path.join(__dirname, "preset-tune.json"), "utf8")) : {};
 for (const b of builds) {
@@ -287,8 +293,8 @@ for (const b of builds) {
   b.spells = t.spells.map(([key, w]) => ({ key, w }));
   const now = b.spells.map((s) => s.key);
   b.ban = b.ban.filter((k) => !now.includes(k)).concat(was.filter((k) => !now.includes(k))).slice(0, 3);
-  b.rings = t.rings;
-  b.trinkets = t.trinkets;
+  b.rings = useful(t.rings, "rings");
+  b.trinkets = useful(t.trinkets, "trinkets");
   b.amulets = t.amulets;
   // Description devenue fausse (sort retire encore cite) : texte court regenere
   const c = data.classes.find((x) => x.key === b.class);

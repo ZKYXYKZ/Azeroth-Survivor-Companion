@@ -8,7 +8,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;warrior;Guerrier Armes;4235101513531/5051132000000/00000000000000;mortal_strike:5,cleave:5,execute:4,whirlwind:3,rend:3,bloodthirst:2;demo_shout,shield_slam,thunder_clap;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,insignia,tep,chosen;leg:mortal_strike,leg:cleave,leg:rend,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;warrior;Guerrier Armes;4235101513531/5051132000000/00000000000000;mortal_strike:5,cleave:5,execute:4,whirlwind:3,rend:3,bloodthirst:2;demo_shout,shield_slam,thunder_clap;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,tep,chosen,earthstrike;leg:mortal_strike,leg:cleave,leg:rend,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Frappe mortelle dès le départ, relancée à chaque victime. Balayage fait toucher 2 ennemis de plus à Frappe mortelle, Enchaînement et Exécution.",
    "en": "Mortal Strike from the start, reset on every kill. Sweeping Strikes makes Mortal Strike, Cleave and Execute hit 2 more enemies."
@@ -23,7 +23,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;warrior;Guerrier Fureur;5105130500000/5232135313021/00000000000000;whirlwind:5,bloodthirst:5,cleave:4,battle_shout:3,execute:3,bloodrage:2;rend,shield_slam,thunder_clap;dragonslayer,quick_strike,blooddrinker,accuria;blackhand,earthstrike,insignia,hoj;leg:bloodthirst,leg:whirlwind,leg:cleave,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;warrior;Guerrier Fureur;5105130500000/5232135313021/00000000000000;whirlwind:5,bloodthirst:5,cleave:4,battle_shout:3,execute:3,bloodrage:2;rend,shield_slam,thunder_clap;dragonslayer,quick_strike,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:bloodthirst,leg:whirlwind,leg:cleave,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Tourbillon gratuit toutes les 3 s grâce à l'apogée, Rafale fait frapper deux fois Tourbillon et Sanguinaire. Plaies profondes et Traumatisme en complément.",
    "en": "A free Whirlwind every 3 sec from the capstone, Flurry makes Whirlwind and Bloodthirst strike twice. Deep Wounds and Trauma on the side."
@@ -68,7 +68,7 @@
   },
   "author": "AS Companion",
   "race": "human",
-  "code": "SB1;paladin;Paladin Protection;0000000000000/35301133331131/2534105000000;hammer_of_justice:5,consecration:5,hammer_of_wrath:4,holy_shock:3,exorcism:3,holy_shield:2;holy_light,holy_wrath,redemption;quick_strike,dragonslayer,blooddrinker,accuria;remote,hoj,blackhand,war_horn;leg:consecration,enlightenment,onyxia_tooth,leg:hammer_of_justice;50,0,1,3,20,2,1",
+  "code": "SB1;paladin;Paladin Protection;0000000000000/35301133331131/2534105000000;hammer_of_justice:5,consecration:5,hammer_of_wrath:4,holy_shock:3,exorcism:3,holy_shield:2;holy_light,holy_wrath,redemption;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:consecration,enlightenment,onyxia_tooth,leg:hammer_of_justice;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Marteau de la justice consacre le sol, chaque Consécration pose un bouclier et +20 % de dégâts tant qu'il tient. Les dégâts suivent la vie max. Le Nain ajoute un bouclier de 30 % de vie toutes les 45 s.",
    "en": "Hammer of Justice hallows the ground, every Consecration raises a shield and +20% damage while it holds. Damage scales with max health. Dwarves add a 30% health shield every 45 sec."
@@ -98,7 +98,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;hunter;Chasseur Maîtrise des bêtes;5032155013331/5500151200000/0000000000000;multi_shot:5,hunters_mark:5,immolation_trap:4,frost_trap:3,serpent_sting:3,arcane_shot:2;aimed_shot,auto_shot,concussive_shot;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,insignia,hoj;leg:immolation_trap,leg:hunters_mark,enlightenment,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;hunter;Chasseur Maîtrise des bêtes;5032155013331/5500151200000/0000000000000;multi_shot:5,hunters_mark:5,immolation_trap:4,frost_trap:3,serpent_sting:3,arcane_shot:2;aimed_shot,auto_shot,concussive_shot;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,hoj,tep;leg:immolation_trap,leg:hunters_mark,enlightenment,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Loup puis raptor : les familiers font près de la moitié des dégâts (+160 % avec Furie libérée et Discipline bestiale), et leurs morsures lancent des Flèches multiples gratuites.",
    "en": "Wolf then raptor: pets deal close to half the damage (+160% with Unleashed Fury and Bestial Discipline), and their bites fire free Multi-Shots."
@@ -158,7 +158,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;rogue;Voleur Combat;5531150000000/5035155303001/0000000000000;sinister_strike:5,eviscerate:5,blade_flurry:4,ghostly_strike:3,adrenaline_rush:3,slice_and_dice:2;backstab,gouge,kidney_shot;dragonslayer,quick_strike,blooddrinker,accuria;blackhand,earthstrike,war_horn,insignia;leg:sinister_strike,onyxia_tooth,south_seas_kelp,vek_nilash;50,0,1,3,20,2,1",
+  "code": "SB1;rogue;Voleur Combat;5531150000000/5035155303001/0000000000000;sinister_strike:5,eviscerate:5,blade_flurry:4,ghostly_strike:3,adrenaline_rush:3,slice_and_dice:2;backstab,gouge,kidney_shot;dragonslayer,quick_strike,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:sinister_strike,onyxia_tooth,south_seas_kelp,vek_nilash;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Attaque pernicieuse gratuite toutes les 3 s sur 2 cibles, Déluge de lames fait toucher 2 ennemis de plus, Poussée d'adrénaline toutes les 20 victimes.",
    "en": "A free Sinister Strike every 3 sec on 2 targets, Blade Flurry hits 2 more enemies, Adrenaline Rush every 20 kills."
@@ -173,7 +173,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;rogue;Voleur Finesse;2530150000000/4000000000000/0515133313501;backstab:5,eviscerate:5,sinister_strike:4,rupture:3,blade_flurry:3,gouge:2;ghostly_strike,kidney_shot,slice_and_dice;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,eldre_thalas;leg:sinister_strike,onyxia_tooth,leg:rupture,leg:backstab;50,0,1,3,20,2,1",
+  "code": "SB1;rogue;Voleur Finesse;2530150000000/4000000000000/0515133313501;backstab:5,eviscerate:5,sinister_strike:4,rupture:3,blade_flurry:3,gouge:2;ghostly_strike,kidney_shot,slice_and_dice;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:sinister_strike,onyxia_tooth,leg:rupture,leg:backstab;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Attaque sournoise dès le départ avec éclaboussure, Suriner gratuit toutes les 6 s étourdit autour de vous et Sales coups ajoute +24 % sur les étourdis. 30 % de chance avec Initiative.",
    "en": "Backstab from the start with a splash, a free Gouge every 6 sec stuns around you and Dirty Deeds adds +24% on stunned enemies. 30% luck from Initiative."
@@ -218,7 +218,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;priest;Prêtre Ombre;5005150000000/4000000000000/2305155013321;sw_pain:5,mind_blast:5,holy_fire:4,mind_flay:4,holy_nova:2,pw_shield:2;devouring_plague,renew,smite;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,carrot;leg:sw_pain,leg:mind_blast,onyxia_tooth,leg:mind_flay;50,0,1,3,20,2,1",
+  "code": "SB1;priest;Prêtre Ombre;5005150000000/4000000000000/2305155013321;sw_pain:5,mind_blast:5,holy_fire:4,mind_flay:4,holy_nova:2,pw_shield:2;devouring_plague,renew,smite;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,hoj;leg:sw_pain,leg:mind_blast,onyxia_tooth,leg:mind_flay;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Mot de l'ombre : Douleur dès le départ, ses dégâts réguliers lancent des Attaques mentales gratuites et la douleur saute d'un ennemi mort au suivant.",
    "en": "Shadow Word: Pain from the start, its ticks fire free Mind Blasts and the pain jumps from a dead enemy to the next."
@@ -264,7 +264,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;shaman;Chaman Totems;5503112200000/0000000000000/0533135014331;magma_totem:5,searing_totem:5,frost_shock:4,chain_lightning:3,flame_shock:3,lightning_shield:2;earth_shock,fire_nova,lightning_bolt;quick_strike,dragonslayer,blooddrinker,accuria;insignia,hoj,earthstrike,blackhand;leg:magma_totem,onyxia_tooth,leg:searing_totem,enlightenment;50,0,1,3,20,2,1",
+  "code": "SB1;shaman;Chaman Totems;5503112200000/0000000000000/0533135014331;magma_totem:5,searing_totem:5,frost_shock:4,chain_lightning:3,flame_shock:3,lightning_shield:2;earth_shock,fire_nova,lightning_bolt;quick_strike,dragonslayer,blooddrinker,accuria;hoj,earthstrike,blackhand,tep;leg:magma_totem,onyxia_tooth,leg:searing_totem,enlightenment;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Arbre Restauration joué en totems : chaque totem en pose un second, Totem de magma dès le départ et un Totem incendiaire gratuit toutes les 14 s. Réincarnation sauve une fois toutes les 2 min, Guérison ancestrale au maximum (9 % de réduction des dégâts) contre le pic qui tue le round suivant.",
    "en": "The Restoration tree played with totems: every totem drops a second one, Magma Totem from the start and a free Searing Totem every 14 sec. Reincarnation saves you every 2 min, Ancestral Healing maxed (9% less damage taken) against the burst that kills next."
@@ -279,7 +279,7 @@
   },
   "author": "AS Companion",
   "race": "gnome",
-  "code": "SB1;mage;Mage Arcanes;5531115013231/0000000000000/5035034000000;arcane_missiles:5,arcane_explosion:5,blizzard:3,pyroblast:3,cone_of_cold:3,ice_barrier:2;fireball,flamestrike,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,eldre_thalas;leg:blizzard,leg:arcane_missiles,onyxia_tooth,south_seas_kelp;50,0,1,3,20,2,1",
+  "code": "SB1;mage;Mage Arcanes;5531115013231/0000000000000/5035034000000;arcane_missiles:5,arcane_explosion:5,blizzard:3,pyroblast:3,cone_of_cold:3,ice_barrier:2;fireball,flamestrike,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,tep,hoj;leg:blizzard,leg:arcane_missiles,onyxia_tooth,south_seas_kelp;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Projectiles des arcanes dès le départ, qui rebondissent, et des sorts qui frappent deux fois en cascade : tout ce qui fait doubler (Main de justice, Pierre de malveillance) vaut double. 60 % de chance avec le Gnome.",
    "en": "Arcane Missiles from the start, leaping between enemies, and spells that strike twice in cascades: anything that doubles casts (Hand of Justice, Malice Stone) is worth double. 60% luck with a Gnome."
@@ -309,7 +309,7 @@
   },
   "author": "AS Companion",
   "race": "human",
-  "code": "SB1;mage;Mage Givre;5035034000000/0000000000000/0535133113321;frostbolt:5,blizzard:4,arcane_missiles:4,arcane_explosion:4,blast_wave:3,ice_barrier:3;fireball,flamestrike,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,carrot,insignia;leg:blizzard,leg:frostbolt,onyxia_tooth,enlightenment;50,0,1,3,20,2,1",
+  "code": "SB1;mage;Mage Givre;5035034000000/0000000000000/0535133113321;frostbolt:5,blizzard:4,arcane_missiles:4,arcane_explosion:4,blast_wave:3,ice_barrier:3;fireball,flamestrike,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,earthstrike,tep;leg:blizzard,leg:frostbolt,onyxia_tooth,enlightenment;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Optimisé au simulateur calé sur les parties partagées : Éclair de givre, Blizzard et Projectiles des arcanes en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
    "en": "Tuned on the simulator calibrated with shared runs: Frostbolt, Blizzard and Arcane Missiles first, with a shield or heal and a defensive ring to last to the end."
@@ -324,7 +324,7 @@
   },
   "author": "AS Companion",
   "race": "orc",
-  "code": "SB1;warlock;Démoniste Affliction;2535101513131/00000000000000/5501130500000;corruption:5,curse_of_agony:5,rain_of_fire:4,immolate:3,drain_life:3,death_coil:2;demonic_empowerment,fear,hellfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,eldre_thalas,tep;leg:curse_of_agony,leg:rain_of_fire,leg:corruption,leg:drain_life;50,0,1,3,20,2,1",
+  "code": "SB1;warlock;Démoniste Affliction;2535101513131/00000000000000/5501130500000;corruption:5,curse_of_agony:5,rain_of_fire:4,immolate:3,drain_life:3,death_coil:2;demonic_empowerment,fear,hellfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,tep,earthstrike;leg:curse_of_agony,leg:rain_of_fire,leg:corruption,leg:drain_life;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Corruption dès le départ, les ennemis morts sous vos dégâts sur la durée explosent et Contagion propage Corruption et Agonie. Suppression donne 25 % de chance, 45 % avec le Gnome.",
    "en": "Corruption from the start, enemies dying under your damage over time explode and Contagion spreads Corruption and Agony. Suppression gives 25% luck, 45% with a Gnome."
@@ -370,7 +370,7 @@
   "author": "AS Companion",
   "race": "tauren",
   "raceAlt": "human",
-  "code": "SB1;druid;Druide Équilibre;5050153313521/00000000000000/5105132000000;starfire:5,moonfire:5,hurricane:4,insect_swarm:4,entangling_roots:3,rejuvenation:2;regrowth,swipe,wrath;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,remote,carrot,hoj;leg:hurricane,leg:moonfire,onyxia_tooth,leg:starfire;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Équilibre;5050153313521/00000000000000/5105132000000;starfire:5,moonfire:5,hurricane:4,insect_swarm:4,entangling_roots:3,rejuvenation:2;regrowth,swipe,wrath;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,hoj,blackhand,tep;leg:hurricane,leg:moonfire,onyxia_tooth,leg:starfire;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Optimisé au simulateur calé sur les parties partagées : Feu stellaire, Éclat lunaire et Ouragan en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
    "en": "Tuned on the simulator calibrated with shared runs: Starfire, Moonfire and Hurricane first, with a shield or heal and a defensive ring to last to the end."
@@ -386,7 +386,7 @@
   "author": "AS Companion",
   "race": "nightelf",
   "raceAlt": "gnome",
-  "code": "SB1;druid;Druide Félin;0000000000000/50351333115001/5105135000000;shred:5,swipe:5,hurricane:3,wrath:3,faerie_fire:2,thorns:2;insect_swarm,rejuvenation,starfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,earthstrike,remote;leg:shred,leg:hurricane,leg:swipe,malice_stone;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Félin;0000000000000/50351333115001/5105135000000;shred:5,swipe:5,hurricane:3,wrath:3,faerie_fire:2,thorns:2;insect_swarm,rejuvenation,starfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,earthstrike,tep;leg:shred,leg:hurricane,leg:swipe,malice_stone;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Forme de félin : +10 % de dégâts et de critique, Lambeau et Balayage dès le départ, chaque coup fait saigner et les critiques encore plus.",
    "en": "Cat Form: +10% damage and crit, Shred and Swipe from the start, every hit bleeds and crits bleed even more."
@@ -402,7 +402,7 @@
   "author": "AS Companion",
   "race": "nightelf",
   "raceAlt": "dwarf",
-  "code": "SB1;druid;Druide Ours;0000000000000/50351333113210/5105135000000;swipe:5,shred:4,wrath:4,thorns:3,faerie_fire:2,regrowth:2;hurricane,insect_swarm,starfire;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,remote,eldre_thalas;leg:shred,leg:swipe,onyxia_tooth,leg:wrath;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Ours;0000000000000/50351333113210/5105135000000;swipe:5,shred:4,wrath:4,thorns:3,faerie_fire:2,regrowth:2;hurricane,insect_swarm,starfire;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:shred,leg:swipe,onyxia_tooth,leg:wrath;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Forme d'ours sacré : +25 % de vie, -10 % de dégâts subis, un Balayage gratuit toutes les 3 s qui soigne à chaque ennemi touché. Le plus solide de tous.",
    "en": "Dire Bear Form: +25% health, 10% less damage taken, a free Swipe every 3 sec that heals for every enemy hit. The toughest of all."
