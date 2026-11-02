@@ -40,7 +40,7 @@ const CAPSTONES = {
   elemental_mastery: { extra: { chain_lightning: 3 } }, lights_grace: { extra: { holy_wrath: 14 } }, wyvern_sting: { extra: { explosive_trap: 5 } },
   totemic_call: { extra: { searing_totem: 14 } }, rain_of_chaos: { extra: { rain_of_fire: 13 } }, water_elemental: { extra: { frost_nova: 8 }, pet: true },
   arcane_power: { echo: 20 }, kill_shot: { spellCd: { aimed_shot: 15 } }, divine_storm: { splash: { exorcism: 0.5 } }, chastise: { targets: { smite: 1 }, critProc: { spell: "holy_nova", from: "smite", perCast: true, every: 1, max: 99 } },
-  bestial_wrath: { pet: true }, force_of_nature: { pet: true }, stormstrike: { pet: true }, butcher: { pet: true }, pact_of_the_annihilan: { pet: true },
+  bestial_wrath: { pet: true }, force_of_nature: { pet: true }, enh_stormbound_echoes: { proc: true }, butcher: { pet: true }, pact_of_the_annihilan: { pet: true },
   penance: { proc: true }, mortal_wounds: { proc: true }, pyroclasm: { kills: { school: "Fire", r: 6, scale: 0.3 } }, seed_of_corruption: { kills: { dots: true, pct: 20, r: 6, scale: 0.6 } }, toxic_bloom: { kills: { dots: true, r: 7 } }, shadowform: { kills: { spells: ["sw_pain"], pct: 20, r: 6, scale: 2 } },
   shadow_dance: { splash: { backstab: 0.5, eviscerate: 0.5 } }, titan: { proc: true }, hammer_righteous: { proc: true }, tree_of_life: {}, leader_of_pack: { extra: { swipe: 3 } }, cat_form: { dmg: 10, crit: 10, spellCd: { shred: 20 } },
 };
@@ -48,7 +48,8 @@ const MILESTONES = {
   sweeping_strikes: { splash: { cleave: 1.4, mortal_strike: 1.4, execute: 1.4 } }, flurry: { mult: { whirlwind: 1.4, bloodthirst: 1.4 } }, rampage: { proc: true },
   deep_wounds: { critBleed: 0.8 }, ignite: { critBleed: 0.8 }, blood_frenzy: { critBleed: 1 }, hot_streak: { critProc: { spell: "pyroblast", school: "Fire", every: 4, max: 2 } }, splitting_ice: { splash: { frostbolt: 2 } },
   arcane_concentration: { proc: true }, presence_of_mind: { mult: { arcane_missiles: 1.4 } }, lightning_overload: { mult: { lightning_bolt: 1.4, chain_lightning: 1.4 } },
-  elemental_fury: { chainJumps: 3 }, windfury: { mult: { lightning_bolt: 1.7, earth_shock: 1.7, frost_shock: 1.7 } }, maelstrom: { proc: true },
+  elemental_fury: { chainJumps: 3 }, enh_unleashed_weapons: { mult: { rockbiter: 1.11, stormstrike: 1.11 } },
+  enh_windfury_weapon: { proc: true }, enh_flametongue_weapon: { proc: true }, enh_frostbrand_weapon: { proc: true }, enh_flurry: { proc: true }, enh_ancestral_fortitude: { proc: true },
   blade_flurry_talent: { splash: { sinister_strike: 0.5, eviscerate: 0.5 } }, mutilate: { mult: { sinister_strike: 1.5, backstab: 1.5 } }, deadly_poison: { critBleed: 0.4 },
   piercing_shots: { mult: { auto_shot: 1.8 } }, rapid_fire: { proc: true }, frenzy_hunter: { pet: true }, tame_beast: { pet: true }, explosive_ammo: { kills: { spells: ["auto_shot", "multi_shot"], r: 6 } },
   seal_of_command: { splash: { judgement: 2 * 0.5 } }, art_of_war: { proc: true }, divine_favor: { proc: true }, daybreak: { proc: true }, hallowed_ground: { proc: true }, ardent_defender: { dmg: 10 },
@@ -656,7 +657,7 @@ function mcStartSpells(sc) {
   for (const tree of c.trees)
     for (const t of tree.talents) {
       if (!sc.talents[t.key]) continue;
-      const m = (t.desc.en || "").match(/[Ss]tart every run with ([A-Z][\w' ]+?)(?: instead of ([A-Z][\w' ]+?))?(?:[,;.]| and )/);
+      const m = (t.desc.en || "").match(/[Ss]tart (?:every|each) run with ([A-Z][\w' ]+?)(?: instead of ([A-Z][\w' ]+?))?(?:[,;.]| and )/);
       if (!m) continue;
       const add = c.spells.find((x) => x.name.en === m[1]);
       const drop = m[2] && c.spells.find((x) => x.name.en === m[2]);
@@ -674,7 +675,7 @@ function monteCarlo(sc, iters, minutes) {
   const fxBase = jewelFx(sc, talentFx(sc));
   const luck = fxBase.luck + ((RACE_FX[sc.race] || {}).luck || 0) + ((sc.gear && sc.gear.luck) || 0);
   const table = mcRarityTable(luck);
-  const pool = c.spells.map((x) => x.key);
+  const pool = c.spells.map((x) => x.key).filter((k) => k !== "rockbiter" || sc.talents.rockbiter_initiation);
   const end = minutes * 60;
   for (let it = 0; it < iters; it++) {
     const owned = {};

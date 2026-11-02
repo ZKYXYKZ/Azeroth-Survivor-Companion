@@ -174,7 +174,7 @@ function showTip(e, html) { const t = $("tip"); t.innerHTML = html; t.style.disp
 function moveTip(e) { const t = $("tip"); t.style.left = Math.min(e.clientX + 16, innerWidth - 380) + "px"; t.style.top = Math.min(e.clientY + 12, innerHeight - t.offsetHeight - 10) + "px"; }
 function hideTip() { $("tip").style.display = "none"; }
 function tipOn(node, fn) { node.onmouseenter = (e) => showTip(e, fn()); node.onmousemove = moveTip; node.onmouseleave = hideTip; }
-const fmtV = (desc, v) => (v === undefined ? desc : desc.split("{v}").join(Number.isInteger(v) ? v : +v.toFixed(1)));
+const fmtV = (desc, v) => (v === undefined ? desc.split("{v}").join("?") : desc.split("{v}").join(Number.isInteger(v) ? v : +v.toFixed(1)));
 
 function iconNode(icon, extra) {
   const d = el("div", "ic " + (extra || ""));

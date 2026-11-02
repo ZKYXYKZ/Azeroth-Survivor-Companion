@@ -1210,7 +1210,8 @@ class Companion : Form
         }
         if (pendingKey != 0 && running && (DateTime.Now - pendingAt).TotalMilliseconds > 500)
         {
-            if (pendingTries >= (pendingKey == 0x0D ? 1 : 6)) { Log("key not taken by the game"); pendingKey = 0; }
+            // X fait asseoir le héros hors des cartes : un seul renvoi, comme Entrée
+            if (pendingTries >= (pendingKey == 0x0D || pendingKey == 0x58 ? 1 : 6)) { Log("key not taken by the game"); pendingKey = 0; }
             else { SendKey(pendingKey); pendingTries++; Log("key resent (" + pendingTries + ")"); }
         }
         if (!running && !updating && DateTime.Now > nextCheck)
@@ -2103,7 +2104,7 @@ class Companion : Form
                 Research("advice", new Dictionary<string, object> { { "text", a.Text }, { "key", a.Key }, { "scores", lastScores }, { "luck", Math.Round(Luck(), 1) }, { "owned", owned }, { "amulet", amulet }, { "amuletUps", amuletUps } });
                 if (B(G(settings, "autoPick")) && a.Key != null)
                 {
-                    uint vk = a.Key == "r" ? 0x52u : (uint)(0x30 + int.Parse(a.Key));
+                    uint vk = a.Key == "r" ? 0x52u : a.Key == "x" ? 0x58u : (uint)(0x30 + int.Parse(a.Key));
                     System.Windows.Forms.Timer t = new System.Windows.Forms.Timer { Interval = (DateTime.Now - lastKey).TotalMilliseconds < 2500 ? 600 : 500 };
                     lastKey = DateTime.Now;
                     t.Tick += delegate
@@ -2297,8 +2298,9 @@ class Companion : Form
         {
             foreach (object t in A(G(tree, "talents")))
             {
-                if (N(G(t, "row"), 0) != 6) continue;
-                Match m = Regex.Match(S(G(G(t, "desc"), "en")) ?? "", @"start every run with (.+?)(?: instead of|[,;.]| and )");
+                // Rockbiter ne s'obtient que par ce palier : seul signe de la spé Amélioration, dont l'apogée n'a pas de sort de départ
+                if (N(G(t, "row"), 0) != 6 && S(G(t, "key")) != "rockbiter_initiation") continue;
+                Match m = Regex.Match(S(G(G(t, "desc"), "en")) ?? "", @"[Ss]tart (?:every|each) run with (.+?)(?: instead of|[,;.]| and )");
                 if (m.Success)
                     foreach (object sp in A(G(cls, "spells")))
                         if (S(G(G(sp, "name"), "en")) == m.Groups[1].Value.Trim()) caps[S(G(sp, "key"))] = ti;
@@ -2810,7 +2812,7 @@ class Companion : Form
             if (weak && reroll && rerolls > reserve)
                 return new Advice { Text = (fr ? "Carte moyenne, relancer (R) : " + rerolls + " restantes" : "Average card, reroll (R): " + rerolls + " left") + luckTxt, Key = "r" };
             if (weak && jewelScreen && B(G(j, "skip")))
-                return new Advice { Text = fr ? "Rien d'utile : skip (+" + S(G(j, "skipGold")) + " or)" : "Nothing useful: skip (+" + S(G(j, "skipGold")) + " gold)" };
+                return new Advice { Text = fr ? "Rien d'utile : passer (X, +" + S(G(j, "skipGold")) + " or)" : "Nothing useful: skip (X, +" + S(G(j, "skipGold")) + " gold)", Key = "x" };
         }
         if (best > 0)
         {
@@ -2820,7 +2822,7 @@ class Companion : Form
         if (reroll && rerolls > 0)
             return new Advice { Text = (fr ? "Aucune carte du build : relancer (R), " + rerolls + " restantes" : "No card from the build: reroll (R), " + rerolls + " left") + luckTxt, Key = "r" };
         if (B(G(j, "skip")))
-            return new Advice { Text = fr ? "Aucune carte du build, plus de relance : skip (+" + S(G(j, "skipGold")) + " or) ou choisissez vous-même" : "No card from the build, no rerolls left: skip (+" + S(G(j, "skipGold")) + " gold) or choose yourself" };
+            return new Advice { Text = fr ? "Aucune carte du build, plus de relance : passer (X, +" + S(G(j, "skipGold")) + " or)" : "No card from the build, no rerolls left: skip (X, +" + S(G(j, "skipGold")) + " gold)", Key = "x" };
         return new Advice { Text = fr ? "Aucune carte du build, plus de relance, pas de skip : choisissez vous-même" : "No card from the build, no rerolls left, no skip: choose yourself" };
     }
 }

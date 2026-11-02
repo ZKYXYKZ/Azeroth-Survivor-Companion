@@ -136,6 +136,7 @@ module.exports = function makeEmu(exePath) {
     regs[Register.RBP] = STACK + 0x80n;
     const api = { rd, rdInt, wr, wrInt, alloc, regs, Register, xmm, f32, STACK, HEAP };
     let ip = opts.start;
+    const depth = [];
     const trace = [];
     for (let step = 0; step < (opts.maxSteps || 20000); step++) {
       if (opts.stopAt && opts.stopAt.has(ip)) return { ip, api, trace };
@@ -196,6 +197,14 @@ module.exports = function makeEmu(exePath) {
           if (cond(ins.conditionCode)) jumped = Number(ins.nearBranch64);
           break;
         case Mnemonic.Call: {
+          // Appel indirect (fiche de famille, Chaman 0.134) : on execute la cible, Ret revient ici
+          if (opKind(ins, 0) !== OpKind.NearBranch64) {
+            const callee = Number(readOp(ins, 0));
+            depth.push(next);
+            regs[Register.RSP] -= 8n;
+            jumped = callee;
+            break;
+          }
           const target = Number(ins.nearBranch64);
           const h = opts.calls && opts.calls[target];
           if (!h) throw new Error("call 0x" + target.toString(16) + " at 0x" + ip.toString(16));
@@ -270,7 +279,11 @@ module.exports = function makeEmu(exePath) {
           const y = opKind(ins, 1) === OpKind.Register ? getReg(ins.opRegister(1)).readFloatLE(0) : rd(ea(ins), 4).readFloatLE(0);
           a.writeDoubleLE(y, 0); setReg(ra, a); break;
         }
-        case Mnemonic.Ret: return { ip, api, trace, ret: true };
+        case Mnemonic.Push: regs[Register.RSP] -= 8n; api.wrInt(regs[Register.RSP], 8, readOp(ins, 0)); break;
+        case Mnemonic.Pop: writeOp(ins, 0, api.rdInt(regs[Register.RSP], 8)); regs[Register.RSP] += 8n; break;
+        case Mnemonic.Ret:
+          if (depth.length) { regs[Register.RSP] += 8n; jumped = depth.pop(); break; }
+          return { ip, api, trace, ret: true };
         default:
           throw new Error("unsupported " + fmt.format(ins) + " at 0x" + ip.toString(16));
       }

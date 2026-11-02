@@ -14,7 +14,7 @@ const CLASSES = [
   ["hunter", ["Beast Mastery", "Marksmanship", "Survival"], 11],
   ["rogue", ["Assassination", "Combat", "Subtlety"], 11],
   ["priest", ["Discipline", "Holy", "Shadow"], 11],
-  ["shaman", ["Elemental", "Enhancement", "Restoration"], 11],
+  ["shaman", ["Elemental", "Enhancement", "Restoration"], 12],
   ["mage", ["Arcane", "Fire", "Frost"], 13],
   ["warlock", ["Affliction", "Demonology", "Destruction"], 12],
   ["druid", ["Balance", "Feral Combat", "Restoration"], 12],
@@ -44,7 +44,8 @@ const isTalent = (o) => {
   if (!desc || desc.length < 5) return false;
   return buf[o + 104] <= 8 && buf[o + 105] <= 4 && buf[o + 106] >= 1 && buf[o + 106] <= 5;
 };
-const talentArrays = findArrays(160, isTalent, rd.raw, rd.raw + rd.rs).filter((g) => g.items.length >= 12);
+const TALENT_STRIDE = 176; // 160 en 0.119, passe a 176 en 0.135.1 (struct talent elargie)
+const talentArrays = findArrays(TALENT_STRIDE, isTalent, rd.raw, rd.raw + rd.rs).filter((g) => g.items.length >= 12);
 if (talentArrays.length !== 27) throw new Error("expected 27 talent trees, got " + talentArrays.length);
 
 const floatsOf = (off) => {
@@ -57,8 +58,9 @@ const floatsOf = (off) => {
 };
 const perRank = (effOff, tag, desc) => {
   if (!/\{v\}/.test(desc)) return null;
-  if (tag === 36) return { v: buf.readFloatLE(effOff + 4), pct: /\{v\}%/.test(desc) };
-  if (tag === 37) return { v: buf.readFloatLE(effOff + 32), pct: /\{v\}%/.test(desc) };
+  if (tag === 0x2b) return { v: buf.readFloatLE(effOff + 4), pct: /\{v\}%/.test(desc) };
+  if (tag === 0x2c) return { v: buf.readFloatLE(effOff + 32), pct: /\{v\}%/.test(desc) };
+  if (tag === 0x2a) return null; // effet code en dur dans le jeu, valeur absente des donnees
   if (tag === 1 || /\{v\}(th|st|nd|rd)\b/.test(desc)) return { v: buf.readUInt32LE(effOff + 4), pct: false, flat: true };
   const fl = floatsOf(effOff);
   if (/\{v\}%/.test(desc)) {
@@ -95,6 +97,7 @@ for (const [cls, trees, nSpells] of CLASSES) {
       if (pre && /^[a-z0-9_]+$/.test(pre)) tal.req = pre;
       if (/^Milestone\./.test(desc)) tal.milestone = true;
       if (/^Capstone\./.test(desc)) tal.capstone = true;
+      if (key === "enh_earthen_bulwark") tal.v = 2; // effet code en dur, 2/4/6/8/10 % d'apres les notes de la 0.135
       if (val) {
         let v = val.pct ? val.v * 100 : val.v;
         v = Math.round(v * 1000) / 1000;
@@ -148,7 +151,7 @@ const jewel = (o, prefix) => {
 };
 const rt = ringsTrinkets.items.map((o) => jewel(o, "jewel."));
 const data = {
-  version: "0.119.0",
+  version: "0.135.1",
   rarity: [0, 1, 2, 3, 4].map((i) => tr("rarity." + i)),
   classes,
   racials,

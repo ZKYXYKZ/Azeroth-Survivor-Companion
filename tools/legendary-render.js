@@ -6,10 +6,10 @@ const P = load(exe);
 const { buf, str } = P;
 const leg = JSON.parse(fs.readFileSync(legJson, "utf8"));
 const L = { en: JSON.parse(fs.readFileSync(path.join(locDir, "loc-1.json"), "utf8")), fr: JSON.parse(fs.readFileSync(path.join(locDir, "loc-7.json"), "utf8")) };
-const ABIL = 0x729e408;
+const ABIL = 0x7105910; // 0x729e408 en 0.119
 const abil = {};
 const bySpellId = {};
-for (let i = 0; i < 113; i++) {
+for (let i = 0; i < 114; i++) {
   const o = ABIL + i * 120;
   const key = str(o, 40);
   abil[key] = { key, spell: buf.readUInt32LE(o + 64), kind: buf[o + 0x75], sub: buf.readUInt32LE(o + 0x68) };
@@ -49,7 +49,7 @@ function render(lang, hex, ownerKey) {
     return t(lang, "your hits");
   };
   switch (tag) {
-    case 0x25: {
+    case 0x2c: { // 0x25 en 0.119
       const k = b[8] === 1 ? keyAt(b, 0x10) : null;
       const who = k ? spellName(lang, k) : "";
       const v = f(0x20);
@@ -69,6 +69,19 @@ function render(lang, hex, ownerKey) {
       if (stat === 6) return t(lang, "{who}: +{v} proc rate", { who, v: pct(v) });
       return null;
     }
+    case 0x2a: // Oeil de la tempete : valeur codee en dur par le jeu
+      if (ownerKey === "stormstrike") return t(lang, "Every fourth Stormstrike strikes again for {p}% damage. At rank 5 and 10, the follow-up gains one additional target.", { p: "?" });
+      return t(lang, "A hidden power");
+    case 0x25:
+      return t(lang, "{spell} slows by {pct} for {secs} sec", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), pct: pct(f(4)), secs: num(f(8)) });
+    case 0x26:
+      return t(lang, "{spell} deals {bonus} more damage to already chilled enemies", { spell: spellName(lang, keyAt(b, 8) || ownerKey), bonus: pct(f(4)) });
+    case 0x27:
+      return t(lang, "{spell} deals {bonus} more damage to enemies below {below} health", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), bonus: pct(f(4)), below: pct(f(8)) });
+    case 0x28:
+      return t(lang, "A kill with {spell} cuts its remaining cooldown by {frac}", { spell: spellName(lang, keyAt(b, 8) || ownerKey), frac: pct(f(4)) });
+    case 0x29:
+      return t(lang, "Each tick of {spell} also hits {n} nearby enemies within {radius} yd for {frac} damage", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), n: String(u(4)), radius: num(f(0xc)), frac: pct(f(8)) });
     case 3:
       if (u(0x10) !== 10) return t(lang, "A hidden power");
       return t(lang, "A broken shield bursts for {frac} of what it absorbed on enemies within {radius} yd", { frac: pct(f(4)), radius: num(f(8)) });
@@ -124,7 +137,7 @@ function render(lang, hex, ownerKey) {
       return t(lang, "{spell} also shields you for {frac} of your max health", { spell: spellName(lang, keyAt(b, 0x20) || ownerKey), frac: pct(f(4)) });
     case 19:
       return t(lang, "A killing blow leaves you at {heal} health instead, once every {cd} sec", { heal: pct(f(8)), cd: num(f(4)) });
-    case 36: {
+    case 0x2b: { // 36 en 0.119
       const tpl = STATS[b[8]];
       if (!tpl) return t(lang, "A hidden power");
       const v = f(4);
@@ -143,6 +156,7 @@ const out = {};
 for (const r of leg) {
   if (!r.family) continue;
   const lines = { en: [], fr: [] };
+  if (!r.effects.length) continue; // lightning_shield, healing_wave : plus de collier depuis 0.134
   for (const h of r.effects) for (const lang of ["en", "fr"]) { const s = render(lang, h, r.key); if (s) lines[lang].push(s); }
   out[r.key] = { family: { en: r.family, fr: L.fr[r.family] || r.family }, icon: r.icon, lines };
 }

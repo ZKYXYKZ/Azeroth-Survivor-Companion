@@ -975,20 +975,35 @@
    "effectDur": 0,
    "flags": 2307
   },
-  "call_of_flame": {
-   "spell": 16038,
-   "dmg": 450,
-   "cd": 1.07,
-   "range": 0,
-   "radius": 8,
-   "targets": 0,
+  "stormstrike": {
+   "spell": 17364,
+   "dmg": 344,
+   "cd": 6.07143,
+   "range": 10,
+   "radius": 0,
+   "targets": 1,
    "dur": 0,
    "ticks": 0,
    "speed": 0,
    "effect": 0,
    "effectValue": 0,
    "effectDur": 0,
-   "flags": 2818
+   "flags": 1283
+  },
+  "rockbiter": {
+   "spell": 8017,
+   "dmg": 132,
+   "cd": 1.35714,
+   "range": 10,
+   "radius": 0,
+   "targets": 2,
+   "dur": 0,
+   "ticks": 0,
+   "speed": 0,
+   "effect": 0,
+   "effectValue": 0,
+   "effectDur": 0,
+   "flags": 1283
   },
   "fireball": {
    "spell": 133,
@@ -1578,7 +1593,7 @@
   "stoneform": {
    "spell": 20594,
    "dmg": 0,
-   "cd": 45,
+   "cd": 30,
    "range": 0,
    "radius": 0,
    "targets": 0,
@@ -1586,7 +1601,7 @@
    "ticks": 0,
    "speed": 0,
    "effect": 7,
-   "effectValue": 0.3,
+   "effectValue": 0.45,
    "effectDur": 0,
    "flags": 2304
   },
@@ -2040,7 +2055,7 @@
      "id": 711,
      "model": 15961,
      "weight": 24,
-     "size": 0.6,
+     "size": 1.19,
      "kind": 6,
      "hp": 1000,
      "dmg": 28,
@@ -2240,7 +2255,7 @@
      "id": 111,
      "model": 433,
      "weight": 9,
-     "size": 2.4,
+     "size": 0.97,
      "kind": 3,
      "hp": 1100,
      "dmg": 30,
@@ -2262,7 +2277,7 @@
     {
      "id": 191,
      "name": "Mannoroth's Herald",
-     "scale": 1.53,
+     "scale": 2.95,
      "at": 6,
      "hp": 9000,
      "dmg": 30,
@@ -2416,7 +2431,7 @@
      "id": 1209,
      "model": 5292,
      "weight": 15,
-     "size": 0.67,
+     "size": 1.2,
      "kind": 1,
      "hp": 650,
      "dmg": 20,
@@ -2453,7 +2468,7 @@
     {
      "id": 1290,
      "name": "Ravasaur Matriarch",
-     "scale": 0.84,
+     "scale": 2.43,
      "at": 3,
      "hp": 3600,
      "dmg": 22,
@@ -2471,7 +2486,7 @@
     {
      "id": 1292,
      "name": "Lar'korwi",
-     "scale": 1.2,
+     "scale": 2.49,
      "at": 9,
      "hp": 17000,
      "dmg": 38,
@@ -2628,7 +2643,7 @@
      "id": 1510,
      "model": 9587,
      "weight": 14,
-     "size": 0.66,
+     "size": 1.19,
      "kind": 4,
      "hp": 950,
      "dmg": 27,
@@ -2653,7 +2668,7 @@
     {
      "id": 1590,
      "name": "Kovork",
-     "scale": 1.4,
+     "scale": 2.83,
      "at": 4,
      "hp": 3800,
      "dmg": 24,
@@ -2840,7 +2855,7 @@
      "id": 811,
      "model": 860,
      "weight": 18,
-     "size": 1.9,
+     "size": 0.63,
      "kind": 4,
      "hp": 1150,
      "dmg": 30,
@@ -2880,7 +2895,7 @@
     {
      "id": 893,
      "name": "Immol'thar",
-     "scale": 0.82,
+     "scale": 1.66,
      "at": 14,
      "hp": 30000,
      "dmg": 48,
@@ -3253,7 +3268,7 @@
     {
      "id": 1390,
      "name": "Houndmaster Loksey",
-     "scale": 1.75,
+     "scale": 4.05,
      "at": 4,
      "hp": 3900,
      "dmg": 25,
@@ -3262,7 +3277,7 @@
     {
      "id": 1391,
      "name": "Arcanist Doan",
-     "scale": 1.7,
+     "scale": 4.05,
      "at": 7,
      "hp": 9600,
      "dmg": 33,
@@ -3271,7 +3286,7 @@
     {
      "id": 1392,
      "name": "Herod",
-     "scale": 1.925,
+     "scale": 3.99,
      "at": 11,
      "hp": 18500,
      "dmg": 42,
@@ -3862,7 +3877,7 @@
     {
      "id": 1191,
      "name": "General Rajaxx",
-     "scale": 0.7,
+     "scale": 1.77,
      "at": 8,
      "hp": 11000,
      "dmg": 35,
@@ -3880,7 +3895,7 @@
     {
      "id": 1193,
      "name": "Ossirian the Unscarred",
-     "scale": 0.46,
+     "scale": 0.91,
      "at": 16,
      "hp": 24750,
      "dmg": 52,
@@ -4016,7 +4031,7 @@
      "id": 1409,
      "model": 16178,
      "weight": 11,
-     "size": 0.46,
+     "size": 1.4,
      "kind": 6,
      "hp": 950,
      "dmg": 28,
@@ -4040,7 +4055,7 @@
      "id": 1411,
      "model": 16586,
      "weight": 20,
-     "size": 1.7,
+     "size": 0.43,
      "kind": 6,
      "hp": 1400,
      "dmg": 37,
@@ -4276,7 +4291,7 @@
     "searing_totem",
     "fire_nova",
     "healing_wave",
-    "call_of_flame"
+    "stormstrike"
    ]
   },
   "mage": {
@@ -4285,7 +4300,7 @@
    "color": "#69CCF0",
    "hp": 215,
    "armor": 0.08,
-   "extra": 0,
+   "extra": 0.005,
    "flag": 8,
    "spells": [
     "fireball",

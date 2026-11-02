@@ -679,6 +679,27 @@
    "range": 32,
    "dmg": 362,
    "samples": 7
+  },
+  "pyroblast": {
+   "text": "Strikes the 2 nearest enemies within 35 yd for 1042 Fire damage each. Bosses and elites are targeted first.",
+   "kind": "multi",
+   "targets": 2,
+   "range": 35,
+   "dmg": 1042,
+   "samples": 5
+  },
+  "fireball": {
+   "text": "Strikes the 2 nearest enemies within 30 yd for 128 Fire damage each. Bosses and elites are targeted first.",
+   "kind": "multi",
+   "targets": 2,
+   "range": 30,
+   "dmg": 128,
+   "samples": 7
+  },
+  "pw_shield": {
+   "text": "Absorbs the next 90 damage you take, 45% of your max health. Cast again once the shield breaks.",
+   "kind": "defense",
+   "samples": 2
   }
  },
  "upgrades": {
