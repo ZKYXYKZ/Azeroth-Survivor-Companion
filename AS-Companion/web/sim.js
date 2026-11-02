@@ -401,7 +401,7 @@ function simulate(sc) {
     const extraT = up("targets") + (fx.spellTargets[s.key] || 0) + leg.targets + (fx.allTargets || 0);
     const durMul = 1 + (up("duration") + leg.dur) / 100;
     if (base.kind === "special") {
-      const sp = specialSpell(s.key, base, { up, mult: mult * critFactor, area, extraT, durMul, cdk: Math.max(0.25, (1 - up("cooldown") / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul), n, kps: sc.density * KILLS_PER_DENSITY / 1200 * Math.exp(((sc.level || 45) - 45) / 35), proc: 1 + (leg.proc || 0) / 100, density: sc.density });
+      const sp = specialSpell(s.key, base, { up, mult: mult * critFactor, area, extraT, durMul, cdk: Math.max(0.25, (1 - up("cooldown") / 100) / (1 + (fx.cdr + buffCdr) / 100) * fx.cdMul), n, kps: sc.kps || sc.density * KILLS_PER_DENSITY / 1200 * Math.exp(((sc.level || 45) - 45) / 35), proc: 1 + (leg.proc || 0) / 100, density: sc.density });
       if (!sp) { row.note = SM("notSim"); continue; }
       if (sp.late) late.push({ row, sp }); else Object.assign(row, sp);
       row.school = school;
@@ -734,6 +734,18 @@ const MC_RARITY = [[0, [52, 26.1, 13.2, 6.7, 2]], [60, [38, 25.5, 17.6, 13.2, 5.
 const MC_START = { warrior: ["cleave"], paladin: ["consecration"], hunter: ["auto_shot"], rogue: ["sinister_strike"], priest: ["smite"], shaman: ["lightning_bolt"], mage: ["fireball"], warlock: ["shadow_bolt"], druid: ["wrath"] };
 const MC_JEWEL_RATE = 1.92;
 
+// Calé sur les parties partagées (02/11) : niveau = 2,04 x morts^0,361 (392 parties solo, r2 0,94),
+// morts par minute = 4,7 x DPS^0,40 x minute^0,08 x e^(0,21 x part de zone) (1267 minutes, r2 0,72)
+const MC_AOE = new Set(["nova", "ground", "totem", "chain", "cone", "mark", "special", "multi", undefined]);
+function mcLevelOfKills(k) { return Math.max(1, 2.04 * Math.pow(Math.max(0, k), 0.361)); }
+function mcKills(dps, minute, aoe) { return 4.7 * Math.pow(Math.max(1, dps), 0.402) * Math.pow(minute, 0.084) * Math.exp(0.21 * aoe); }
+function mcMinute(sc, owned, jew, level, minute, kps) {
+  const state = Object.assign({}, sc, { kps, spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps, level });
+  const r = simulate(state);
+  const dps = r.total * mcYield(minute + 1) * ((SIMDATA.cal && SIMDATA.cal.zones && SIMDATA.cal.zones[sc.zone]) || 1);
+  const aoe = r.total > 0 ? r.rows.filter((x) => MC_AOE.has(x.kind) && x.key !== "procs").reduce((a, x) => a + x.mix, 0) / r.total : 0;
+  return { r, dps, aoe };
+}
 function mcLevelAt(t) {
   for (let i = 1; i < MC_LEVEL.length; i++) {
     const [l1, t1] = MC_LEVEL[i - 1], [l2, t2] = MC_LEVEL[i];
@@ -791,14 +803,17 @@ function monteCarlo(sc, iters, minutes) {
     const owned = {};
     for (const k of mcStartSpells(sc)) owned[k] = { key: k, rank: 1, ups: { damage: 0, cooldown: 0, area: 0, targets: 0, duration: 0 }, n: 0 };
     const jew = { rings: [], trinkets: [], amulet: "", ups: 0, jewelUps: {} };
-    let level = 1, total = 0, nextJewel = (-Math.log(Math.random()) / MC_JEWEL_RATE) * 60;
-    const levelUps = [];
+    let level = 1, total = 0, kills = 0, nextJewel = (-Math.log(Math.random()) / MC_JEWEL_RATE) * 60;
     const xpMul = (RACE_FX[sc.race] || {}).xp || 1;
-    for (let t = 0; t < end; t += 1) { const l = Math.floor(mcLevelAt(t * xpMul)); while (level < l) { level++; levelUps.push(t); } }
-    let li = 0;
+    let li = 0, last = null;
     for (let minute = 0; minute < minutes; minute++) {
       const tEnd = (minute + 1) * 60;
-      while (li < levelUps.length && levelUps[li] < tEnd) {
+      // les morts de la minute viennent des dégâts de la minute précédente, le niveau vient des morts
+      if (!last) last = mcMinute(sc, owned, jew, 1, minute);
+      const kpm = mcKills(last.dps, minute + 1, last.aoe);
+      kills += kpm;
+      level = Math.max(level, Math.floor(mcLevelOfKills(kills * xpMul)));
+      while (li + 1 < level) {
         li++;
         const cards = [];
         for (let k = 0; k < 3; k++) {
@@ -844,9 +859,8 @@ function monteCarlo(sc, iters, minutes) {
           }
         }
       }
-      const state = Object.assign({}, sc, { spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps, level: li + 1 });
-      const r = simulate(state);
-      const dps = r.total * mcYield(minute + 1) * ((SIMDATA.cal && SIMDATA.cal.zones && SIMDATA.cal.zones[sc.zone]) || 1);
+      last = mcMinute(sc, owned, jew, li + 1, minute, kpm / 60);
+      const r = last.r, dps = last.dps;
       total += dps * 60;
       res.curve[minute] += dps / iters;
       const tr = (res.track[minute] = res.track[minute] || { dmg: 0, crit: 0, cd: 0, echo: 0, ranks: 0 });

@@ -18,7 +18,7 @@ const web = path.join(__dirname, "..", "AS-Companion", "web");
 const sd = sim.get();
 sd.cal = JSON.parse(fs.readFileSync(path.join(web, "simcal.json"), "utf8"));
 const DATA = ctx.DATA;
-const MINUTES = 15, SCREEN = 60, CONFIRM = 300, MIN_MC = 0.03;
+const MINUTES = 18, SCREEN = 60, CONFIRM = 300, MIN_MC = 0.03;
 const HAND = new Set(["Chaman Amélioration"]); // fait main d'après les parties réelles, procs et survie inconnus du simulateur
 const NOSIM = /pickup|experience|gold|movement speed|buffs are/i; // effets absents du simulateur, gain de pur hasard
 const DEF = /damage taken|less damage|damage reduction|maximum health|max health|health per second|would kill|heals? |shield|return to life/i;
