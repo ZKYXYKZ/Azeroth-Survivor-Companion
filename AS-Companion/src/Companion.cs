@@ -1218,8 +1218,8 @@ class Companion : Form
         }
         if (pendingKey != 0 && running && (DateTime.Now - pendingAt).TotalMilliseconds > 500)
         {
-            // X fait asseoir le héros hors des cartes : un seul renvoi, comme Entrée
-            if (pendingTries >= (pendingKey == 0x0D || pendingKey == 0x58 ? 1 : 6)) { Log("key not taken by the game"); pendingKey = 0; }
+            // X fait asseoir le héros hors des cartes : un seul renvoi ; Entrée de remplacement d'amulette jusqu'à 4, la fenêtre s'ouvre parfois tard
+            if (pendingTries >= (pendingKey == 0x58 ? 1 : pendingKey == 0x0D ? 4 : 6)) { Log("key not taken by the game"); pendingKey = 0; }
             else { SendKey(pendingKey); pendingTries++; Log("key resent (" + pendingTries + ")"); }
         }
         if (!running && !updating && DateTime.Now > nextCheck)
