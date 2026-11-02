@@ -1,0 +1,2289 @@
+{
+ "version": "0.139",
+ "notes": {
+  "units": "t = minutes de partie (state+0xE88 / 60). m = minutes depuis la mort du boss final (mode sans fin choisi). n = joueurs du lobby coop (state+0xE50), coop = state+0xF46.",
+  "D": "D = zone.diff * S, S = facteur d'etat (state+0xF14) d'origine non retrouvee (lu partout a cote de zone.diff, sans doute 1 hors modificateurs).",
+  "H": "H = heroic[h-1].hp ou .dmg, 1 hors heroique (h = state+0x3F7).",
+  "coopFactor": "coopFactor(a, b) = b * (1 + a * kZone * (n-1)), kZone = coopZoneK[index<3 ? 1 : 0] ; 1 hors coop."
+ },
+ "horde": {
+  "formula": {
+   "hp": "def.hp * (elite ? hpMulElite : hpMulNormal) * (1 + hpT1*t + hpT2*t^2 + (elite ? hpT3Elite : hpT3Normal)*t^3) * D * (1 + zone.growth * min(1, t/growthRampMin)^2) * endlessHpBase^m * H.hp * coopFactor(coopHp, coopHpBase)",
+   "dmg": "def.dmg * (elite ? 1 : dmgMulNormal) * sqrt(D) * (1 + dmgT1*t + dmgT2*t^2 + dmgT3*t^3) * endlessDmgBase^m * H.dmg",
+   "speed": "def.speed (aucune montee avec le temps trouvee)"
+  },
+  "hpMulNormal": 4.95,
+  "hpMulElite": 4.8,
+  "hpT1": 0.1,
+  "hpT2": 0.036,
+  "hpT3Elite": 0.00594,
+  "hpT3Normal": 0.00704,
+  "growthRampMin": 20,
+  "endlessHpBase": 1.22,
+  "coopHp": 0.72,
+  "coopHpBase": 0.8,
+  "dmgMulNormal": 1.25,
+  "dmgT1": 0.07,
+  "dmgT2": 0.015,
+  "dmgT3": 0.0002,
+  "endlessDmgBase": 1.096,
+  "spawnRadius": [
+   26,
+   36
+  ]
+ },
+ "spawn": {
+  "formula": {
+   "budget": "chaque frame : budget += dt * rate ; tant que budget >= 1 et < maxPerFrame apparitions : on tire un monstre (poids, at <= t) et budget -= def.cost",
+   "rate": "rate = slow * base * endless * clamp(adaptK * (killed/adaptTau) / max(base*slow*endless, 0.001), adaptMin, adaptMax) * (coop ? 1 + coopRate*kZone*(n-1) : 1)",
+   "base": "base = rateMul * (rateC0 + rateT1*t + rateT2*t^2)",
+   "slow": "slow = 1 sans boss ; slowBoss tant qu'un boss est en vie ; slowFinalBoss pour le boss final",
+   "endless": "endless = endlessRate0 + endlessRateT*m apres le boss final en mode sans fin, sinon 1",
+   "killed": "killed : somme des def.cost des monstres non elites tues, amortie exp(-dt/adaptTau) (state+0xEC8)",
+   "cap": "aucune apparition si vivants >= aliveCap * (coop ? 1 + coopCap*kZone*(n-1) : 1)",
+   "minAlive": "si vivants < min(minAliveMax, (minAlive0 + minAliveT*t) * slow) * (coop ? 1 + coopRate*kZone*(n-1) : 1) : jusqu'a topUpMax apparitions immediates",
+   "elite": "un elite toutes les max(eliteIntervalMin, eliteInterval0 + eliteIntervalT*t) secondes (Heroique I : par paires)",
+   "swarm": "une vague toutes les max(swarmIntervalMin, swarmInterval0 + swarmIntervalT*t) s ; taille selon le motif = (a*t + b) * swarmMul * (coop ? 1 + swarmCoop*kZone*(n-1) : 1)"
+  },
+  "rateMul": 0.6,
+  "rateC0": 0.9,
+  "rateT1": 0.32,
+  "rateT2": 0.025,
+  "slowBoss": 0.45,
+  "slowFinalBoss": 0.3,
+  "endlessRate0": 1.5,
+  "endlessRateT": 0.1,
+  "adaptTau": 12,
+  "adaptK": 1.25,
+  "adaptMin": 1,
+  "adaptMax": 3,
+  "coopRate": 0.312,
+  "maxPerFrame": 8,
+  "aliveCap": 50,
+  "coopCap": 0.312,
+  "minAlive0": 4,
+  "minAliveT": 1.6,
+  "minAliveMax": 36,
+  "topUpMax": 3,
+  "eliteInterval0": 55,
+  "eliteIntervalT": -2.5,
+  "eliteIntervalMin": 25,
+  "swarmInterval0": 60,
+  "swarmIntervalT": -1.5,
+  "swarmIntervalMin": 35,
+  "swarmMul": 0.6,
+  "swarmCoop": 0.312,
+  "swarmPatterns": [
+   {
+    "a": 2.5,
+    "b": 12
+   },
+   {
+    "a": 2,
+    "b": 10
+   },
+   {
+    "a": 0.8,
+    "b": 5
+   },
+   {
+    "a": 1.5,
+    "b": 12
+   }
+  ]
+ },
+ "guardians": {
+  "count": 4,
+  "formula": {
+   "hp": "3 * max(curveA, curveB) * endlessHpBase^m * (1 + slain*perSlainHp[heroic>=wardensLevel]) * H.hp * coopFactor(coopHp, coopHpBase)",
+   "curveA": "aHp * bossCurve(t) * D ; bossCurve = interpolation lineaire (at, hp) des boss non finaux de la zone, prolongee apres le dernier ; avant le premier : (earlyC0 + earlyT*t/at0) * hp0",
+   "curveB": "bHp * def.hp * D * (1 + bT1*t + bT2*t^2) (def = monstre de la zone attribue au repaire)",
+   "dmg": "def.dmg * sqrt(D) * (1 + dT1*t + dT2*t^2) * dMul * endlessDmgBase^m * (1 + slain*perSlainDmg[heroic>=wardensLevel]) * H.dmg",
+   "refill": "un repaire vide se remplit apres refill[heroic>=wardensLevel] secondes",
+   "liveRescale": "a chaque gardien tue, les gardiens vivants sont recalcules en gardant leur fraction de PV"
+  },
+  "hpMul": 3,
+  "aHp": 0.6,
+  "earlyC0": 0.6,
+  "earlyT": 0.4,
+  "bHp": 2.5,
+  "bT1": 0.12,
+  "bT2": 0.009,
+  "endlessHpBase": 1.22,
+  "coopHp": 1.04,
+  "coopHpBase": 0.8,
+  "dT1": 0.08,
+  "dT2": 0.004,
+  "dMul": 1.4,
+  "endlessDmgBase": 1.096,
+  "wardensLevel": 2,
+  "perSlainHp": [
+   0.25,
+   0.35
+  ],
+  "perSlainDmg": [
+   0.05,
+   0.07
+  ],
+  "refill": [
+   180,
+   150
+  ],
+  "damageTakenReduction": null
+ },
+ "bosses": {
+  "formula": {
+   "hp": "scale * boss.hp * hpMul * D * endlessHpBase^m * H.hp * coopFactor(coopHp, coopHpBase) ; scale = 1, councilScale pour le boss rappele (Heroique V)",
+   "dmg": "boss.dmg * sqrt(D) * endlessDmgBase^m * H.dmg",
+   "timing": "boss.at en minutes ; aucune montee pendant le combat trouvee"
+  },
+  "hpMul": 5.75,
+  "endlessHpBase": 1.22,
+  "endlessDmgBase": 1.096,
+  "coopHp": 1.04,
+  "coopHpBase": 0.8,
+  "councilScale": 0.6
+ },
+ "coopZoneK": [
+  1,
+  0.7
+ ],
+ "heroic": [
+  {
+   "level": 1,
+   "affix1": "Boss attacks give 15% less warning.",
+   "affix2": "Elite packs: elites come in pairs.",
+   "hp": 1.79,
+   "dmg": 1.65,
+   "marks": 1,
+   "rewardBonus": 1.3
+  },
+  {
+   "level": 2,
+   "affix1": "Relentless: bosses fight enraged from the start, and fiercer below 30% health.",
+   "affix2": "Wardens: each guardian slain makes the others twice as tough, and lairs refill sooner.",
+   "hp": 1.97,
+   "dmg": 1.77,
+   "marks": 1.25,
+   "rewardBonus": 1.4
+  },
+  {
+   "level": 3,
+   "affix1": "Lean purse: one free reroll, and caches cost a quarter more.",
+   "affix2": "Affix: the horde has Bolstering, Sanguine or Explosive.",
+   "hp": 2.16,
+   "dmg": 1.88,
+   "marks": 1.5,
+   "rewardBonus": 1.5
+  },
+  {
+   "level": 4,
+   "affix1": "Old mechanics: boss towers and gazes are back.",
+   "affix2": "Unforgiving: a failed boss mechanic hits three times as hard.",
+   "hp": 2.45,
+   "dmg": 2.01,
+   "marks": 2,
+   "rewardBonus": 1.6
+  },
+  {
+   "level": 5,
+   "affix1": "Withering: regeneration, heals and leech are halved, and revives are slower and weaker.",
+   "affix2": "Council: two affixes, and the final boss brings one of the zone's earlier bosses.",
+   "hp": 2.72,
+   "dmg": 2.16,
+   "marks": 2.5,
+   "rewardBonus": 1.7
+  }
+ ],
+ "runModifiers": {
+  "density": null,
+  "health": null,
+  "damage": null,
+  "speed": null,
+  "note": "4 curseurs du menu Difficulte (runmods.rs) : valeurs non retrouvees"
+ },
+ "stateScaleF14": null,
+ "zones": {
+  "elwynn": {
+   "index": 0,
+   "diff": 0.82,
+   "growth": 0,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 600,
+     "weight": 13,
+     "hp": 24,
+     "dmg": 3,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 601,
+     "weight": 10,
+     "hp": 18,
+     "dmg": 3,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 602,
+     "weight": 19,
+     "hp": 30,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 603,
+     "weight": 16,
+     "hp": 30,
+     "dmg": 6,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 604,
+     "weight": 11,
+     "hp": 44,
+     "dmg": 6,
+     "speed": 1.8,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 605,
+     "weight": 14,
+     "hp": 120,
+     "dmg": 9,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 606,
+     "weight": 7,
+     "hp": 50,
+     "dmg": 7,
+     "speed": 1.3,
+     "cost": 1.5,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 607,
+     "weight": 19,
+     "hp": 40,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7.5,
+     "elite": false
+    },
+    {
+     "id": 608,
+     "weight": 15,
+     "hp": 170,
+     "dmg": 12,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 609,
+     "weight": 17,
+     "hp": 600,
+     "dmg": 18,
+     "speed": 2,
+     "cost": 12,
+     "at": 3.5,
+     "elite": true
+    },
+    {
+     "id": 610,
+     "weight": 15,
+     "hp": 800,
+     "dmg": 22,
+     "speed": 1.6,
+     "cost": 13,
+     "at": 8,
+     "elite": true
+    },
+    {
+     "id": 611,
+     "weight": 9,
+     "hp": 1000,
+     "dmg": 26,
+     "speed": 2.4,
+     "cost": 14,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 690,
+     "name": "Hogger",
+     "at": 3,
+     "hp": 3600,
+     "dmg": 22,
+     "final": false
+    },
+    {
+     "id": 691,
+     "name": "Mother Fang",
+     "at": 6,
+     "hp": 9000,
+     "dmg": 30,
+     "final": false
+    },
+    {
+     "id": 692,
+     "name": "Rhahk'Zor",
+     "at": 9,
+     "hp": 17000,
+     "dmg": 38,
+     "final": false
+    },
+    {
+     "id": 693,
+     "name": "Mr. Smite",
+     "at": 12,
+     "hp": 28000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 694,
+     "name": "Edwin VanCleef",
+     "at": 16,
+     "hp": 52500,
+     "dmg": 54,
+     "final": true
+    }
+   ]
+  },
+  "duskwood": {
+   "index": 1,
+   "diff": 0.97,
+   "growth": 0,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 700,
+     "weight": 15,
+     "hp": 28,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 701,
+     "weight": 15,
+     "hp": 30,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0.4,
+     "elite": false
+    },
+    {
+     "id": 702,
+     "weight": 21,
+     "hp": 18,
+     "dmg": 4,
+     "speed": 1.2,
+     "cost": 1,
+     "at": 1,
+     "elite": false
+    },
+    {
+     "id": 703,
+     "weight": 23,
+     "hp": 36,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 704,
+     "weight": 14,
+     "hp": 60,
+     "dmg": 7,
+     "speed": 2,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 705,
+     "weight": 21,
+     "hp": 55,
+     "dmg": 8,
+     "speed": 1.4,
+     "cost": 2,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 706,
+     "weight": 11,
+     "hp": 40,
+     "dmg": 6,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 707,
+     "weight": 14,
+     "hp": 46,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 708,
+     "weight": 11,
+     "hp": 170,
+     "dmg": 12,
+     "speed": 2.3,
+     "cost": 3,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 709,
+     "weight": 22,
+     "hp": 700,
+     "dmg": 20,
+     "speed": 1.6,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 710,
+     "weight": 15,
+     "hp": 850,
+     "dmg": 24,
+     "speed": 2,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 711,
+     "weight": 24,
+     "hp": 1000,
+     "dmg": 28,
+     "speed": 2.4,
+     "cost": 14,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 790,
+     "name": "Naraxis",
+     "at": 3,
+     "hp": 3600,
+     "dmg": 22,
+     "final": false
+    },
+    {
+     "id": 791,
+     "name": "Mor'Ladim",
+     "at": 6,
+     "hp": 9000,
+     "dmg": 30,
+     "final": false
+    },
+    {
+     "id": 792,
+     "name": "Stitches",
+     "at": 9,
+     "hp": 17000,
+     "dmg": 38,
+     "final": false
+    },
+    {
+     "id": 793,
+     "name": "Lupos",
+     "at": 12,
+     "hp": 28000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 794,
+     "name": "Morbent Fel",
+     "at": 16,
+     "hp": 52500,
+     "dmg": 54,
+     "final": true
+    }
+   ]
+  },
+  "wsg": {
+   "index": 2,
+   "diff": 1.17,
+   "growth": 0,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 100,
+     "weight": 11,
+     "hp": 26,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 101,
+     "weight": 8,
+     "hp": 22,
+     "dmg": 4,
+     "speed": 1.4,
+     "cost": 1,
+     "at": 0.7,
+     "elite": false
+    },
+    {
+     "id": 108,
+     "weight": 7,
+     "hp": 22,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 103,
+     "weight": 18,
+     "hp": 34,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 102,
+     "weight": 15,
+     "hp": 40,
+     "dmg": 6,
+     "speed": 1.8,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 104,
+     "weight": 10,
+     "hp": 130,
+     "dmg": 10,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 105,
+     "weight": 8,
+     "hp": 60,
+     "dmg": 9,
+     "speed": 1.5,
+     "cost": 2,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 109,
+     "weight": 8,
+     "hp": 40,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7.5,
+     "elite": false
+    },
+    {
+     "id": 110,
+     "weight": 10,
+     "hp": 190,
+     "dmg": 13,
+     "speed": 2.2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 106,
+     "weight": 14,
+     "hp": 650,
+     "dmg": 20,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 107,
+     "weight": 8,
+     "hp": 900,
+     "dmg": 26,
+     "speed": 2.4,
+     "cost": 14,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 111,
+     "weight": 9,
+     "hp": 1100,
+     "dmg": 30,
+     "speed": 2.4,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 190,
+     "name": "Doomguard Commander",
+     "at": 3,
+     "hp": 3600,
+     "dmg": 22,
+     "final": false
+    },
+    {
+     "id": 191,
+     "name": "Mannoroth's Herald",
+     "at": 6,
+     "hp": 9000,
+     "dmg": 30,
+     "final": false
+    },
+    {
+     "id": 192,
+     "name": "Varimathras",
+     "at": 9,
+     "hp": 17000,
+     "dmg": 38,
+     "final": false
+    },
+    {
+     "id": 194,
+     "name": "Lord Hel'nurath",
+     "at": 12,
+     "hp": 28000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 193,
+     "name": "Lord Kazzak",
+     "at": 16,
+     "hp": 52500,
+     "dmg": 54,
+     "final": true
+    }
+   ]
+  },
+  "ungoro": {
+   "index": 3,
+   "diff": 1.32,
+   "growth": 0,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 1200,
+     "weight": 15,
+     "hp": 26,
+     "dmg": 4,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1201,
+     "weight": 14,
+     "hp": 24,
+     "dmg": 4,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.6,
+     "elite": false
+    },
+    {
+     "id": 1202,
+     "weight": 20,
+     "hp": 22,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 1203,
+     "weight": 15,
+     "hp": 34,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1204,
+     "weight": 17,
+     "hp": 40,
+     "dmg": 6,
+     "speed": 1.8,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1205,
+     "weight": 15,
+     "hp": 130,
+     "dmg": 10,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 1206,
+     "weight": 18,
+     "hp": 60,
+     "dmg": 9,
+     "speed": 1.4,
+     "cost": 2,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 1207,
+     "weight": 19,
+     "hp": 40,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7.5,
+     "elite": false
+    },
+    {
+     "id": 1208,
+     "weight": 17,
+     "hp": 190,
+     "dmg": 13,
+     "speed": 2.2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1209,
+     "weight": 15,
+     "hp": 650,
+     "dmg": 20,
+     "speed": 1.6,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1210,
+     "weight": 17,
+     "hp": 900,
+     "dmg": 26,
+     "speed": 2.4,
+     "cost": 14,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1211,
+     "weight": 9,
+     "hp": 1100,
+     "dmg": 30,
+     "speed": 2.4,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1290,
+     "name": "Ravasaur Matriarch",
+     "at": 3,
+     "hp": 3600,
+     "dmg": 22,
+     "final": false
+    },
+    {
+     "id": 1291,
+     "name": "Uhk'loc",
+     "at": 6,
+     "hp": 9000,
+     "dmg": 30,
+     "final": false
+    },
+    {
+     "id": 1292,
+     "name": "Lar'korwi",
+     "at": 9,
+     "hp": 17000,
+     "dmg": 38,
+     "final": false
+    },
+    {
+     "id": 1293,
+     "name": "Tyrant Devilsaur",
+     "at": 12,
+     "hp": 28000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 1294,
+     "name": "King Mosh",
+     "at": 16,
+     "hp": 52500,
+     "dmg": 54,
+     "final": true
+    }
+   ]
+  },
+  "ab": {
+   "index": 4,
+   "diff": 1.5,
+   "growth": 0,
+   "length": 127.5,
+   "enemies": [
+    {
+     "id": 1500,
+     "weight": 16,
+     "hp": 28,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1501,
+     "weight": 14,
+     "hp": 30,
+     "dmg": 5,
+     "speed": 1.5,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 1502,
+     "weight": 12,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.4,
+     "cost": 1.2,
+     "at": 1,
+     "elite": false
+    },
+    {
+     "id": 1503,
+     "weight": 23,
+     "hp": 32,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1504,
+     "weight": 19,
+     "hp": 36,
+     "dmg": 6,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1505,
+     "weight": 16,
+     "hp": 150,
+     "dmg": 11,
+     "speed": 2.4,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 1506,
+     "weight": 19,
+     "hp": 46,
+     "dmg": 8,
+     "speed": 1.3,
+     "cost": 2,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 1507,
+     "weight": 17,
+     "hp": 52,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7.5,
+     "elite": false
+    },
+    {
+     "id": 1508,
+     "weight": 17,
+     "hp": 200,
+     "dmg": 13,
+     "speed": 2.2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1509,
+     "weight": 21,
+     "hp": 700,
+     "dmg": 21,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1510,
+     "weight": 14,
+     "hp": 950,
+     "dmg": 27,
+     "speed": 2.4,
+     "cost": 14,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1511,
+     "weight": 20,
+     "hp": 1150,
+     "dmg": 31,
+     "speed": 2.2,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1590,
+     "name": "Kovork",
+     "at": 4,
+     "hp": 3800,
+     "dmg": 24,
+     "final": false
+    },
+    {
+     "id": 1591,
+     "name": "Nimar the Slayer",
+     "at": 7,
+     "hp": 9400,
+     "dmg": 30,
+     "final": false
+    },
+    {
+     "id": 1592,
+     "name": "Marez Cowl",
+     "at": 11,
+     "hp": 17500,
+     "dmg": 40,
+     "final": false
+    },
+    {
+     "id": 1593,
+     "name": "Lord Falconcrest",
+     "at": 14,
+     "hp": 29000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 1594,
+     "name": "Lord Aliden Perenolde",
+     "at": 18,
+     "hp": 54000,
+     "dmg": 56,
+     "final": true
+    }
+   ]
+  },
+  "feralas": {
+   "index": 5,
+   "diff": 2.05,
+   "growth": 0,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 800,
+     "weight": 15,
+     "hp": 28,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 801,
+     "weight": 16,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.6,
+     "elite": false
+    },
+    {
+     "id": 802,
+     "weight": 13,
+     "hp": 22,
+     "dmg": 5,
+     "speed": 1.4,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 803,
+     "weight": 14,
+     "hp": 36,
+     "dmg": 7,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 804,
+     "weight": 13,
+     "hp": 75,
+     "dmg": 9,
+     "speed": 2,
+     "cost": 2,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 805,
+     "weight": 15,
+     "hp": 50,
+     "dmg": 8,
+     "speed": 1.6,
+     "cost": 1.5,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 806,
+     "weight": 12,
+     "hp": 160,
+     "dmg": 12,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 807,
+     "weight": 18,
+     "hp": 55,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 808,
+     "weight": 15,
+     "hp": 200,
+     "dmg": 14,
+     "speed": 2.4,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 809,
+     "weight": 14,
+     "hp": 750,
+     "dmg": 22,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 810,
+     "weight": 15,
+     "hp": 950,
+     "dmg": 26,
+     "speed": 2.4,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 811,
+     "weight": 18,
+     "hp": 1150,
+     "dmg": 30,
+     "speed": 2.6,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 890,
+     "name": "Zevrim Thornhoof",
+     "at": 4,
+     "hp": 3800,
+     "dmg": 24,
+     "final": false
+    },
+    {
+     "id": 891,
+     "name": "Alzzin the Wildshaper",
+     "at": 7,
+     "hp": 9400,
+     "dmg": 32,
+     "final": false
+    },
+    {
+     "id": 892,
+     "name": "Tendris Warpwood",
+     "at": 11,
+     "hp": 18000,
+     "dmg": 40,
+     "final": false
+    },
+    {
+     "id": 893,
+     "name": "Immol'thar",
+     "at": 14,
+     "hp": 30000,
+     "dmg": 48,
+     "final": false
+    },
+    {
+     "id": 894,
+     "name": "King Gordok",
+     "at": 18,
+     "hp": 56250,
+     "dmg": 58,
+     "final": true
+    }
+   ]
+  },
+  "arena": {
+   "index": 6,
+   "diff": 2.95,
+   "growth": 0.06,
+   "length": 32,
+   "enemies": [
+    {
+     "id": 900,
+     "weight": 15,
+     "hp": 30,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 901,
+     "weight": 15,
+     "hp": 26,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 902,
+     "weight": 15,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 903,
+     "weight": 20,
+     "hp": 38,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 904,
+     "weight": 21,
+     "hp": 60,
+     "dmg": 9,
+     "speed": 1.8,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 905,
+     "weight": 12,
+     "hp": 55,
+     "dmg": 9,
+     "speed": 1.3,
+     "cost": 1.5,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 906,
+     "weight": 16,
+     "hp": 140,
+     "dmg": 12,
+     "speed": 2,
+     "cost": 3,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 907,
+     "weight": 20,
+     "hp": 52,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 908,
+     "weight": 13,
+     "hp": 190,
+     "dmg": 14,
+     "speed": 2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 909,
+     "weight": 19,
+     "hp": 800,
+     "dmg": 24,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 910,
+     "weight": 16,
+     "hp": 950,
+     "dmg": 26,
+     "speed": 2.4,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 911,
+     "weight": 18,
+     "hp": 1150,
+     "dmg": 32,
+     "speed": 2.2,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 990,
+     "name": "High Priestess Jeklik",
+     "at": 4,
+     "hp": 3900,
+     "dmg": 25,
+     "final": false
+    },
+    {
+     "id": 991,
+     "name": "High Priest Venoxis",
+     "at": 7,
+     "hp": 9600,
+     "dmg": 33,
+     "final": false
+    },
+    {
+     "id": 992,
+     "name": "Bloodlord Mandokir",
+     "at": 11,
+     "hp": 18500,
+     "dmg": 42,
+     "final": false
+    },
+    {
+     "id": 993,
+     "name": "Jin'do the Hexxer",
+     "at": 14,
+     "hp": 30000,
+     "dmg": 48,
+     "final": false
+    },
+    {
+     "id": 994,
+     "name": "Hakkar the Soulflayer",
+     "at": 18,
+     "hp": 57000,
+     "dmg": 58,
+     "final": true
+    }
+   ]
+  },
+  "sm": {
+   "index": 7,
+   "diff": 2.33,
+   "growth": 0.12,
+   "length": 150,
+   "enemies": [
+    {
+     "id": 1300,
+     "weight": 12,
+     "hp": 30,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1301,
+     "weight": 22,
+     "hp": 26,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 1302,
+     "weight": 13,
+     "hp": 26,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 1303,
+     "weight": 13,
+     "hp": 38,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1304,
+     "weight": 17,
+     "hp": 60,
+     "dmg": 9,
+     "speed": 1.8,
+     "cost": 1.5,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1305,
+     "weight": 16,
+     "hp": 140,
+     "dmg": 12,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 1306,
+     "weight": 15,
+     "hp": 55,
+     "dmg": 9,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 1307,
+     "weight": 14,
+     "hp": 52,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 1308,
+     "weight": 17,
+     "hp": 190,
+     "dmg": 14,
+     "speed": 2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1309,
+     "weight": 16,
+     "hp": 800,
+     "dmg": 24,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1310,
+     "weight": 16,
+     "hp": 950,
+     "dmg": 26,
+     "speed": 2.2,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1311,
+     "weight": 13,
+     "hp": 1150,
+     "dmg": 32,
+     "speed": 2.2,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1390,
+     "name": "Houndmaster Loksey",
+     "at": 4,
+     "hp": 3900,
+     "dmg": 25,
+     "final": false
+    },
+    {
+     "id": 1391,
+     "name": "Arcanist Doan",
+     "at": 7,
+     "hp": 9600,
+     "dmg": 33,
+     "final": false
+    },
+    {
+     "id": 1392,
+     "name": "Herod",
+     "at": 11,
+     "hp": 18500,
+     "dmg": 42,
+     "final": false
+    },
+    {
+     "id": 1393,
+     "name": "Scarlet Commander Mograine",
+     "at": 14,
+     "hp": 30000,
+     "dmg": 48,
+     "final": false
+    },
+    {
+     "id": 1394,
+     "name": "High Inquisitor Whitemane",
+     "at": 18,
+     "hp": 57000,
+     "dmg": 58,
+     "final": true
+    }
+   ]
+  },
+  "av": {
+   "index": 8,
+   "diff": 2.95,
+   "growth": 0.18,
+   "length": 135,
+   "enemies": [
+    {
+     "id": 300,
+     "weight": 14,
+     "hp": 30,
+     "dmg": 4,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 301,
+     "weight": 18,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.6,
+     "elite": false
+    },
+    {
+     "id": 308,
+     "weight": 20,
+     "hp": 34,
+     "dmg": 6,
+     "speed": 1.7,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 303,
+     "weight": 20,
+     "hp": 48,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 302,
+     "weight": 16,
+     "hp": 70,
+     "dmg": 8,
+     "speed": 2,
+     "cost": 2,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 304,
+     "weight": 16,
+     "hp": 170,
+     "dmg": 12,
+     "speed": 2.4,
+     "cost": 3,
+     "at": 4.5,
+     "elite": false
+    },
+    {
+     "id": 305,
+     "weight": 12,
+     "hp": 90,
+     "dmg": 9,
+     "speed": 1.8,
+     "cost": 2,
+     "at": 6,
+     "elite": false
+    },
+    {
+     "id": 309,
+     "weight": 22,
+     "hp": 56,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7.5,
+     "elite": false
+    },
+    {
+     "id": 310,
+     "weight": 20,
+     "hp": 200,
+     "dmg": 14,
+     "speed": 1.6,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 306,
+     "weight": 17,
+     "hp": 750,
+     "dmg": 22,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 307,
+     "weight": 14,
+     "hp": 1000,
+     "dmg": 28,
+     "speed": 2.6,
+     "cost": 14,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 311,
+     "weight": 16,
+     "hp": 1200,
+     "dmg": 32,
+     "speed": 2.2,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 390,
+     "name": "Korrak the Bloodrager",
+     "at": 4,
+     "hp": 4000,
+     "dmg": 25,
+     "final": false
+    },
+    {
+     "id": 391,
+     "name": "Ivus the Forest Lord",
+     "at": 8,
+     "hp": 10000,
+     "dmg": 33,
+     "final": false
+    },
+    {
+     "id": 392,
+     "name": "Lokholar the Ice Lord",
+     "at": 12,
+     "hp": 19000,
+     "dmg": 42,
+     "final": false
+    },
+    {
+     "id": 394,
+     "name": "Glacius the Frozen Titan",
+     "at": 16,
+     "hp": 23250,
+     "dmg": 48,
+     "final": false
+    },
+    {
+     "id": 393,
+     "name": "Azuregos",
+     "at": 20,
+     "hp": 58500,
+     "dmg": 60,
+     "final": true
+    }
+   ]
+  },
+  "brm": {
+   "index": 9,
+   "diff": 4.14,
+   "growth": 0.25,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 1000,
+     "weight": 16,
+     "hp": 30,
+     "dmg": 5,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1001,
+     "weight": 15,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 1002,
+     "weight": 15,
+     "hp": 36,
+     "dmg": 6,
+     "speed": 1.7,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 1003,
+     "weight": 19,
+     "hp": 38,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1004,
+     "weight": 19,
+     "hp": 80,
+     "dmg": 10,
+     "speed": 2,
+     "cost": 2,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1005,
+     "weight": 17,
+     "hp": 55,
+     "dmg": 9,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 1006,
+     "weight": 12,
+     "hp": 170,
+     "dmg": 13,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 1007,
+     "weight": 13,
+     "hp": 60,
+     "dmg": 10,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 1008,
+     "weight": 19,
+     "hp": 210,
+     "dmg": 15,
+     "speed": 2.4,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1009,
+     "weight": 10,
+     "hp": 850,
+     "dmg": 26,
+     "speed": 1.8,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1010,
+     "weight": 11,
+     "hp": 1000,
+     "dmg": 28,
+     "speed": 2.2,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1011,
+     "weight": 12,
+     "hp": 1250,
+     "dmg": 34,
+     "speed": 2.6,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1090,
+     "name": "General Angerforge",
+     "at": 4,
+     "hp": 4200,
+     "dmg": 26,
+     "final": false
+    },
+    {
+     "id": 1091,
+     "name": "Warchief Rend Blackhand",
+     "at": 8,
+     "hp": 10500,
+     "dmg": 34,
+     "final": false
+    },
+    {
+     "id": 1092,
+     "name": "Emperor Dagran Thaurissan",
+     "at": 12,
+     "hp": 19500,
+     "dmg": 42,
+     "final": false
+    },
+    {
+     "id": 1093,
+     "name": "Majordomo Executus",
+     "at": 16,
+     "hp": 24000,
+     "dmg": 50,
+     "final": false
+    },
+    {
+     "id": 1094,
+     "name": "Nefarian",
+     "at": 20,
+     "hp": 60000,
+     "dmg": 62,
+     "final": true
+    }
+   ]
+  },
+  "aq": {
+   "index": 10,
+   "diff": 3.26,
+   "growth": 0.32,
+   "length": 120,
+   "enemies": [
+    {
+     "id": 1100,
+     "weight": 16,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.2,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1101,
+     "weight": 16,
+     "hp": 32,
+     "dmg": 6,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 1102,
+     "weight": 17,
+     "hp": 26,
+     "dmg": 6,
+     "speed": 1.3,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 1103,
+     "weight": 16,
+     "hp": 40,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1104,
+     "weight": 16,
+     "hp": 90,
+     "dmg": 11,
+     "speed": 2,
+     "cost": 2,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1105,
+     "weight": 17,
+     "hp": 60,
+     "dmg": 10,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 1106,
+     "weight": 16,
+     "hp": 190,
+     "dmg": 14,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 1107,
+     "weight": 17,
+     "hp": 60,
+     "dmg": 11,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 1108,
+     "weight": 12,
+     "hp": 230,
+     "dmg": 16,
+     "speed": 2.2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1109,
+     "weight": 15,
+     "hp": 900,
+     "dmg": 28,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1110,
+     "weight": 18,
+     "hp": 1100,
+     "dmg": 30,
+     "speed": 2.4,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1111,
+     "weight": 18,
+     "hp": 1350,
+     "dmg": 36,
+     "speed": 2.6,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1190,
+     "name": "Kurinnaxx",
+     "at": 4,
+     "hp": 4400,
+     "dmg": 27,
+     "final": false
+    },
+    {
+     "id": 1191,
+     "name": "General Rajaxx",
+     "at": 8,
+     "hp": 11000,
+     "dmg": 35,
+     "final": false
+    },
+    {
+     "id": 1192,
+     "name": "Princess Huhuran",
+     "at": 12,
+     "hp": 20000,
+     "dmg": 44,
+     "final": false
+    },
+    {
+     "id": 1193,
+     "name": "Ossirian the Unscarred",
+     "at": 16,
+     "hp": 24750,
+     "dmg": 52,
+     "final": false
+    },
+    {
+     "id": 1194,
+     "name": "C'Thun",
+     "at": 20,
+     "hp": 55500,
+     "dmg": 64,
+     "final": true
+    }
+   ]
+  },
+  "naxx": {
+   "index": 11,
+   "diff": 6.25,
+   "growth": 0.4,
+   "length": 44,
+   "enemies": [
+    {
+     "id": 1400,
+     "weight": 13,
+     "hp": 30,
+     "dmg": 5,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 1401,
+     "weight": 13,
+     "hp": 28,
+     "dmg": 6,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 1402,
+     "weight": 28,
+     "hp": 26,
+     "dmg": 6,
+     "speed": 1.4,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 1403,
+     "weight": 17,
+     "hp": 42,
+     "dmg": 9,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 1404,
+     "weight": 15,
+     "hp": 90,
+     "dmg": 11,
+     "speed": 2,
+     "cost": 2,
+     "at": 3,
+     "elite": false
+    },
+    {
+     "id": 1405,
+     "weight": 12,
+     "hp": 190,
+     "dmg": 14,
+     "speed": 2.2,
+     "cost": 3,
+     "at": 5.5,
+     "elite": false
+    },
+    {
+     "id": 1406,
+     "weight": 18,
+     "hp": 62,
+     "dmg": 10,
+     "speed": 1.4,
+     "cost": 1.5,
+     "at": 4,
+     "elite": false
+    },
+    {
+     "id": 1407,
+     "weight": 17,
+     "hp": 62,
+     "dmg": 11,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 7,
+     "elite": false
+    },
+    {
+     "id": 1408,
+     "weight": 18,
+     "hp": 240,
+     "dmg": 16,
+     "speed": 2.2,
+     "cost": 3.5,
+     "at": 9,
+     "elite": false
+    },
+    {
+     "id": 1409,
+     "weight": 11,
+     "hp": 950,
+     "dmg": 28,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 1410,
+     "weight": 23,
+     "hp": 1150,
+     "dmg": 31,
+     "speed": 2.4,
+     "cost": 13,
+     "at": 8.5,
+     "elite": true
+    },
+    {
+     "id": 1411,
+     "weight": 20,
+     "hp": 1400,
+     "dmg": 37,
+     "speed": 2.6,
+     "cost": 15,
+     "at": 13,
+     "elite": true
+    },
+    {
+     "id": 1412,
+     "weight": 17,
+     "hp": 1400,
+     "dmg": 37,
+     "speed": 2.4,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 1413,
+     "weight": 15,
+     "hp": 1400,
+     "dmg": 37,
+     "speed": 2.4,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 1414,
+     "weight": 13,
+     "hp": 1400,
+     "dmg": 37,
+     "speed": 2.4,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 1415,
+     "weight": 10,
+     "hp": 1400,
+     "dmg": 37,
+     "speed": 2.4,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 1490,
+     "name": "Anub'Rekhan",
+     "at": 4,
+     "hp": 4600,
+     "dmg": 28,
+     "final": false
+    },
+    {
+     "id": 1491,
+     "name": "Noth the Plaguebringer",
+     "at": 8,
+     "hp": 11500,
+     "dmg": 36,
+     "final": false
+    },
+    {
+     "id": 1492,
+     "name": "Patchwerk",
+     "at": 12,
+     "hp": 21000,
+     "dmg": 46,
+     "final": false
+    },
+    {
+     "id": 1493,
+     "name": "Sapphiron",
+     "at": 16,
+     "hp": 26000,
+     "dmg": 54,
+     "final": false
+    },
+    {
+     "id": 1494,
+     "name": "Kel'Thuzad",
+     "at": 20,
+     "hp": 58500,
+     "dmg": 66,
+     "final": true
+    }
+   ]
+  }
+ },
+ "missing": []
+}
