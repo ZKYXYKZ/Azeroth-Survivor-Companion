@@ -3,6 +3,7 @@
 // le vol de vie reste en reserve apres les deux bijoux portes. Bouclier de classe garde, sorts forts des vraies
 // victoires gardes, race ponderee legerement par sa survie. Part des builds deja proposes (defaults.json).
 // Usage : node tools/build-finish.js [--shard i/n] ; sans shard, fusionne aussi les morceaux dans tools/preset-tune.json.
+const ARGV = process.argv.slice();
 const fs = require("fs");
 const path = require("path");
 const log = console.log;
@@ -28,13 +29,17 @@ for (const r of rd("runs-").filter((x) => !x.patch && !x.suspect && x.result ===
   for (const [k, v] of Object.entries(r.spells)) if (v.share >= 0.1) { const e = ((realTop[r.spec] = realTop[r.spec] || {})[k] = realTop[r.spec][k] || { n: 0, s: 0 }); e.n++; e.s += v.share; }
 // Identite de la spe : ses deux sorts signatures d'avant l'optimisation (v1.7.61) restent en tete
 const IDENT = Object.fromEntries(JSON.parse(require("child_process").execSync("git show v1.7.61:AS-Companion/web/defaults.json", { cwd: __dirname, maxBuffer: 1e8 }).toString()).map((p) => [p.name, p.code.split(";")[4].split(",").slice(0, 2).map((x) => x.split(":")[0])]));
+// --only <classe> --free : une seule classe, sans sorts signatures imposes (Chaman : le simulateur decide), --out <fichier>
+const arg = (k) => { const i = ARGV.indexOf(k); return i > 0 ? ARGV[i + 1] : null; };
+const ONLY = arg("--only"), FREE = ARGV.includes("--free"), OUT = arg("--out");
+if (FREE) for (const k of Object.keys(IDENT)) delete IDENT[k];
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const mc = (sc, n) => sim.monteCarlo(sc, n, MINUTES).mean;
 
 const presets = JSON.parse(fs.readFileSync(path.join(web, "defaults.json"), "utf8"));
 const out = {};
 presets.forEach((p, idx) => {
-  if (idx % SN !== SI) return;
+  if (idx % SN !== SI || (ONLY && p.class !== ONLY)) return;
   const f = p.code.split(";");
   const c = ctx.cls(p.class);
   const sc = decodeBuild(p.code, p.race);
@@ -67,6 +72,7 @@ presets.forEach((p, idx) => {
   log(p.name.padEnd(28), Math.round(best.d), best.r, alt, amulets[0], sc.rings.join("+"), sc.trinkets.join("+"));
   out[p.name] = { talents: sc.talents, spells: sc.spells.map((s) => [s.key, s.w]), rings, trinkets: trinkR.slice(0, 4), amulets, race: best.r, alt };
 });
+if (OUT) { fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n"); process.exit(0); }
 fs.writeFileSync(path.join(__dirname, SN > 1 ? "finish-" + SI + ".json" : "preset-tune.json"), JSON.stringify(out, null, 1) + "\n");
 if (SN > 1 && fs.readdirSync(__dirname).filter((x) => /^finish-\d+\.json$/.test(x)).length === SN) {
   const all = {};

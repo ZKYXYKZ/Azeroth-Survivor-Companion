@@ -53,10 +53,10 @@
    "accuria"
   ],
   "trinkets": [
-   "earthstrike",
    "blackhand",
-   "hoj",
-   "remote"
+   "insignia",
+   "tep",
+   "chosen"
   ],
   "amulets": [
    "leg:mortal_strike",
@@ -117,21 +117,21 @@
    "quick_strike",
    "dragonslayer",
    "blooddrinker",
-   "spell_power"
+   "accuria"
   ],
   "trinkets": [
-   "hoj",
    "earthstrike",
    "blackhand",
-   "carrot"
+   "insignia",
+   "hoj"
   ],
   "amulets": [
    "leg:immolation_trap",
-   "leg:frost_trap",
-   "onyxia_tooth",
-   "leg:hunters_mark"
+   "leg:hunters_mark",
+   "enlightenment",
+   "onyxia_tooth"
   ],
-  "race": "dwarf",
+  "race": "troll",
   "alt": ""
  },
  "Prêtre Discipline": {
@@ -190,14 +190,14 @@
   "trinkets": [
    "blackhand",
    "earthstrike",
-   "carrot",
-   "hoj"
+   "hoj",
+   "tep"
   ],
   "amulets": [
    "leg:sw_pain",
    "leg:smite",
    "onyxia_tooth",
-   "enlightenment"
+   "malice_stone"
   ],
   "race": "human",
   "alt": ""
@@ -250,24 +250,24 @@
   ],
   "rings": [
    "quick_strike",
-   "accuria",
+   "dragonslayer",
    "blooddrinker",
-   "dragonslayer"
+   "accuria"
   ],
   "trinkets": [
    "blackhand",
    "earthstrike",
-   "eldre_thalas",
-   "war_horn"
+   "tep",
+   "eldre_thalas"
   ],
   "amulets": [
    "leg:blizzard",
-   "onyxia_tooth",
    "leg:arcane_missiles",
-   "mark_of_fordring"
+   "onyxia_tooth",
+   "south_seas_kelp"
   ],
-  "race": "human",
-  "alt": "orc"
+  "race": "gnome",
+  "alt": ""
  },
  "Druide Équilibre": {
   "talents": {
@@ -323,17 +323,17 @@
   ],
   "trinkets": [
    "earthstrike",
-   "hoj",
-   "chosen",
-   "blackhand"
+   "remote",
+   "carrot",
+   "hoj"
   ],
   "amulets": [
    "leg:hurricane",
    "leg:moonfire",
-   "leg:starfire",
-   "leg:insect_swarm"
+   "onyxia_tooth",
+   "leg:starfire"
   ],
-  "race": "nightelf",
+  "race": "tauren",
   "alt": "human"
  },
  "Guerrier Fureur": {
@@ -385,23 +385,23 @@
   ],
   "rings": [
    "dragonslayer",
-   "accuria",
+   "quick_strike",
    "blooddrinker",
-   "spell_power"
+   "accuria"
   ],
   "trinkets": [
    "blackhand",
    "earthstrike",
-   "hoj",
-   "tep"
+   "insignia",
+   "hoj"
   ],
   "amulets": [
    "leg:bloodthirst",
    "leg:whirlwind",
-   "onyxia_tooth",
-   "enlightenment"
+   "leg:cleave",
+   "onyxia_tooth"
   ],
-  "race": "gnome",
+  "race": "troll",
   "alt": ""
  },
  "Chasseur Précision": {
@@ -456,18 +456,18 @@
    "accuria"
   ],
   "trinkets": [
+   "hoj",
    "blackhand",
    "earthstrike",
-   "remote",
-   "tep"
+   "chosen"
   ],
   "amulets": [
    "leg:aimed_shot",
    "leg:volley",
    "onyxia_tooth",
-   "south_seas_kelp"
+   "leg:hunters_mark"
   ],
-  "race": "dwarf",
+  "race": "troll",
   "alt": ""
  },
  "Prêtre Sacré": {
@@ -524,15 +524,15 @@
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
    "earthstrike",
-   "chosen"
+   "hoj",
+   "tep"
   ],
   "amulets": [
    "leg:sw_pain",
-   "south_seas_kelp",
+   "leg:smite",
    "onyxia_tooth",
-   "leg:smite"
+   "enlightenment"
   ],
   "race": "troll",
   "alt": ""
@@ -589,18 +589,18 @@
    "accuria"
   ],
   "trinkets": [
-   "remote",
-   "chosen",
+   "tep",
    "blackhand",
+   "earthstrike",
    "hoj"
   ],
   "amulets": [
    "leg:flamestrike",
+   "leg:blizzard",
    "leg:pyroblast",
-   "south_seas_kelp",
    "onyxia_tooth"
   ],
-  "race": "troll",
+  "race": "human",
   "alt": ""
  },
  "Druide Félin": {
@@ -659,16 +659,16 @@
    "blackhand",
    "hoj",
    "earthstrike",
-   "eldre_thalas"
+   "remote"
   ],
   "amulets": [
    "leg:shred",
    "leg:hurricane",
    "leg:swipe",
-   "onyxia_tooth"
+   "malice_stone"
   ],
   "race": "nightelf",
-  "alt": "human"
+  "alt": "gnome"
  },
  "Guerrier Protection": {
   "talents": {
@@ -723,18 +723,18 @@
    "accuria"
   ],
   "trinkets": [
-   "tep",
+   "hoj",
    "blackhand",
-   "war_horn",
-   "remote"
+   "earthstrike",
+   "tep"
   ],
   "amulets": [
    "leg:shield_slam",
-   "leg:cleave",
+   "vek_nilash",
    "onyxia_tooth",
-   "leg:mortal_strike"
+   "south_seas_kelp"
   ],
-  "race": "orc",
+  "race": "troll",
   "alt": ""
  },
  "Chasseur Survie": {
@@ -788,21 +788,21 @@
    "quick_strike",
    "dragonslayer",
    "blooddrinker",
-   "accuria"
+   "spell_power"
   ],
   "trinkets": [
    "earthstrike",
    "blackhand",
-   "carrot",
-   "tep"
+   "hoj",
+   "chosen"
   ],
   "amulets": [
    "leg:immolation_trap",
-   "leg:auto_shot",
    "leg:volley",
-   "vek_nilash"
+   "onyxia_tooth",
+   "enlightenment"
   ],
-  "race": "dwarf",
+  "race": "troll",
   "alt": ""
  },
  "Prêtre Ombre": {
@@ -858,15 +858,15 @@
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
    "earthstrike",
-   "insignia"
+   "tep",
+   "carrot"
   ],
   "amulets": [
    "leg:sw_pain",
-   "leg:holy_fire",
-   "enlightenment",
-   "leg:mind_blast"
+   "leg:mind_blast",
+   "onyxia_tooth",
+   "leg:mind_flay"
   ],
   "race": "troll",
   "alt": ""
@@ -924,19 +924,19 @@
    "accuria"
   ],
   "trinkets": [
-   "earthstrike",
-   "hoj",
    "blackhand",
-   "war_horn"
+   "hoj",
+   "carrot",
+   "insignia"
   ],
   "amulets": [
    "leg:blizzard",
    "leg:frostbolt",
    "onyxia_tooth",
-   "leg:arcane_missiles"
+   "enlightenment"
   ],
   "race": "human",
-  "alt": "orc"
+  "alt": ""
  },
  "Druide Ours": {
   "talents": {
@@ -992,16 +992,16 @@
    "accuria"
   ],
   "trinkets": [
-   "blackhand",
-   "earthstrike",
    "hoj",
-   "tep"
+   "blackhand",
+   "remote",
+   "eldre_thalas"
   ],
   "amulets": [
    "leg:shred",
    "leg:swipe",
    "onyxia_tooth",
-   "south_seas_kelp"
+   "leg:wrath"
   ],
   "race": "nightelf",
   "alt": "dwarf"
@@ -1061,13 +1061,13 @@
   "trinkets": [
    "blackhand",
    "earthstrike",
-   "tep",
+   "chosen",
    "hoj"
   ],
   "amulets": [
-   "leg:holy_shock",
+   "leg:judgement",
    "leg:consecration",
-   "south_seas_kelp",
+   "leg:holy_shock",
    "leg:hammer_of_wrath"
   ],
   "race": "human",
@@ -1127,14 +1127,14 @@
   ],
   "trinkets": [
    "blackhand",
-   "tep",
    "earthstrike",
-   "hoj"
+   "hoj",
+   "chosen"
   ],
   "amulets": [
    "leg:sinister_strike",
    "leg:rupture",
-   "darkmoon",
+   "onyxia_tooth",
    "south_seas_kelp"
   ],
   "race": "troll",
@@ -1193,17 +1193,17 @@
   ],
   "trinkets": [
    "blackhand",
-   "earthstrike",
    "hoj",
+   "chosen",
    "tep"
   ],
   "amulets": [
    "leg:searing_totem",
-   "leg:flame_shock",
    "enlightenment",
-   "talvash"
+   "leg:lightning_bolt",
+   "onyxia_tooth"
   ],
-  "race": "orc",
+  "race": "troll",
   "alt": ""
  },
  "Démoniste Affliction": {
@@ -1262,17 +1262,17 @@
   "trinkets": [
    "blackhand",
    "hoj",
-   "insignia",
-   "earthstrike"
+   "eldre_thalas",
+   "tep"
   ],
   "amulets": [
    "leg:curse_of_agony",
-   "leg:corruption",
    "leg:rain_of_fire",
-   "vek_nilash"
+   "leg:corruption",
+   "leg:drain_life"
   ],
-  "race": "human",
-  "alt": "troll"
+  "race": "orc",
+  "alt": ""
  },
  "Druide Restauration": {
   "talents": {
@@ -1326,19 +1326,19 @@
    "accuria"
   ],
   "trinkets": [
-   "blackhand",
-   "eldre_thalas",
-   "earthstrike",
-   "tep"
+   "chosen",
+   "tep",
+   "hoj",
+   "earthstrike"
   ],
   "amulets": [
    "leg:insect_swarm",
    "leg:hurricane",
    "leg:moonfire",
-   "prestor"
+   "onyxia_tooth"
   ],
   "race": "nightelf",
-  "alt": "troll"
+  "alt": "orc"
  },
  "Paladin Protection": {
   "talents": {
@@ -1390,24 +1390,24 @@
   ],
   "rings": [
    "quick_strike",
-   "spell_power",
+   "dragonslayer",
    "blooddrinker",
-   "dragonslayer"
+   "accuria"
   ],
   "trinkets": [
-   "earthstrike",
    "remote",
-   "carrot",
-   "blackhand"
+   "hoj",
+   "blackhand",
+   "war_horn"
   ],
   "amulets": [
    "leg:consecration",
-   "leg:hammer_of_wrath",
-   "leg:holy_shock",
-   "onyxia_tooth"
+   "enlightenment",
+   "onyxia_tooth",
+   "leg:hammer_of_justice"
   ],
   "race": "human",
-  "alt": "tauren"
+  "alt": ""
  },
  "Voleur Combat": {
   "talents": {
@@ -1461,17 +1461,17 @@
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
+   "earthstrike",
    "war_horn",
-   "chosen"
+   "insignia"
   ],
   "amulets": [
    "leg:sinister_strike",
    "onyxia_tooth",
-   "vek_nilash",
-   "talvash"
+   "south_seas_kelp",
+   "vek_nilash"
   ],
-  "race": "gnome",
+  "race": "troll",
   "alt": ""
  },
  "Chaman Amélioration": {
@@ -1527,16 +1527,16 @@
    "accuria"
   ],
   "trinkets": [
-   "hoj",
-   "blackhand",
    "earthstrike",
-   "insignia"
+   "hoj",
+   "tep",
+   "war_horn"
   ],
   "amulets": [
    "leg:magma_totem",
-   "south_seas_kelp",
-   "enlightenment",
-   "vek_nilash"
+   "onyxia_tooth",
+   "talvash",
+   "malice_stone"
   ],
   "race": "troll",
   "alt": ""
@@ -1590,19 +1590,19 @@
    "quick_strike",
    "dragonslayer",
    "blooddrinker",
-   "seal_damned"
+   "accuria"
   ],
   "trinkets": [
    "blackhand",
-   "carrot",
-   "chosen",
+   "tep",
+   "hoj",
    "earthstrike"
   ],
   "amulets": [
    "leg:corruption",
    "leg:curse_of_agony",
-   "leg:searing_pain",
-   "onyxia_tooth"
+   "leg:immolate",
+   "leg:searing_pain"
   ],
   "race": "human",
   "alt": ""
@@ -1661,15 +1661,15 @@
   ],
   "trinkets": [
    "blackhand",
+   "hoj",
    "earthstrike",
-   "tep",
-   "hoj"
+   "tep"
   ],
   "amulets": [
    "leg:consecration",
-   "enlightenment",
-   "vek_nilash",
-   "south_seas_kelp"
+   "leg:exorcism",
+   "leg:judgement",
+   "malice_stone"
   ],
   "race": "dwarf",
   "alt": ""
@@ -1727,18 +1727,18 @@
    "accuria"
   ],
   "trinkets": [
-   "earthstrike",
    "blackhand",
+   "earthstrike",
    "hoj",
-   "tep"
+   "eldre_thalas"
   ],
   "amulets": [
    "leg:sinister_strike",
    "onyxia_tooth",
-   "enlightenment",
-   "vek_nilash"
+   "leg:rupture",
+   "leg:backstab"
   ],
-  "race": "scourge",
+  "race": "troll",
   "alt": ""
  },
  "Chaman Totems": {
@@ -1790,20 +1790,20 @@
   ],
   "rings": [
    "quick_strike",
-   "spell_power",
+   "dragonslayer",
    "blooddrinker",
    "accuria"
   ],
   "trinkets": [
+   "insignia",
    "hoj",
-   "tep",
-   "chosen",
-   "earthstrike"
+   "earthstrike",
+   "blackhand"
   ],
   "amulets": [
    "leg:magma_totem",
-   "south_seas_kelp",
    "onyxia_tooth",
+   "leg:searing_totem",
    "enlightenment"
   ],
   "race": "troll",
@@ -1862,16 +1862,16 @@
    "accuria"
   ],
   "trinkets": [
-   "remote",
    "blackhand",
    "earthstrike",
-   "hoj"
+   "hoj",
+   "tep"
   ],
   "amulets": [
    "leg:immolate",
-   "leg:corruption",
    "leg:searing_pain",
-   "south_seas_kelp"
+   "leg:corruption",
+   "onyxia_tooth"
   ],
   "race": "human",
   "alt": ""
