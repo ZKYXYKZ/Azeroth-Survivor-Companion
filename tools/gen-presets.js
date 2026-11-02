@@ -156,12 +156,12 @@ const builds = [
   },
   {
     class: "shaman", name: "Chaman Amélioration", race: "tauren", alt: "gnome",
-    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:2 enh_stormbound_echoes:1
-      concussion:5 convection:5 earths_grasp:3 call_of_flame:3 call_of_thunder:4`),
-    spells: SP("rockbiter:5 stormstrike:5 magma_totem:4 fire_nova:3 healing_wave:3 lightning_shield:2"), ban: L("lightning_bolt chain_lightning earth_shock"),
-    rings: L("blooddrinker dark_iron dragonslayer quick_strike"), trinkets: L("earthstrike lifegiving hoj chosen"), amulets: L("jeklik steadfast_might leg:rockbiter leg:stormstrike"),
-    fr: "Spé de corps à corps : restez collé au paquet et au boss, Croque-roc et Courroux des tempêtes ne portent qu'à 10 m et Garde-tempête ne réduit les dégâts qu'avec un ennemi à moins de 7 m. La survie vient du vol de vie, qui grandit avec les dégâts : apogée (1 %), Buveur de sang et Talisman de Jeklik (3 %), plus le Médaillon de puissance inébranlable. Ne pas kiter.",
-    en: "A melee spec: stay on the pack and the boss, Rockbiter and Stormstrike only reach 10 yd and Earthen Bulwark only cuts damage with an enemy within 7 yd. Survival comes from leech, which grows with your damage: capstone (1%), Blooddrinker and Jeklik's talisman (3%), plus the Medallion of Steadfast Might. Don't kite.",
+    talents: T(`enh_thundering_strikes:2 enh_earthen_bulwark:5 enh_resonant_shocks:3 enh_shattering_elements:3 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_stormbound_echoes:1
+      concussion:5 convection:5 earths_grasp:3 call_of_flame:3 reverberation:4`),
+    spells: SP("flame_shock:5 fire_nova:5 rockbiter:4 frost_shock:3 earth_shock:3 stormstrike:3"), ban: L("lightning_bolt chain_lightning lightning_shield"),
+    rings: L("blooddrinker accuria dragonslayer quick_strike"), trinkets: L("earthstrike hoj chosen lifegiving"), amulets: L("leg:flame_shock leg:fire_nova fire_lord jeklik"),
+    fr: "Spé des horions, faite pour le set des éléments (8 pièces : un ennemi qui meurt sous Horion de flammes explose pour 15 % de sa vie max à 8 m). Horion de flammes à 20 m et Horions résonnants pour le poser sur 3 ennemis de plus, Arme Langue de feu pour des Novas de feu gratuites, Arme Givrefeu pour des Horions de givre gratuits et Éléments fracassants qui renforcent l'horion suivant. Se joue à distance.",
+    en: "The shock spec, made for the Elements set (8 pieces: an enemy dying with Flame Shock explodes for 15% of its max health within 8 yd). Flame Shock at 20 yd and Resonant Shocks to spread it to 3 more enemies, Flametongue Weapon for free Fire Novas, Frostbrand for free Frost Shocks and Shattering Elements boosting the next shock. Played at range.",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",
