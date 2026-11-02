@@ -156,12 +156,12 @@ const builds = [
   },
   {
     class: "shaman", name: "Chaman Amélioration", race: "tauren", alt: "gnome",
-    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:2 enh_stormbound_echoes:1
-      concussion:5 earths_grasp:3 tidal_focus:5 totemic_focus:5 twin_totems:1 natures_guidance:1`),
-    spells: SP("stormstrike:5 rockbiter:5 magma_totem:5 lightning_shield:4 fire_nova:3 searing_totem:3"), ban: L("lightning_bolt chain_lightning earth_shock"),
-    rings: L("dark_iron blooddrinker quick_strike dragonslayer"), trinkets: L("earthstrike soulstone lifegiving hoj"), amulets: L("leg:magma_totem fallen_dragon steadfast_might animated_chain"),
-    fr: "Refait le 02/11 d'après les vraies parties (mort à 7 min à Naxxramas, 638 PV) : mêlée Croque-roc et Courroux des tempêtes, chaque totem posé en double par l'arbre Restauration, plus de régénération et 6 % de dégâts en moins avec Protection élémentaire. Bouclier de foudre à garder actif (15 % de plus), anneau de vie et Pierre d'âme pour survivre au pic.",
-    en: "Remade on 11/02 from real runs (dead at 7 min in Naxxramas, 638 HP): Rockbiter and Stormstrike melee, every totem dropped twice by the Restoration tree, extra regeneration and 6% less damage from Elemental Warding. Keep Lightning Shield up (15% more), health ring and Soulstone to survive the burst.",
+    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:2
+      tidal_focus:5 totemic_focus:5 twin_totems:1 restorative_totems:3 natures_guidance:1 tidal_mastery:5 reincarnation:1 purification:4 totemic_mastery:2 ancestral_healing:3 totemic_call:1`),
+    spells: SP("rockbiter:5 magma_totem:5 searing_totem:4 stormstrike:4 fire_nova:3 lightning_shield:3"), ban: L("lightning_bolt chain_lightning earth_shock"),
+    rings: L("quick_strike dragonslayer blooddrinker accuria"), trinkets: L("earthstrike chosen lifegiving hoj"), amulets: L("leg:magma_totem leg:searing_totem fire_lord malice_stone"),
+    fr: "Hybride mêlée et totems : Arme Croque-roc et Totem de magma dès le départ, Furie-des-vents et Langue de feu sur Croque-roc, Garde-tempête tant que Bouclier de foudre est actif. Le moteur et la survie viennent de l'arbre Restauration du Chaman Totems : chaque totem posé en double, Réincarnation toutes les 2 min, Purification et Guérison ancestrale pour la vie et les dégâts subis. L'arbre Amélioration complet meurt trop vite (parties du 02/11 à Naxxramas).",
+    en: "Melee and totem hybrid: Rockbiter Weapon and Magma Totem from the start, Windfury and Flametongue on Rockbiter, Stormguard while Lightning Shield is up. The engine and survival come from the Totem Shaman's Restoration tree: every totem dropped twice, Reincarnation every 2 min, Purification and Ancestral Healing for health and damage taken. The full Enhancement tree dies too fast (runs of 11/02 in Naxxramas).",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",
