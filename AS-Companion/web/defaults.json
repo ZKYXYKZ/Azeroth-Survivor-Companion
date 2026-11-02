@@ -249,10 +249,10 @@
   "author": "AS Companion",
   "race": "tauren",
   "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Amélioration;0000000000000/5510133200000/0551135014231;rockbiter:5,magma_totem:5,searing_totem:4,stormstrike:4,fire_nova:3,lightning_shield:3;chain_lightning,earth_shock,lightning_bolt;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,chosen,lifegiving,hoj;leg:magma_totem,leg:searing_totem,fire_lord,malice_stone;50,0,1,3,20,2,1",
+  "code": "SB1;shaman;Chaman Amélioration;5533004000000/5510133313321/0000000000000;rockbiter:5,stormstrike:5,magma_totem:4,fire_nova:3,healing_wave:3,lightning_shield:2;chain_lightning,earth_shock,lightning_bolt;blooddrinker,dark_iron,dragonslayer,quick_strike;earthstrike,lifegiving,hoj,chosen;jeklik,steadfast_might,leg:rockbiter,leg:stormstrike;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Hybride mêlée et totems : Arme Croque-roc et Totem de magma dès le départ, Furie-des-vents et Langue de feu sur Croque-roc, Garde-tempête tant que Bouclier de foudre est actif. Le moteur et la survie viennent de l'arbre Restauration du Chaman Totems : chaque totem posé en double, Réincarnation toutes les 2 min, Purification et Guérison ancestrale pour la vie et les dégâts subis. L'arbre Amélioration complet meurt trop vite (parties du 02/11 à Naxxramas).",
-   "en": "Melee and totem hybrid: Rockbiter Weapon and Magma Totem from the start, Windfury and Flametongue on Rockbiter, Stormguard while Lightning Shield is up. The engine and survival come from the Totem Shaman's Restoration tree: every totem dropped twice, Reincarnation every 2 min, Purification and Ancestral Healing for health and damage taken. The full Enhancement tree dies too fast (runs of 11/02 in Naxxramas)."
+   "fr": "Spé de corps à corps : restez collé au paquet et au boss, Croque-roc et Courroux des tempêtes ne portent qu'à 10 m et Garde-tempête ne réduit les dégâts qu'avec un ennemi à moins de 7 m. La survie vient du vol de vie, qui grandit avec les dégâts : apogée (1 %), Buveur de sang et Talisman de Jeklik (3 %), plus le Médaillon de puissance inébranlable. Ne pas kiter.",
+   "en": "A melee spec: stay on the pack and the boss, Rockbiter and Stormstrike only reach 10 yd and Earthen Bulwark only cuts damage with an enemy within 7 yd. Survival comes from leech, which grows with your damage: capstone (1%), Blooddrinker and Jeklik's talisman (3%), plus the Medallion of Steadfast Might. Don't kite."
   }
  },
  {

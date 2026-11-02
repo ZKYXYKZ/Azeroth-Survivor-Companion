@@ -156,12 +156,12 @@ const builds = [
   },
   {
     class: "shaman", name: "Chaman Amélioration", race: "tauren", alt: "gnome",
-    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:2
-      tidal_focus:5 totemic_focus:5 twin_totems:1 restorative_totems:3 natures_guidance:1 tidal_mastery:5 reincarnation:1 purification:4 totemic_mastery:2 ancestral_healing:3 totemic_call:1`),
-    spells: SP("rockbiter:5 magma_totem:5 searing_totem:4 stormstrike:4 fire_nova:3 lightning_shield:3"), ban: L("lightning_bolt chain_lightning earth_shock"),
-    rings: L("quick_strike dragonslayer blooddrinker accuria"), trinkets: L("earthstrike chosen lifegiving hoj"), amulets: L("leg:magma_totem leg:searing_totem fire_lord malice_stone"),
-    fr: "Hybride mêlée et totems : Arme Croque-roc et Totem de magma dès le départ, Furie-des-vents et Langue de feu sur Croque-roc, Garde-tempête tant que Bouclier de foudre est actif. Le moteur et la survie viennent de l'arbre Restauration du Chaman Totems : chaque totem posé en double, Réincarnation toutes les 2 min, Purification et Guérison ancestrale pour la vie et les dégâts subis. L'arbre Amélioration complet meurt trop vite (parties du 02/11 à Naxxramas).",
-    en: "Melee and totem hybrid: Rockbiter Weapon and Magma Totem from the start, Windfury and Flametongue on Rockbiter, Stormguard while Lightning Shield is up. The engine and survival come from the Totem Shaman's Restoration tree: every totem dropped twice, Reincarnation every 2 min, Purification and Ancestral Healing for health and damage taken. The full Enhancement tree dies too fast (runs of 11/02 in Naxxramas).",
+    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:1 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:2 enh_stormbound_echoes:1
+      concussion:5 convection:5 earths_grasp:3 call_of_flame:3 call_of_thunder:4`),
+    spells: SP("rockbiter:5 stormstrike:5 magma_totem:4 fire_nova:3 healing_wave:3 lightning_shield:2"), ban: L("lightning_bolt chain_lightning earth_shock"),
+    rings: L("blooddrinker dark_iron dragonslayer quick_strike"), trinkets: L("earthstrike lifegiving hoj chosen"), amulets: L("jeklik steadfast_might leg:rockbiter leg:stormstrike"),
+    fr: "Spé de corps à corps : restez collé au paquet et au boss, Croque-roc et Courroux des tempêtes ne portent qu'à 10 m et Garde-tempête ne réduit les dégâts qu'avec un ennemi à moins de 7 m. La survie vient du vol de vie, qui grandit avec les dégâts : apogée (1 %), Buveur de sang et Talisman de Jeklik (3 %), plus le Médaillon de puissance inébranlable. Ne pas kiter.",
+    en: "A melee spec: stay on the pack and the boss, Rockbiter and Stormstrike only reach 10 yd and Earthen Bulwark only cuts damage with an enemy within 7 yd. Survival comes from leech, which grows with your damage: capstone (1%), Blooddrinker and Jeklik's talisman (3%), plus the Medallion of Steadfast Might. Don't kite.",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",
