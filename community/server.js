@@ -70,7 +70,7 @@ function clean(r, ip) {
     endedAt: str(r.endedAt, 40),
     jewels: Array.isArray(r.jewels) ? r.jewels.slice(0, 8).map((j) => str(j, 40)).filter((j) => j && KEY.test(j)) : [],
     amuletUps: num(r.amuletUps, 0, 50),
-    minutes: Array.isArray(r.minutes) ? r.minutes.slice(0, 120).map((m) => ({ dps: num(m && m.dps, 0, 1e12), taken: num(m && m.taken, 0, 1e12), level: num(m && m.level, 0, 500) })) : [],
+    minutes: Array.isArray(r.minutes) ? r.minutes.slice(0, 120).map((m) => ({ dps: num(m && m.dps, 0, 1e12), taken: num(m && m.taken, 0, 1e12), level: num(m && m.level, 0, 500), kills: num(m && m.kills, 0, 1e6) })) : [],
     spells: Object.create(null),
     detail: typeof r.detail === "string" && r.detail.startsWith("AZD1|") ? r.detail.slice(0, 1000000) : null,
     picks: Array.isArray(r.picks) ? r.picks.slice(0, 400).map((p) => ({ t: num(p && p.t, 0, 36000), took: str(p && p.took, 40), kind: str(p && p.kind, 20), rarity: num(p && p.rarity, 0, 10) })) : [],
@@ -78,7 +78,7 @@ function clean(r, ip) {
   if (r.spells && typeof r.spells === "object")
     for (const [k, v] of Object.entries(r.spells).slice(0, 40)) {
       const key = str(k, 40);
-      if (key && KEY.test(key) && v && typeof v === "object") run.spells[key] = { rank: num(v.rank, 0, 100), share: num(v.share, 0, 1) };
+      if (key && KEY.test(key) && v && typeof v === "object") run.spells[key] = { rank: num(v.rank, 0, 100), share: num(v.share, 0, 1), kills: num(v.kills, 0, 1e7) };
     }
   if (!run.time || run.level == null || !run.zone) return null;
   const real = (Date.parse(run.endedAt) - Date.parse(run.startedAt)) / 1000;

@@ -1004,18 +1004,25 @@ class Companion : Form
                         continue;
                     }
                     m = HitLine.Match(line);
-                    if (m.Success) { hostiles.Add(m.Groups[2].Value); AddDmg(m.Groups[1].Value, double.Parse(m.Groups[3].Value), line.Contains(" crits ")); continue; }
+                    if (m.Success) { hostiles.Add(m.Groups[2].Value); lastHit[m.Groups[2].Value] = AddDmg(m.Groups[1].Value, double.Parse(m.Groups[3].Value), line.Contains(" crits ")); continue; }
                     m = TickLine.Match(line);
-                    if (m.Success) { hostiles.Add(m.Groups[1].Value); AddDmg(m.Groups[3].Value, double.Parse(m.Groups[2].Value), false); continue; }
+                    if (m.Success) { hostiles.Add(m.Groups[1].Value); lastHit[m.Groups[1].Value] = AddDmg(m.Groups[3].Value, double.Parse(m.Groups[2].Value), false); continue; }
                     m = MeleeLine.Match(line);
-                    if (m.Success) { hostiles.Add(m.Groups[1].Value); AddDmg("Attack", double.Parse(m.Groups[2].Value), line.Contains("You crit ")); continue; }
+                    if (m.Success) { hostiles.Add(m.Groups[1].Value); lastHit[m.Groups[1].Value] = AddDmg("Attack", double.Parse(m.Groups[2].Value), line.Contains("You crit ")); continue; }
                     m = DiesLine.Match(line);
-                    if (m.Success) { hostiles.Add(m.Groups[1].Value); continue; }
+                    if (m.Success)
+                    {
+                        // le coup fatal précède la ligne de mort : le dernier sort qui a touché ce nom de mob prend la victime
+                        string by;
+                        hostiles.Add(m.Groups[1].Value);
+                        if (lastHit.TryGetValue(m.Groups[1].Value, out by)) { int k; spellKills.TryGetValue(by, out k); spellKills[by] = k + 1; lastHit.Remove(m.Groups[1].Value); }
+                        continue;
+                    }
                     m = OtherHit.Match(line);
                     int petTree;
                     if (m.Success && detectedTree < 0 && coopSize <= 1 && !hostiles.Contains(m.Groups[1].Value) && hostiles.Contains(m.Groups[2].Value) && capPets.TryGetValue(m.Groups[1].Value, out petTree)) DetectSpec(petTree, "pet " + m.Groups[1].Value);
                     if (m.Success && !hostiles.Contains(m.Groups[1].Value) && hostiles.Contains(m.Groups[2].Value) && OwnPet(m.Groups[1].Value))
-                        AddDmg("Pets", double.Parse(m.Groups[3].Value), line.Contains(" crits "));
+                        lastHit[m.Groups[2].Value] = AddDmg("Pets", double.Parse(m.Groups[3].Value), line.Contains(" crits "));
                 }
             }
         }
@@ -1025,7 +1032,9 @@ class Companion : Form
             dpsLog = DateTime.Now.AddSeconds(60);
             ResearchCombat();
             ResearchIo();
-            runMinutes.Add(new Dictionary<string, object> { { "dps", Math.Round((totalDmg - minuteDmg) / 60) }, { "taken", Math.Round(dmgTaken - minuteTaken) }, { "level", runLevel } });
+            int killsNow = spellKills.Values.Sum();
+            runMinutes.Add(new Dictionary<string, object> { { "dps", Math.Round((totalDmg - minuteDmg) / 60) }, { "taken", Math.Round(dmgTaken - minuteTaken) }, { "level", runLevel }, { "kills", killsNow - minuteKills } });
+            minuteKills = killsNow;
             minuteDmg = totalDmg;
             minuteTaken = dmgTaken;
             Log("dps " + string.Join(", ", spellDmg.OrderByDescending(kv => kv.Value).Take(6).Select(kv => kv.Key + " " + Math.Round(100 * kv.Value / totalDmg) + "%")));
@@ -1033,8 +1042,10 @@ class Companion : Form
     }
 
     DateTime dpsLog = DateTime.MinValue;
+    int minuteKills;
     static readonly Regex TakenLine = new Regex(@"^\S+ \S+\s+(.+?) (?:hits|crits) you for (\d+)", RegexOptions.Compiled);
-    Dictionary<string, int> spellHits = new Dictionary<string, int>(), spellCrits = new Dictionary<string, int>();
+    Dictionary<string, int> spellHits = new Dictionary<string, int>(), spellCrits = new Dictionary<string, int>(), spellKills = new Dictionary<string, int>();
+    Dictionary<string, string> lastHit = new Dictionary<string, string>();
     Dictionary<string, double> takenBy = new Dictionary<string, double>();
     double dmgTaken;
     string researchFile;
@@ -1046,6 +1057,8 @@ class Companion : Form
         researchFile = null;
         spellHits = new Dictionary<string, int>();
         spellCrits = new Dictionary<string, int>();
+        spellKills = new Dictionary<string, int>();
+        lastHit = new Dictionary<string, string>();
         takenBy = new Dictionary<string, double>();
         dmgTaken = 0;
         string name = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + Regex.Replace(cls ?? "hero", @"[^\w-]", "") + ".jsonl";
@@ -1076,10 +1089,10 @@ class Companion : Form
 
     void ResearchCombat()
     {
-        Research("combat", new Dictionary<string, object> { { "dmg", spellDmg.ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value)) }, { "hits", spellHits }, { "crits", spellCrits }, { "taken", Math.Round(dmgTaken) }, { "takenBy", takenBy.OrderByDescending(kv => kv.Value).Take(10).ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value)) } });
+        Research("combat", new Dictionary<string, object> { { "dmg", spellDmg.ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value)) }, { "hits", spellHits }, { "crits", spellCrits }, { "kills", spellKills }, { "taken", Math.Round(dmgTaken) }, { "takenBy", takenBy.OrderByDescending(kv => kv.Value).Take(10).ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value)) } });
     }
 
-    void AddDmg(string spellName, double dmg, bool crit)
+    string AddDmg(string spellName, double dmg, bool crit)
     {
         string key = spellName;
         string bare = Regex.Replace(spellName, " (Aura|Effect)$", "");
@@ -1101,6 +1114,7 @@ class Companion : Form
         spellHits.TryGetValue(key, out c);
         spellHits[key] = c + 1;
         if (crit) { spellCrits.TryGetValue(key, out c); spellCrits[key] = c + 1; }
+        return key;
     }
 
     double DmgShare(string key)
@@ -2085,6 +2099,9 @@ class Companion : Form
                 runLevel = 1;
                 minuteDmg = 0;
                 minuteTaken = 0;
+                minuteKills = 0;
+                spellKills = new Dictionary<string, int>();
+                lastHit = new Dictionary<string, string>();
                 build = SelectBuild(S(G(j, "class")));
                 ApplyGamePick();
                 CapSignals();
@@ -2440,7 +2457,7 @@ class Companion : Form
                 { "dps", G(r, "dps") }, { "damage", G(r, "damage") }, { "taken", G(r, "taken") },
                 { "build", BuildCode(build) },
                 { "minutes", runMinutes },
-                { "spells", spellDmg.ToDictionary(kv => kv.Key, kv => (object)new Dictionary<string, object> { { "rank", owned.ContainsKey(kv.Key) ? owned[kv.Key] : 0 }, { "share", total > 0 ? Math.Round(kv.Value / total, 4) : 0 } }) },
+                { "spells", spellDmg.ToDictionary(kv => kv.Key, kv => (object)new Dictionary<string, object> { { "rank", owned.ContainsKey(kv.Key) ? owned[kv.Key] : 0 }, { "share", total > 0 ? Math.Round(kv.Value / total, 4) : 0 }, { "kills", spellKills.ContainsKey(kv.Key) ? spellKills[kv.Key] : 0 } }) },
                 { "jewels", G(r, "jewels") }, { "amuletUps", amuletUps },
                 { "picks", runPicks }, { "downed", runDowned }
             };
@@ -2650,6 +2667,7 @@ class Companion : Form
         r["jewels"] = jewels.Keys.Concat(amulet != null ? new[] { amulet } : new string[0]).ToArray();
         r["luck"] = Math.Round(Luck());
         r["dmg"] = spellDmg.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value));
+        r["killsBy"] = spellKills.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => (object)kv.Value);
         if (recordedIndex >= 0 && recordedIndex < runs.Count && S(G(runs[recordedIndex], "result")) == "victory")
         {
             r["result"] = "victory";
