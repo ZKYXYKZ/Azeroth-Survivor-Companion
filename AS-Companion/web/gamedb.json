@@ -993,7 +993,7 @@
   "rockbiter": {
    "spell": 8017,
    "dmg": 132,
-   "cd": 1.35714,
+   "cd": 1.57143,
    "range": 10,
    "radius": 0,
    "targets": 2,

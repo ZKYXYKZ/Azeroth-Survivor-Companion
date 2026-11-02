@@ -241,10 +241,10 @@
   "author": "AS Companion",
   "race": "orc",
   "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Élémentaire;5530155015231/0502000000000/0503000000000;chain_lightning:5,lightning_bolt:5,earth_shock:3,frost_shock:3,flame_shock:3,searing_totem:2;fire_nova,healing_wave,lightning_shield;accuria,dragonslayer,quick_strike,spell_power;chosen,blackhand,earthstrike,hoj;leg:chain_lightning,leg:lightning_bolt,onyxia_tooth,malice_stone;50,0,1,3,20,2,1",
+  "code": "SB1;shaman;Chaman Élémentaire;5530155015231/0502000000000/0503000000000;chain_lightning:5,lightning_bolt:5,earth_shock:3,frost_shock:3,flame_shock:3,lightning_shield:3;fire_nova,healing_wave,searing_totem;accuria,dragonslayer,quick_strike,spell_power;chosen,blackhand,earthstrike,hoj;leg:chain_lightning,leg:lightning_bolt,onyxia_tooth,malice_stone;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Étreinte de la terre et Rempart terrestre réduisent les dégâts subis, surtout quand les ennemis arrivent au contact.",
-   "en": "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Earthen Bulwark cut damage taken, most of all once enemies reach melee range."
+   "fr": "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Étreinte de la terre et Garde-tempête réduisent les dégâts subis, Bouclier de foudre actif.",
+   "en": "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Stormguard cut damage taken while Lightning Shield is up."
   }
  },
  {
@@ -257,10 +257,10 @@
   "author": "AS Companion",
   "race": "orc",
   "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Amélioration;5532002000000/5503133313331/0000000000000;stormstrike:5,rockbiter:5,fire_nova:4,frost_shock:4,flame_shock:3,earth_shock:3;chain_lightning,lightning_bolt,lightning_shield;accuria,dragonslayer,quick_strike,blooddrinker;chosen,earthstrike,hoj,blackhand;leg:stormstrike,leg:rockbiter,leg:fire_nova,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;shaman;Chaman Amélioration;5531000000000/5533133313331/0000000000000;rockbiter:5,stormstrike:5,fire_nova:4,lightning_shield:4,flame_shock:3,frost_shock:3;chain_lightning,healing_wave,lightning_bolt;accuria,dragonslayer,quick_strike,blooddrinker;chosen,earthstrike,hoj,blackhand;leg:rockbiter,leg:stormstrike,leg:fire_nova,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Spé de mêlée de la 0.134 : Arme Croque-roc dès le départ et Courroux des tempêtes, Furie-des-vents pour les frappes en plus, Langue de feu pour les Novas de feu gratuites, Givrefeu pour les Horions de givre. Rempart terrestre et Étreinte de la terre tiennent le corps à corps. Build de départ, à ajuster avec les premières parties.",
-   "en": "The melee spec from 0.134: Rockbiter Weapon from the start plus Stormstrike, Windfury for extra strikes, Flametongue for free Fire Novas, Frostbrand for Frost Shocks. Earthen Bulwark and Earth's Grasp hold melee range. A starting build, to adjust with the first runs."
+   "fr": "Spé de mêlée refaite en 0.137 : Arme Croque-roc et Courroux des tempêtes dès le départ, Furie-des-vents dont les frappes relancent tous les effets, Novas de feu et Horions de givre gratuits. Bouclier de foudre à garder actif pour Garde-tempête (15 % de dégâts en moins). Build de départ, à ajuster avec les premières parties.",
+   "en": "The melee spec remade in 0.137: Rockbiter Weapon and Stormstrike from the start, Windfury strikes that set off every proc, free Fire Novas and Frost Shocks. Keep Lightning Shield up for Stormguard (15% less damage). A starting build, to adjust with the first runs."
   }
  },
  {

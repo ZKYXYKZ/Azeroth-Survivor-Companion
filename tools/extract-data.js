@@ -58,8 +58,8 @@ const floatsOf = (off) => {
 };
 const perRank = (effOff, tag, desc) => {
   if (!/\{v\}/.test(desc)) return null;
-  if (tag === 0x2b) return { v: buf.readFloatLE(effOff + 4), pct: /\{v\}%/.test(desc) };
-  if (tag === 0x2c) return { v: buf.readFloatLE(effOff + 32), pct: /\{v\}%/.test(desc) };
+  if (tag === 0x2f) return { v: buf.readFloatLE(effOff + 4), pct: /\{v\}%/.test(desc) };
+  if (tag === 0x30) return { v: buf.readFloatLE(effOff + 32), pct: /\{v\}%/.test(desc) };
   if (tag === 0x2a) return null; // effet code en dur dans le jeu, valeur absente des donnees
   if (tag === 1 || /\{v\}(th|st|nd|rd)\b/.test(desc)) return { v: buf.readUInt32LE(effOff + 4), pct: false, flat: true };
   const fl = floatsOf(effOff);
@@ -75,6 +75,8 @@ const perRank = (effOff, tag, desc) => {
   return f ? { v: f.v, pct: false } : null;
 };
 
+// Effets codes en dur dans le jeu (etiquette 0x2a) : valeurs par rang des notes de la 0.137
+const HARD_V = { enh_earthen_bulwark: 3, enh_resonant_shocks: 1, enh_flametongue_weapon: 5, enh_frostbrand_weapon: 10, enh_flurry: 6 };
 const classes = [];
 let t = 0;
 for (const [cls, trees, nSpells] of CLASSES) {
@@ -97,7 +99,8 @@ for (const [cls, trees, nSpells] of CLASSES) {
       if (pre && /^[a-z0-9_]+$/.test(pre)) tal.req = pre;
       if (/^Milestone\./.test(desc)) tal.milestone = true;
       if (/^Capstone\./.test(desc)) tal.capstone = true;
-      if (key === "enh_earthen_bulwark") tal.v = 2; // effet code en dur, 2/4/6/8/10 % d'apres les notes de la 0.135
+      if (HARD_V[key] !== undefined) tal.v = HARD_V[key];
+      for (const l of ["en", "fr"]) tal.desc[l] = tal.desc[l].split("{v2}").join("10/20/30");
       if (val) {
         let v = val.pct ? val.v * 100 : val.v;
         v = Math.round(v * 1000) / 1000;
@@ -151,7 +154,7 @@ const jewel = (o, prefix) => {
 };
 const rt = ringsTrinkets.items.map((o) => jewel(o, "jewel."));
 const data = {
-  version: "0.135.1",
+  version: "0.139.0",
   rarity: [0, 1, 2, 3, 4].map((i) => tr("rarity." + i)),
   classes,
   racials,

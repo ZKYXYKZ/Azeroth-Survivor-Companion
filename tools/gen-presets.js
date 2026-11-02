@@ -149,19 +149,19 @@ const builds = [
     class: "shaman", name: "Chaman Élémentaire", race: "orc", alt: "gnome",
     talents: T(`concussion:5 convection:5 earths_grasp:3 lightning_overload:1 reverberation:5 call_of_thunder:5 elemental_fury:1 lightning_mastery:5 elemental_devastation:3 storm_reach:2 elemental_mastery:1
       enh_earthen_bulwark:5 enh_shattering_elements:2 tidal_focus:5 natures_guidance:3`),
-    spells: SP("chain_lightning:5 lightning_bolt:5 earth_shock:3 frost_shock:3 flame_shock:3 searing_totem:2"), ban: L("healing_wave lightning_shield fire_nova"),
+    spells: SP("chain_lightning:5 lightning_bolt:5 earth_shock:3 frost_shock:3 flame_shock:3 lightning_shield:3"), ban: L("healing_wave searing_totem fire_nova"),
     rings: L("accuria dragonslayer quick_strike spell_power"), trinkets: L("chosen blackhand earthstrike hoj"), amulets: L("leg:chain_lightning leg:lightning_bolt onyxia_tooth malice_stone"),
-    fr: "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Étreinte de la terre et Rempart terrestre réduisent les dégâts subis, surtout quand les ennemis arrivent au contact.",
-    en: "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Earthen Bulwark cut damage taken, most of all once enemies reach melee range.",
+    fr: "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Étreinte de la terre et Garde-tempête réduisent les dégâts subis, Bouclier de foudre actif.",
+    en: "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Stormguard cut damage taken while Lightning Shield is up.",
   },
   {
     class: "shaman", name: "Chaman Amélioration", race: "orc", alt: "gnome",
-    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_shattering_elements:3 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:3 enh_stormbound_echoes:1
-      concussion:5 convection:5 earths_grasp:3 call_of_flame:2 call_of_thunder:2`),
-    spells: SP("stormstrike:5 rockbiter:5 fire_nova:4 frost_shock:4 flame_shock:3 earth_shock:3"), ban: L("lightning_bolt chain_lightning lightning_shield"),
-    rings: L("accuria dragonslayer quick_strike blooddrinker"), trinkets: L("chosen earthstrike hoj blackhand"), amulets: L("leg:stormstrike leg:rockbiter leg:fire_nova onyxia_tooth"),
-    fr: "Spé de mêlée de la 0.134 : Arme Croque-roc dès le départ et Courroux des tempêtes, Furie-des-vents pour les frappes en plus, Langue de feu pour les Novas de feu gratuites, Givrefeu pour les Horions de givre. Rempart terrestre et Étreinte de la terre tiennent le corps à corps. Build de départ, à ajuster avec les premières parties.",
-    en: "The melee spec from 0.134: Rockbiter Weapon from the start plus Stormstrike, Windfury for extra strikes, Flametongue for free Fire Novas, Frostbrand for Frost Shocks. Earthen Bulwark and Earth's Grasp hold melee range. A starting build, to adjust with the first runs.",
+    talents: T(`enh_thundering_strikes:5 enh_earthen_bulwark:5 enh_resonant_shocks:3 enh_shattering_elements:3 rockbiter_initiation:1 enh_windfury_weapon:3 enh_flametongue_weapon:3 enh_frostbrand_weapon:3 enh_unleashed_weapons:1 enh_ancestral_fortitude:3 enh_flurry:3 enh_sweeping_storm:3 enh_stormbound_echoes:1
+      concussion:5 convection:5 earths_grasp:3 call_of_flame:1`),
+    spells: SP("rockbiter:5 stormstrike:5 fire_nova:4 lightning_shield:4 flame_shock:3 frost_shock:3"), ban: L("lightning_bolt chain_lightning healing_wave"),
+    rings: L("accuria dragonslayer quick_strike blooddrinker"), trinkets: L("chosen earthstrike hoj blackhand"), amulets: L("leg:rockbiter leg:stormstrike leg:fire_nova onyxia_tooth"),
+    fr: "Spé de mêlée refaite en 0.137 : Arme Croque-roc et Courroux des tempêtes dès le départ, Furie-des-vents dont les frappes relancent tous les effets, Novas de feu et Horions de givre gratuits. Bouclier de foudre à garder actif pour Garde-tempête (15 % de dégâts en moins). Build de départ, à ajuster avec les premières parties.",
+    en: "The melee spec remade in 0.137: Rockbiter Weapon and Stormstrike from the start, Windfury strikes that set off every proc, free Fire Novas and Frost Shocks. Keep Lightning Shield up for Stormguard (15% less damage). A starting build, to adjust with the first runs.",
   },
   {
     class: "shaman", name: "Chaman Totems", race: "tauren", alt: "",

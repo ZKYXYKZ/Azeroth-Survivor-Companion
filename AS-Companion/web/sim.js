@@ -48,8 +48,10 @@ const MILESTONES = {
   sweeping_strikes: { splash: { cleave: 1.4, mortal_strike: 1.4, execute: 1.4 } }, flurry: { mult: { whirlwind: 1.4, bloodthirst: 1.4 } }, rampage: { proc: true },
   deep_wounds: { critBleed: 0.8 }, ignite: { critBleed: 0.8 }, blood_frenzy: { critBleed: 1 }, hot_streak: { critProc: { spell: "pyroblast", school: "Fire", every: 4, max: 2 } }, splitting_ice: { splash: { frostbolt: 2 } },
   arcane_concentration: { proc: true }, presence_of_mind: { mult: { arcane_missiles: 1.4 } }, lightning_overload: { mult: { lightning_bolt: 1.4, chain_lightning: 1.4 } },
-  elemental_fury: { chainJumps: 3 }, enh_unleashed_weapons: { mult: { rockbiter: 1.11, stormstrike: 1.11 } },
-  enh_windfury_weapon: { proc: true }, enh_flametongue_weapon: { proc: true }, enh_frostbrand_weapon: { proc: true }, enh_flurry: { proc: true }, enh_ancestral_fortitude: { proc: true },
+  elemental_fury: { chainJumps: 3 }, enh_unleashed_weapons: { mult: { rockbiter: 1.1, stormstrike: 1.1, fire_nova: 1.1, flame_shock: 1.1, frost_shock: 1, chain_lightning: 1.1, lightning_bolt: 1.1 } },
+  // Valeurs au rang 3 (notes 0.137) : 15 % par Croque-roc de 2,2 s, 30 % par Courroux de 8,5 s
+  enh_flametongue_weapon: { extra: { fire_nova: 15 } }, enh_frostbrand_weapon: { extra: { frost_shock: 28 } },
+  enh_windfury_weapon: { proc: true }, enh_flurry: { proc: true }, enh_ancestral_fortitude: { proc: true }, enh_resonant_shocks: { proc: true },
   blade_flurry_talent: { splash: { sinister_strike: 0.5, eviscerate: 0.5 } }, mutilate: { mult: { sinister_strike: 1.5, backstab: 1.5 } }, deadly_poison: { critBleed: 0.4 },
   piercing_shots: { mult: { auto_shot: 1.8 } }, rapid_fire: { proc: true }, frenzy_hunter: { pet: true }, tame_beast: { pet: true }, explosive_ammo: { kills: { spells: ["auto_shot", "multi_shot"], r: 6 } },
   seal_of_command: { splash: { judgement: 2 * 0.5 } }, art_of_war: { proc: true }, divine_favor: { proc: true }, daybreak: { proc: true }, hallowed_ground: { proc: true }, ardent_defender: { dmg: 10 },
@@ -664,6 +666,7 @@ function mcStartSpells(sc) {
       if (drop) out.delete(drop.key);
       if (add) out.add(add.key);
     }
+  if (sc.talents.enh_stormbound_echoes) out.add("stormstrike");
   return [...out];
 }
 

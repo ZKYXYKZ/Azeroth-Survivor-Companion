@@ -206,6 +206,13 @@ module.exports = function makeEmu(exePath) {
             break;
           }
           const target = Number(ins.nearBranch64);
+          // Fonctions pures a executer vraiment plutot qu'a simuler
+          if (opts.follow && opts.follow.has(target)) {
+            depth.push(next);
+            regs[Register.RSP] -= 8n;
+            jumped = target;
+            break;
+          }
           const h = opts.calls && opts.calls[target];
           if (!h) throw new Error("call 0x" + target.toString(16) + " at 0x" + ip.toString(16));
           h(api);
