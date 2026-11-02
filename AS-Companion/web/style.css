@@ -255,3 +255,7 @@ header { flex: none; }
 .switch input:checked + .knob::after { left: 18px; background: #1a1a1f; }
 .switch.off { opacity: .5; cursor: default; }
 .subnav { padding: 0 0 12px; }
+
+.stalebanner { padding: 8px 10px; margin-bottom: 10px; border: 1px solid #f0b429; border-radius: 6px; color: #f0b429; }
+.badge2.stale { color: #f0b429; border-color: #f0b429; }
+#presetBtn.stalebtn { border-color: #f0b429; color: #f0b429; }

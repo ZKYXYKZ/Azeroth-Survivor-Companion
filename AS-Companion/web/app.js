@@ -26,7 +26,7 @@ const STR = {
     needAddon: "L'addon SurvivorsBuilds n'est pas installé : il affiche le build en jeu et enregistre le détail de vos parties pour le simulateur et les statistiques.", needAddonOn: "L'addon SurvivorsBuilds est désactivé : il affiche le build en jeu et enregistre le détail de vos parties pour le simulateur et les statistiques.", needAddonInstall: "Installer", needAddonEnable: "Activer",
     shareNotice: "Vos parties, anonymes, améliorent le compagnon. Désactivable dans les options.", shareNoticeOk: "Compris",
     share: "Partager mes parties", shareHelp: "Vos parties améliorent ce compagnon : les builds proposés, le simulateur et les statistiques par classe et par race. À la fin de chaque partie, un résumé anonyme part vers le site communautaire : classe, race, spé, zone, résultat, durée, niveau, DPS et dégâts subis minute par minute, sorts, bijoux, cartes prises et build. Ni pseudo, ni chemin, ni adresse : seulement un identifiant aléatoire propre à cette installation.",
-    presets: "Builds proposés", presetsTitle: "Builds proposés : {c}", presetAdd: "Ajouter", presetHave: "Déjà ajouté", by: "par {v}",
+    presetStale: "Mis à jour", presetReimport: "Réimporter", presetBanner: "Des builds proposés ont changé depuis ton import : réimporte ceux marqués « Mis à jour ».", presets: "Builds proposés", presetsTitle: "Builds proposés : {c}", presetAdd: "Ajouter", presetHave: "Déjà ajouté", by: "par {v}",
     report: "Créer un rapport", reportLabel: "Rapport de bug", reportHelp: "Rassemble dans un zip le journal du compagnon, tes dernières parties et tes réglages, puis ouvre le dossier. Envoie ce fichier avec la description du problème.", reportDone: "Rapport créé : {v}",
     noGame: "Jeu introuvable : indiquez où se trouve AzerothSurvivors.exe.", addonsUpdated: "Addons mis à jour : {v}. Ils prennent effet au prochain lancement du jeu.", autoAddons: "Mise à jour auto des addons", autoAddonsHelp: "Au démarrage puis toutes les 30 minutes, hors partie, les addons installés sont mis à jour depuis la dernière version publiée sur GitHub.", stage_download: "Téléchargement de la version {v}…", stage_verify: "Vérification du fichier…", stage_install: "Installation des addons et du compagnon…", stage_restart: "Redémarrage du compagnon…", updated: "Mis à jour en version {v}", updateAvail: "Mise à jour {v} disponible", updateBtn: "Mettre à jour", updating: "Mise à jour en cours…", version: "Version", checkUpdate: "Rechercher une mise à jour", upToDate: "À jour", down: "Le compagnon ne répond plus : relancez ASCompanion.exe. Si ça recommence, envoyez %APPDATA%\\AS-Companion\\companion.log.", renamePrompt: "Nouveau nom du build", saved: "Enregistré", gameOff: "Jeu fermé", advice: "Conseil",
   },
@@ -51,7 +51,7 @@ const STR = {
     needAddon: "The SurvivorsBuilds addon isn't installed: it shows the build in game and records the details of your runs for the simulator and the stats.", needAddonOn: "The SurvivorsBuilds addon is disabled: it shows the build in game and records the details of your runs for the simulator and the stats.", needAddonInstall: "Install", needAddonEnable: "Enable",
     shareNotice: "Your runs, anonymous, improve the companion. You can turn this off in the options.", shareNoticeOk: "Got it",
     share: "Share my runs", shareHelp: "Your runs improve this companion: the suggested builds, the simulator and the stats per class and race. At the end of each run, an anonymous summary goes to the community site: class, race, spec, zone, result, duration, level, DPS and damage taken minute by minute, spells, jewelry, picked cards and build. No player name, path or address: only a random ID tied to this install.",
-    presets: "Suggested builds", presetsTitle: "Suggested builds: {c}", presetAdd: "Add", presetHave: "Already added", by: "by {v}",
+    presetStale: "Updated", presetReimport: "Re-import", presetBanner: "Some suggested builds changed since you imported them: re-import the ones marked “Updated”.", presets: "Suggested builds", presetsTitle: "Suggested builds: {c}", presetAdd: "Add", presetHave: "Already added", by: "by {v}",
     report: "Create a report", reportLabel: "Bug report", reportHelp: "Zips the companion log, your latest runs and your settings, then opens the folder. Send this file with a description of the problem.", reportDone: "Report created: {v}",
     noGame: "Game not found: show where AzerothSurvivors.exe is.", addonsUpdated: "Addons updated: {v}. They apply at the next game launch.", autoAddons: "Auto-update addons", autoAddonsHelp: "At startup and every 30 minutes, outside a run, the installed addons are updated from the latest version published on GitHub.", stage_download: "Downloading version {v}…", stage_verify: "Checking the file…", stage_install: "Installing the addons and the companion…", stage_restart: "Restarting the companion…", updated: "Updated to version {v}", updateAvail: "Update {v} available", updateBtn: "Update", updating: "Updating…", version: "Version", checkUpdate: "Check for updates", upToDate: "Up to date", down: "The companion is not responding: restart ASCompanion.exe. If it happens again, send %APPDATA%\\AS-Companion\\companion.log.", renamePrompt: "New build name", saved: "Saved", gameOff: "Game closed", advice: "Advice",
   },
@@ -462,22 +462,38 @@ function decode(text) {
   return b;
 }
 
+// Build importe d'une suggestion (meme nom) dont le code a change depuis : a reimporter
+function stalePreset(p) {
+  const nm = p.names ? L(p.names) : p.name;
+  const old = builds(p.class).find((b) => b.name === nm || b.name === p.name);
+  return old && encode(Object.assign({}, old, { name: p.name })) !== p.code ? old : null;
+}
+
 function showPresets() {
   $("presetTitle").textContent = T("presetsTitle", { c: L(cls(CLASS).name) });
   $("presetClose").textContent = T("close");
   const list = $("presetList");
   list.innerHTML = "";
+  if (PRESETS.some((p) => p.class === CLASS && stalePreset(p))) list.appendChild(el("div", "stalebanner", esc(T("presetBanner"))));
   PRESETS.filter((p) => p.class === CLASS).forEach((p) => {
     const item = el("div", "preset");
     const head = el("div", "row");
     head.appendChild(el("b", "", esc(p.names ? L(p.names) : p.name)));
     if (p.author) head.appendChild(el("span", "hint", esc(T("by", { v: p.author }))));
     const have = builds(CLASS).some((b) => encode(Object.assign({}, b, { name: p.name })) === p.code);
-    const add = el("button", "small" + (have ? "" : " primary"), esc(have ? T("presetHave") : T("presetAdd")));
+    const stale = !have && stalePreset(p);
+    if (stale) head.appendChild(el("span", "badge2 stale", esc(T("presetStale"))));
+    const add = el("button", "small" + (have ? "" : " primary"), esc(have ? T("presetHave") : stale ? T("presetReimport") : T("presetAdd")));
     add.disabled = have;
     add.onclick = () => {
-      const b = decode(p.code);
+      let b = decode(p.code);
       if (!b) return alert(T("bad"));
+      if (stale) {
+        STATE.builds.splice(STATE.builds.indexOf(b), 1);
+        const id = stale.id;
+        b = Object.assign(stale, b, { id });
+        STATE.active[p.class] = id;
+      }
       b.name = p.names ? L(p.names) : p.name;
       if (p.race) b.race = p.race;
       if (p.raceAlt) b.raceAlt = p.raceAlt;
@@ -520,6 +536,9 @@ function renderHeader() {
   bs.disabled = !b;
   [["newBtn", "new"], ["dupBtn", "dup"], ["renBtn", "ren"], ["delBtn", "del"], ["impBtn", "imp"], ["expBtn", "exp"], ["presetBtn", "presets"]].forEach(([id, k]) => ($(id).textContent = T(k)));
   $("presetBtn").classList.toggle("hidden", !PRESETS.some((p) => p.class === CLASS));
+  const nStale = PRESETS.filter((p) => p.class === CLASS && stalePreset(p)).length;
+  $("presetBtn").classList.toggle("stalebtn", nStale > 0);
+  if (nStale) $("presetBtn").textContent += " (!)";
   const pages = $("pages");
   pages.innerHTML = "";
   ["builds", "stats", "sim", "addons", "options"].forEach((p) => {
