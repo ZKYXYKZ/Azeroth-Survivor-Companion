@@ -37,7 +37,7 @@ const RACE_FX = {
 };
 const CAPSTONES = {
   bladestorm: { extra: { whirlwind: 3 } }, killing_spree: { extra: { sinister_strike: 3 }, targets: { sinister_strike: 1 } },
-  elemental_mastery: { extra: { chain_lightning: 3 } }, lights_grace: { extra: { holy_wrath: 14 } }, wyvern_sting: { extra: { explosive_trap: 5 } },
+  elemental_mastery: { extra: { chain_lightning: 3 } }, lights_grace: { extra: { holy_wrath: 14 } }, wyvern_sting: { extra: { immolation_trap: 5 } },
   totemic_call: { extra: { searing_totem: 14 } }, rain_of_chaos: { extra: { rain_of_fire: 13 } }, water_elemental: { extra: { frost_nova: 8 }, pet: true },
   arcane_power: { echo: 20 }, kill_shot: { spellCd: { aimed_shot: 15 } }, divine_storm: { splash: { exorcism: 0.5 } }, chastise: { targets: { smite: 1 }, critProc: { spell: "holy_nova", from: "smite", perCast: true, every: 1, max: 99 } },
   bestial_wrath: { pet: true }, force_of_nature: { pet: true }, enh_stormbound_echoes: { proc: true }, butcher: { pet: true }, pact_of_the_annihilan: { pet: true },

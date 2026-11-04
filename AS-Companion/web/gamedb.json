@@ -167,7 +167,7 @@
   },
   "consecration": {
    "spell": 26573,
-   "dmg": 96,
+   "dmg": 144,
    "cd": 8,
    "range": 0,
    "radius": 8,
@@ -420,6 +420,21 @@
    "effectDur": 0,
    "flags": 514
   },
+  "kill_command": {
+   "spell": 883,
+   "dmg": 67,
+   "cd": 8.57143,
+   "range": 35,
+   "radius": 0,
+   "targets": 0,
+   "dur": 0,
+   "ticks": 0,
+   "speed": 0,
+   "effect": 0,
+   "effectValue": 0,
+   "effectDur": 0,
+   "flags": 3072
+  },
   "concussive_shot": {
    "spell": 5116,
    "dmg": 17,
@@ -499,7 +514,7 @@
    "spell": 1752,
    "dmg": 35,
    "cd": 1,
-   "range": 7,
+   "range": 8,
    "radius": 0,
    "targets": 2,
    "dur": 0,
@@ -559,7 +574,7 @@
    "spell": 408,
    "dmg": 25,
    "cd": 6,
-   "range": 7,
+   "range": 8,
    "radius": 0,
    "targets": 2,
    "dur": 0,
@@ -574,7 +589,7 @@
    "spell": 1776,
    "dmg": 25.5,
    "cd": 5,
-   "range": 7,
+   "range": 8,
    "radius": 0,
    "targets": 3,
    "dur": 0,
@@ -589,7 +604,7 @@
    "spell": 14278,
    "dmg": 46,
    "cd": 4,
-   "range": 7,
+   "range": 8,
    "radius": 0,
    "targets": 1,
    "dur": 0,
@@ -619,7 +634,7 @@
    "spell": 53,
    "dmg": 55.5,
    "cd": 1.8,
-   "range": 7,
+   "range": 8,
    "radius": 0,
    "targets": 2,
    "dur": 0,
@@ -692,7 +707,7 @@
   },
   "mind_blast": {
    "spell": 8092,
-   "dmg": 93,
+   "dmg": 131.429,
    "cd": 4,
    "range": 28,
    "radius": 0,
@@ -992,7 +1007,7 @@
   },
   "rockbiter": {
    "spell": 8017,
-   "dmg": 132,
+   "dmg": 66,
    "cd": 1.57143,
    "range": 10,
    "radius": 0,
@@ -3712,6 +3727,182 @@
     }
    ]
   },
+  "scholomance": {
+   "name": "Scholomance",
+   "subtitle": "The Great Ossuary",
+   "diff": 4,
+   "growth": 0.28,
+   "length": 46,
+   "enemies": [
+    {
+     "id": 10481,
+     "model": 10975,
+     "weight": 17,
+     "size": 1,
+     "kind": 6,
+     "hp": 30,
+     "dmg": 5,
+     "speed": 1.6,
+     "xp": 5.2,
+     "at": 0
+    },
+    {
+     "id": 10678,
+     "model": 10007,
+     "weight": 17,
+     "size": 0.45,
+     "kind": 2,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "xp": 7.8,
+     "at": 0.5
+    },
+    {
+     "id": 10485,
+     "model": 9786,
+     "weight": 16,
+     "size": 1,
+     "kind": 6,
+     "hp": 36,
+     "dmg": 6,
+     "speed": 1.7,
+     "xp": 5.6,
+     "at": 1.2
+    },
+    {
+     "id": 10475,
+     "model": 11135,
+     "weight": 19,
+     "size": 1,
+     "kind": 7,
+     "hp": 38,
+     "dmg": 8,
+     "speed": 3.2,
+     "xp": 5,
+     "at": 2
+    },
+    {
+     "id": 10491,
+     "model": 11397,
+     "weight": 16,
+     "size": 1.3,
+     "kind": 6,
+     "hp": 900,
+     "dmg": 28,
+     "speed": 2,
+     "xp": 5.6,
+     "at": 4
+    },
+    {
+     "id": 10495,
+     "model": 519,
+     "weight": 14,
+     "size": 0.85,
+     "kind": 6,
+     "hp": 1100,
+     "dmg": 30,
+     "speed": 2.4,
+     "xp": 4.8,
+     "at": 4
+    },
+    {
+     "id": 10488,
+     "model": 12074,
+     "weight": 15,
+     "size": 1.5,
+     "kind": 6,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "xp": 4.5,
+     "at": null
+    },
+    {
+     "id": 11551,
+     "model": 11178,
+     "weight": 10,
+     "size": 0.7,
+     "kind": 6,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "xp": 4.5,
+     "at": null
+    },
+    {
+     "id": 10498,
+     "model": 3942,
+     "weight": 14,
+     "size": 1.3,
+     "kind": 6,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "xp": 4.5,
+     "at": null
+    },
+    {
+     "id": 11582,
+     "model": 11129,
+     "weight": 25,
+     "size": 1.4,
+     "kind": 7,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "xp": 4.5,
+     "at": null
+    }
+   ],
+   "bosses": [
+    {
+     "id": 10506,
+     "name": "Kirtonos the Herald",
+     "scale": 2.7,
+     "at": 4,
+     "hp": 8480,
+     "dmg": 27,
+     "atk": 6
+    },
+    {
+     "id": 10508,
+     "name": "Ras Frostwhisper",
+     "scale": 1.6,
+     "at": 8,
+     "hp": 10650,
+     "dmg": 35,
+     "atk": 6
+    },
+    {
+     "id": 11261,
+     "name": "Doctor Theolen Krastinov",
+     "scale": 3,
+     "at": 12,
+     "hp": 20430,
+     "dmg": 44,
+     "atk": 6
+    },
+    {
+     "id": 10504,
+     "name": "Lord Alexei Barov",
+     "scale": 3,
+     "at": 16,
+     "hp": 30430,
+     "dmg": 52,
+     "atk": 6
+    },
+    {
+     "id": 1853,
+     "name": "Darkmaster Gandling",
+     "scale": 4,
+     "at": 20,
+     "hp": 60870,
+     "dmg": 64,
+     "atk": 6
+    }
+   ]
+  },
   "aq": {
    "name": "Gates of Ahn'Qiraj",
    "subtitle": "The Old God Stirs",
@@ -4220,7 +4411,7 @@
     "multi_shot",
     "serpent_sting",
     "volley",
-    "explosive_trap",
+    "kill_command",
     "concussive_shot",
     "aimed_shot",
     "immolation_trap",

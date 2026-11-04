@@ -77,7 +77,7 @@ const builds = [
     class: "hunter", name: "Chasseur Précision", race: "troll", alt: "gnome",
     talents: T(`lethal_shots:5 efficiency:5 piercing_shots:1 mortal_shots:5 ranged_spec:5 imp_multi_shot:2 rapid_fire:1 barrage:3 scatter_shot:3 kill_shot:1
       imp_hawk:5 imp_monkey:3 pathfinding:2 tame_beast:1 unleashed_fury:4 ferocity_hunter:5`),
-    spells: SP("aimed_shot:5 auto_shot:5 multi_shot:4 volley:3 hunters_mark:3 arcane_shot:2"), ban: L("frost_trap immolation_trap explosive_trap"),
+    spells: SP("aimed_shot:5 auto_shot:5 multi_shot:4 volley:3 hunters_mark:3 arcane_shot:2"), ban: L("frost_trap immolation_trap concussive_shot"),
     rings: L("accuria dragonslayer quick_strike spell_power"), trinkets: L("chosen blackhand earthstrike hoj"), amulets: L("leg:aimed_shot leg:auto_shot onyxia_tooth malice_stone"),
     fr: "Visée dès le départ, relancée à chaque victime, et une Visée gratuite tous les 6 tirs. Tir automatique perce. Le loup de Maîtrise des bêtes vient en renfort.",
     en: "Aimed Shot from the start, reset on kills, and a free Aimed Shot every 6th shot. Auto Shot pierces. The Beast Mastery wolf helps out.",
@@ -86,8 +86,8 @@ const builds = [
     class: "hunter", name: "Chasseur Survie", race: "tauren", alt: "",
     talents: T(`monster_slaying:5 deflection_hunter:2 clever_traps:3 survivalist:2 entrapment:1 savage_strikes:3 trap_mastery:3 surefooted:2 explosive_ammo:1 killer_instinct:3 lightning_reflexes:5 wyvern_sting:1
       imp_hawk:5 imp_monkey:3 pathfinding:2 tame_beast:1 unleashed_fury:4 ferocity_hunter:5`),
-    spells: SP("explosive_trap:5 immolation_trap:4 frost_trap:4 multi_shot:4 auto_shot:3 volley:3"), ban: L("aimed_shot concussive_shot arcane_shot"),
-    rings: L("accuria spell_power quick_strike seal_damned"), trinkets: L("chosen earthstrike tep hoj"), amulets: L("leg:explosive_trap fire_lord leg:immolation_trap malice_stone"),
+    spells: SP("immolation_trap:5 frost_trap:4 kill_command:4 multi_shot:4 auto_shot:3 volley:3"), ban: L("aimed_shot concussive_shot arcane_shot"),
+    rings: L("accuria spell_power quick_strike seal_damned"), trinkets: L("chosen earthstrike tep hoj"), amulets: L("leg:immolation_trap fire_lord malice_stone onyxia_tooth"),
     fr: "Pièges à vos pieds : on se bat au contact, d'où la Tauren et ses points de vie. Moins de dégâts que Maîtrise des bêtes dans nos essais, à réserver aux zones faciles.",
     en: "Traps at your feet: you fight in melee range, hence Tauren and its health. Less damage than Beast Mastery in our tests, best kept for easy zones.",
   },

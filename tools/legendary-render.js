@@ -6,10 +6,10 @@ const P = load(exe);
 const { buf, str } = P;
 const leg = JSON.parse(fs.readFileSync(legJson, "utf8"));
 const L = { en: JSON.parse(fs.readFileSync(path.join(locDir, "loc-1.json"), "utf8")), fr: JSON.parse(fs.readFileSync(path.join(locDir, "loc-7.json"), "utf8")) };
-const ABIL = 0x7322758; // 0x7105910 en 0.135.1
+const ABIL = 0x73a26d8; // 0x7105910 en 0.135.1, 0x7322758 en 0.139
 const abil = {};
 const bySpellId = {};
-for (let i = 0; i < 114; i++) {
+for (let i = 0; i < 115; i++) { // 114 en 0.139
   const o = ABIL + i * 120;
   const key = str(o, 40);
   abil[key] = { key, spell: buf.readUInt32LE(o + 64), kind: buf[o + 0x75], sub: buf.readUInt32LE(o + 0x68) };
@@ -38,6 +38,8 @@ const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function render(lang, hex, ownerKey) {
   const b = Buffer.from(hex, "hex");
+  // 0.141 : etiquettes 0x0f a 0x3a = celles de 0.139 + 12, stats 0x48/0x49 (0x2f/0x30 en 0.139). Charges utiles
+  // deplacees : cible des coups ({hits}) en +8 (sort en +0x10/+0x18), valeurs apres. Fonction de redaction 0x1460655f8.
   const tag = b[0];
   const f = (o) => b.readFloatLE(o);
   const u = (o) => b.readUInt32LE(o);
@@ -48,8 +50,9 @@ function render(lang, hex, ownerKey) {
     }
     return t(lang, "your hits");
   };
+  const who = (o) => spellName(lang, (b[o] === 1 && keyAt(b, o + 8)) || ownerKey);
   switch (tag) {
-    case 0x30: { // 0x2c en 0.135.1
+    case 0x49: { // 0x30 en 0.139, 0x2c en 0.135.1
       const k = b[8] === 1 ? keyAt(b, 0x10) : null;
       const who = k ? spellName(lang, k) : "";
       const v = f(0x20);
@@ -67,90 +70,95 @@ function render(lang, hex, ownerKey) {
       if (stat === 4) return t(lang, "{who}: +{v} duration", { who, v: pct(v) });
       if (stat === 5) return t(lang, "{who}: +{v} of max health as damage", { who, v: pct(v) });
       if (stat === 6) return t(lang, "{who}: +{v} proc rate", { who, v: pct(v) });
+      // 7 a 9 nouveaux en 0.141
+      if (stat === 7) return t(lang, "{who}: +{g} healing", { who, g: pct(v) });
+      if (stat === 8) return t(lang, "{who}: +{v} damage", { who, v: pct(v) });
+      if (stat === 9) return t(lang, "{who}: +{v} absorb cap", { who, v: pct(v) });
       return null;
     }
-    case 0x2b:
+    case 0x37: // 0x2b en 0.139
       return t(lang, "{spell}'s primary hit unleashes a seismic shockwave, dealing {p} damage to enemies within {r} yd.", { spell: spellName(lang, ownerKey), p: pct(f(4)), r: num(f(8)) });
-    case 0x2c:
+    case 0x38:
       return t(lang, "{spell}: {p} chance to cast a free {cast}", { spell: spellName(lang, ownerKey), p: pct(f(4)), cast: spellName(lang, "chain_lightning") });
-    case 0x2d:
+    case 0x39:
       return t(lang, "{spell}'s free {cast} deals {p} damage", { spell: spellName(lang, ownerKey), p: pct(f(4)), cast: spellName(lang, "chain_lightning") });
-    case 0x2e:
+    case 0x3a:
       return t(lang, "{spell} instantly deals {p} of your remaining {dot} damage to enemies hit, without removing {dot}.", { spell: spellName(lang, ownerKey), p: pct(f(4)), dot: spellName(lang, "flame_shock") });
-    case 0x25:
-      return t(lang, "{spell} slows by {pct} for {secs} sec", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), pct: pct(f(4)), secs: num(f(8)) });
-    case 0x26:
-      return t(lang, "{spell} deals {bonus} more damage to already chilled enemies", { spell: spellName(lang, keyAt(b, 8) || ownerKey), bonus: pct(f(4)) });
-    case 0x27:
-      return t(lang, "{spell} deals {bonus} more damage to enemies below {below} health", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), bonus: pct(f(4)), below: pct(f(8)) });
-    case 0x28:
-      return t(lang, "A kill with {spell} cuts its remaining cooldown by {frac}", { spell: spellName(lang, keyAt(b, 8) || ownerKey), frac: pct(f(4)) });
-    case 0x29:
-      return t(lang, "Each tick of {spell} also hits {n} nearby enemies within {radius} yd for {frac} damage", { spell: spellName(lang, keyAt(b, 0x10) || ownerKey), n: String(u(4)), radius: num(f(0xc)), frac: pct(f(8)) });
-    case 3:
-      if (u(0x10) !== 10) return t(lang, "A hidden power");
-      return t(lang, "A broken shield bursts for {frac} of what it absorbed on enemies within {radius} yd", { frac: pct(f(4)), radius: num(f(8)) });
-    case 4:
-      return cap(t(lang, "{hits} splash {frac} on enemies within {radius} yd", { hits: hitsAt(0x20), frac: pct(f(4)), radius: num(f(8)) }));
-    case 6: {
-      const n = u(4);
+    case 0x31: // 0x25 en 0.139
+      return t(lang, "{spell} slows by {pct} for {secs} sec", { spell: spellName(lang, keyAt(b, 8) || ownerKey), pct: pct(f(0x18)), secs: num(f(0x1c)) });
+    case 0x32:
+      return t(lang, "{spell} deals {bonus} more damage to already chilled enemies", { spell: spellName(lang, keyAt(b, 8) || ownerKey), bonus: pct(f(0x18)) });
+    case 0x33:
+      return t(lang, "{spell} deals {bonus} more damage to enemies below {below} health", { spell: spellName(lang, keyAt(b, 8) || ownerKey), bonus: pct(f(0x18)), below: pct(f(0x1c)) });
+    case 0x34:
+      return t(lang, "A kill with {spell} cuts its remaining cooldown by {frac}", { spell: spellName(lang, keyAt(b, 8) || ownerKey), frac: pct(f(0x18)) });
+    case 0x35:
+      return t(lang, "Each tick of {spell} also hits {n} nearby enemies within {radius} yd for {frac} damage", { spell: spellName(lang, keyAt(b, 8) || ownerKey), n: String(u(0x18)), frac: pct(f(0x1c)), radius: num(f(0x20)) });
+    case 0x3d: // collier du Chasseur (0.141, Heart of the Packlord)
+      return t(lang, "Wolf: Howl makes {n} nearby enemies take {p} more damage from you", { n: String(u(8)), p: pct(f(4)) });
+    case 0x3e:
+      return t(lang, "Raptor: {spell} bleeds nearby enemies for {p} of its strike damage over {secs} sec", { spell: spellName(lang, "kill_command"), p: pct(f(4)), secs: num(f(0xc)) });
+    case 0x3f:
+      return t(lang, "Devilsaur Matriarch: {spell} unleashes a devastating shockwave", { spell: spellName(lang, "kill_command") });
+    case 0x0f: // 3 en 0.139
+      if (u(8) !== 10) return t(lang, "A hidden power");
+      return t(lang, "A broken shield bursts for {frac} of what it absorbed on enemies within {radius} yd", { frac: pct(f(0x28)), radius: num(f(0x2c)) });
+    case 0x10:
+      return cap(t(lang, "{hits} splash {frac} on enemies within {radius} yd", { hits: hitsAt(0x10), frac: pct(f(0x28)), radius: num(f(0x2c)) }));
+    case 0x12: {
+      const n = u(0x28);
       const k = n === 1 ? "{hits} leap to 1 more enemy for {frac}" : "{hits} leap to {n} more enemies for {frac}";
-      return cap(t(lang, k, { hits: hitsAt(0x18), n: String(n), frac: pct(f(8)) }));
+      return cap(t(lang, k, { hits: hitsAt(0x10), n: String(n), frac: pct(f(0x2c)) }));
     }
-    case 7:
-      return cap(t(lang, "{chance} chance for {hits} to strike again for {frac}", { chance: pct(f(4)), hits: hitsAt(0x18), frac: pct(f(0xc)) }));
-    case 8: {
-      const kind = u(8) | 0;
-      const hits = hitsAt(0x20);
-      if (kind === 3) return cap(t(lang, "{hits} stun for {s} sec", { hits, s: num(f(0xc)) }));
-      if (kind === 2) return cap(t(lang, "{hits} root for {s} sec", { hits, s: num(f(0xc)) }));
-      if (kind === -1) return cap(t(lang, "{hits} leave enemies taking {v} more damage for {s} sec", { hits, v: pct(f(0xc)), s: num(f(0x10)) }));
+    case 0x13:
+      return cap(t(lang, "{chance} chance for {hits} to strike again for {frac}", { chance: pct(f(0x28)), hits: hitsAt(0x10), frac: pct(f(0x30)) }));
+    case 0x14: {
+      const kind = u(0x28) | 0;
+      const hits = hitsAt(0x10);
+      if (kind === 3) return cap(t(lang, "{hits} stun for {s} sec", { hits, s: num(f(0x2c)) }));
+      if (kind === 2) return cap(t(lang, "{hits} root for {s} sec", { hits, s: num(f(0x2c)) }));
+      if (kind === -1) return cap(t(lang, "{hits} leave enemies taking {v} more damage for {s} sec", { hits, v: pct(f(0x2c)), s: num(f(0x30)) }));
       return cap(t(lang, "{hits} hinder enemies", { hits }));
     }
-    case 9:
-      return cap(t(lang, "{hits} burn and bleed for {frac} more over {dur} sec", { hits: hitsAt(0x18), frac: pct(f(8)), dur: num(f(0xc)) }));
-    case 10: {
-      const k = b[8] === 1 ? keyAt(b, 0x10) : ownerKey;
-      return t(lang, "A kill with {who} readies it again at once", { who: spellName(lang, k || ownerKey) });
-    }
-    case 11: {
-      const frac = pct(f(4));
-      if (b[0x18] === 1) {
-        const k = keyAt(b, 0x20) || ownerKey;
-        const spell = spellName(lang, k);
-        if (b[1] === 0) return t(lang, "Enemies {spell} kills explode for {frac} of their max health", { spell, frac });
+    case 0x15:
+      return cap(t(lang, "{hits} burn and bleed for {frac} more over {dur} sec", { hits: hitsAt(0x10), frac: pct(f(0x2c)), dur: num(f(0x30)) }));
+    case 0x16:
+      return t(lang, "A kill with {who} readies it again at once", { who: who(8) });
+    case 0x17: {
+      const frac = pct(f(0x20));
+      if (b[8] === 1) {
+        const spell = spellName(lang, keyAt(b, 0x10) || ownerKey);
+        if (b[0x30] === 0) return t(lang, "Enemies {spell} kills explode for {frac} of their max health", { spell, frac });
         return t(lang, "Enemies that die with {spell} on them explode for {frac} of their max health", { spell, frac });
       }
       return t(lang, "Enemies you kill explode for {frac} of their max health", { frac });
     }
-    case 12: {
+    case 0x18: {
       const k = bySpellId[u(4)] || ownerKey;
       return t(lang, "Enemies you kill during {spell} explode for {frac} of their max health", { spell: spellName(lang, k), frac: pct(f(8)) });
     }
-    case 13: {
-      const k = keyAt(b, 8) || ownerKey;
-      return t(lang, "{spell} explodes a second time for {frac} of its damage", { spell: spellName(lang, k), frac: pct(f(4)) });
-    }
-    case 14: {
-      const k = b[8] === 1 ? keyAt(b, 0x10) : ownerKey;
-      return t(lang, "{who} leaps to {n} enemies when its victim dies", { who: spellName(lang, k || ownerKey), n: String(u(4)) });
-    }
-    case 15:
-      if (u(0x10) !== 7 || b[1] !== 0x0e) return t(lang, "A hidden power");
-      return t(lang, "While {spell} heals you, {p} of the damage you deal heals you too", { spell: spellName(lang, keyAt(b, 0x20) || ownerKey), p: pct(f(4)) });
-    case 18:
-      return t(lang, "{spell} also shields you for {frac} of your max health", { spell: spellName(lang, keyAt(b, 0x20) || ownerKey), frac: pct(f(4)) });
-    case 19:
+    case 0x19:
+      return t(lang, "{spell} explodes a second time for {frac} of its damage", { spell: spellName(lang, keyAt(b, 8) || ownerKey), frac: pct(f(0x18)) });
+    case 0x1a:
+      return t(lang, "{who} leaps to {n} enemies when its victim dies", { who: who(8), n: String(u(0x20)) });
+    case 0x1b:
+      if (u(8) !== 7 || b[0x34] !== 0x0e) return t(lang, "A hidden power");
+      return t(lang, "While {spell} heals you, {p} of the damage you deal heals you too", { spell: spellName(lang, (b[0x10] === 1 && keyAt(b, 0x18)) || ownerKey), p: pct(f(0x28)) });
+    case 0x1e:
+      return t(lang, "{spell} also shields you for {frac} of your max health", { spell: spellName(lang, (b[0x10] === 1 && keyAt(b, 0x18)) || ownerKey), frac: pct(f(0x28)) });
+    case 0x1f:
       return t(lang, "A killing blow leaves you at {heal} health instead, once every {cd} sec", { heal: pct(f(8)), cd: num(f(4)) });
-    case 0x2f: { // 0x2b en 0.135.1
+    case 0x48: { // 0x2f en 0.139, 0x2b en 0.135.1
       const tpl = STATS[b[8]];
       if (!tpl) return t(lang, "A hidden power");
       const v = f(4);
+      // collier de Courroux des tempetes (0.141) : la stat 19 est redigee au nom du sort (0x145e0b6e2)
+      if (ownerKey === "stormstrike" && b[8] === 0x13) return t(lang, "{spell}: +{p} damage to bosses and elites", { spell: spellName(lang, ownerKey), p: pct(v) });
       return t(lang, tpl, { p: pct(v), v: num(v) });
     }
-    case 22:
+    case 0x22: // 22 en 0.139
       return t(lang, "Every totem pulse heals you {frac} of max health", { frac: pct(f(4)) });
-    case 23:
+    case 0x23:
       return t(lang, "Chains lose nothing on each jump");
     default:
       return t(lang, "A hidden power");

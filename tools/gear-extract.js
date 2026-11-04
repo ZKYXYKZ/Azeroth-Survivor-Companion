@@ -2,7 +2,7 @@
 // Usage : node tools/gear-extract.js <exe> [sortie] [dossier loc]
 // Lecture statique uniquement : ni le jeu ni le compagnon ne sont lances. Les adresses ne sont
 // pas codees en dur : chaque table est retrouvee par motif de code. Formules lues sur 0.135.1,
-// outil execute sur 0.139.0 (meme code, tables deplacees).
+// outil execute sur 0.139.0 puis 0.141.0 (registres changes, Tier 0.5 et Scholomance ajoutes).
 // Le dossier loc (sortie de tools/extract-loc.js) est optionnel : sans lui, pas de textes fr.
 const fs = require("fs");
 const path = require("path");
@@ -102,12 +102,15 @@ const atHeader = b.indexOf(pat, rdata.raw);
 if (atHeader < 0) die("table des emplacements introuvable");
 const SLOT_IDS = [...b.subarray(atHeader + 32, atHeader + 40)];
 
-// cmp r12d,6 ; (2 mov) ; ja X ; mov eax,r12d ; lea rcx,[rip+table de saut] ; saut indexe
-const itemHits = find([0x0f, 0x87], (o) => same(o + 6, [0x44, 0x89, 0xe0, 0x48, 0x8d, 0x0d]) && same(o + 16, [0x48, 0x63, 0x04, 0x81, 0x48, 0x01, 0xc8, 0xff, 0xe0]) && b.subarray(o - 24, o).indexOf(Buffer.from([0x41, 0x83, 0xfc, 0x06])) >= 0);
+// cmp r,6 ; (2 mov) ; ja X ; mov eax,r ; lea rcx,[rip+table de saut] ; saut indexe. r12d en 0.139, edi en 0.141 :
+// registre libre (mov eax,r sur 2 ou 3 octets), et le cmp r,6 doit preceder le ja.
+const movLen = (o) => (b[o] === 0x89 && b[o + 1] >= 0xc0 && (b[o + 1] & 7) === 0 ? 2 : b[o] === 0x44 && b[o + 1] === 0x89 && b[o + 2] >= 0xc0 && (b[o + 2] & 7) === 0 ? 3 : 0);
+const cmp6Before = (o, k) => { const r = (b[o + 6 + k - 1] >> 3) & 7; const w = b.subarray(o - 24, o); const c = Buffer.from(k === 3 ? [0x41, 0x83, 0xf8 + r, 0x06] : [0x83, 0xf8 + r, 0x06]); return w.indexOf(c) >= 0 && (k === 3 || w[w.indexOf(c) - 1] !== 0x41); };
+const itemHits = find([0x0f, 0x87], (o) => { const k = movLen(o + 6); return k > 0 && same(o + 6 + k, [0x48, 0x8d, 0x0d]) && same(o + 13 + k, [0x48, 0x63, 0x04, 0x81, 0x48, 0x01, 0xc8, 0xff, 0xe0]) && cmp6Before(o, k); });
 if (itemHits.length !== 1) die("fonction item : " + itemHits.length + " candidats");
 const hit = itemHits[0];
 const defaultBlock = toTextVA(hit + 6) + i32At(hit + 2);
-const jumpTable = relAt(hit + 12);
+const jumpTable = relAt(hit + 9 + movLen(hit + 6));
 const baseList = (va) => { // bloc : mov eax,N ; lea rcx,[rip+T]
   const o = off(va);
   if (b[o] !== 0xb8 || !same(o + 5, [0x48, 0x8d, 0x0d])) die("bloc de base inattendu " + hex(va));
@@ -127,7 +130,7 @@ const follow = (callVa) => {
 };
 const iArmorEnd = idx(item, /^lea rax,\[rcx\+rax\*8\]/);
 const iWeaponEnd = idx(item, /^lea rcx,\[rax\+rcx\*8\]/);
-const iThemeIdx = idx(item, /^lea r14d,\[rdi\+rdi\*2\]/);
+const iThemeIdx = idx(item, /^lea r1[0-5]d,\[([a-z0-9]+)\+\1\*2\]/); // 3*classe : lea r14d,[rdi+rdi*2] en 0.139, lea r15d,[rax+rax*2] en 0.141
 const iTheme = idx(item, /^shl eax,4/, iThemeIdx);
 const THEME_VA = item[iTheme + 1].rip;
 if (!THEME_VA) die("table des themes introuvable");
@@ -146,43 +149,73 @@ const bonusFromImm = (q) => ({ t: Number(q & 0xffffffffn), v: (() => { const t =
 const LEG_ARMOR = bonusFromImm(item[iLeg].imm);
 const LEG_WEAPON = bonusFromImm(item[iLeg - 1].imm);
 
-// accesseurs classe -> fiche : mov ecx,edi ; call accesseur (dec cl ; cmp cl,0Ah ; ja ; movzx ; lea rcx,[T])
-const classAccessors = [];
-for (let i = 0; i < item.length - 1 && classAccessors.length < 2; i++) {
-  if (item[i].t === "mov ecx,edi" && item[i + 1].mn === Mnemonic.Call) {
-    const a = decode(item[i + 1].br, 0x18);
-    classAccessors.push(a[idx(a, /^lea rcx,\[/)].rip);
-  }
-}
+// accesseurs classe -> fiche (dec cl ; cmp cl,0Ah ; ja ; movzx eax,cl ; lea rcx,[T] ; mov rax,[rcx+rax*8] ; ret).
+// Appeles par mov ecx,edi depuis item() jusqu'en 0.139 ; en 0.141 item() ne les appelle plus : on les cherche dans tout .text.
+// Fiche de classe : octet +0x129 = id de classe (1 pour la 1re) ; fiche JcJ : deux noms en +0 et +0x10.
+const accTables = [...new Set(find([0xfe, 0xc9, 0x80, 0xf9, 0x0a, 0x77], (o) => same(o + 7, [0x0f, 0xb6, 0xc1, 0x48, 0x8d, 0x0d]) && same(o + 17, [0x48, 0x8b, 0x04, 0xc1, 0xc3])).map((o) => relAt(o + 13)))];
+const firstFiche = (T) => { const q = P.toOff(BigInt(T)); if (q < 0) return -1; const o = P.toOff(b.readBigUInt64LE(q)); return o; };
+const classAccessors = [
+  accTables.find((T) => { const o = firstFiche(T); return o >= 0 && b[o + 0x129] === 1 && P.str(o, 60) != null; }),
+  accTables.find((T) => { const o = firstFiche(T); return o >= 0 && b[o + 0x129] !== 1 && P.str(o, 60) != null && P.str(o + 0x10, 60) != null && Number(b.readBigUInt64LE(o + 0x28)) <= 4; }),
+].filter((x) => x);
 if (classAccessors.length !== 2) die("accesseurs de classe introuvables");
 const [CLASS_TABLE, PVP_TABLE] = classAccessors;
 const CLASS_IDS = [1, 2, 3, 4, 5, 7, 8, 9, 11]; // Blizzard, voir le masque 0x5DF de 0x145be5e60 (0.135.1)
 
-// --- Etoiles : mulss xmm0,[rdx+rcx*4] ; jbe ; lea rcx,[T2] ; addss xmm0,[rcx+rax*4] -----------
-const starHits = find([0xf3, 0x0f, 0x59, 0x04, 0x8a, 0x76], (o) => same(o + 7, [0x48, 0x8d, 0x0d]) && same(o + 14, [0xf3, 0x0f, 0x58, 0x04, 0x81]));
+// --- Etoiles : mulss xmm0,[T1+i*4] ; jbe ; lea r,[T2] ; addss xmm0,[r+j*4] ----------------------------
+// registres libres : [rdx+rcx*4] puis lea rcx en 0.139, [r8+rdx*4] puis lea rdx en 0.141 (prefixe REX eventuel)
+const starHits = find([0x0f, 0x59, 0x04], (o) => {
+  if (b[o - 1] !== 0xf3 && !(b[o - 1] >= 0x40 && b[o - 1] <= 0x4f && b[o - 2] === 0xf3)) return false;
+  if (b[o + 4] !== 0x76 || (b[o + 6] & 0xf0) !== 0x40 || b[o + 7] !== 0x8d || (b[o + 8] & 0xc7) !== 0x05) return false;
+  const q = o + 13; // addss xmm0,[..*4] : f3 [REX] 0f 58 04 xx
+  return b[q] === 0xf3 && (same(q + 1, [0x0f, 0x58, 0x04]) || ((b[q + 1] & 0xf0) === 0x40 && same(q + 2, [0x0f, 0x58, 0x04])));
+});
 if (starHits.length !== 1) die("fonction des etoiles : " + starHits.length + " candidats");
-const STAR2_VA = relAt(starHits[0] + 10);
+const STAR2_VA = relAt(starHits[0] + 9);
 const star = decodeFn(toTextVA(starHits[0]));
-const iStar = idx(star, /^mulss xmm0,\[rdx\+rcx\*4\]/);
+const iStar = idx(star, /^mulss xmm0,\[r[a-z0-9]+\+r[a-z0-9]+\*4\]/);
 const STAR1_VA = star[iStar - 1].rip;
 if (!STAR1_VA) die("table etoiles introuvable");
 const STAR_PER = f32s(STAR1_VA, 6), STAR_FIFTH = f32s(STAR2_VA, 6);
 const iCap = idx(star, /^cmp bl,4/, iStar);
 const fill = decodeFn(star[nextCall(star, iCap)].br);
 // 5e etoile : complete avec les stats absentes de la piece, prises sur le legendaire amene a 5*
-const iFrac = idx(fill, /^movss xmm0,\[rdx\+rcx\*4\]/);
+const iFrac = idx(fill, /^movss xmm0,\[r[a-z0-9]+\+r[a-z0-9]+\*4\]/); // [rdx+rcx*4] en 0.139, [rdx+rax*4] en 0.141
 const FILL_FRAC = f32s(fill[iFrac - 1].rip, 6);
 const fillImm = fill[idx(fill, /^mov dword \[rbp\+[0-9A-F]+h\],3[EF][0-9A-F]{6}h/)].imm;
 const LEG_STAR5 = (() => { const t = Buffer.alloc(4); t.writeUInt32LE(Number(fillImm)); return t.readFloatLE(0); })();
 
 // --- Bonus 4 pieces : un seul par palier, communs a toutes les classes -------------------------
-const set4Hits = find([0x49, 0x83, 0xf8, 0x05, 0x77], (o) => same(o + 6, [0x48, 0x8d, 0x05]) && same(o + 13, [0x4a, 0x8b, 0x14, 0xc0, 0x48, 0x8d, 0x05]) && same(o + 24, [0x4a, 0x8b, 0x04, 0xc0]));
-if (!set4Hits.length) die("table des bonus 4 pieces introuvable");
-const SET4_LEN = relAt(set4Hits[0] + 9), SET4_PTR = relAt(set4Hits[0] + 20);
-const SET4 = Array.from({ length: 6 }, (_, i) => readBonuses(u64(SET4_PTR + i * 8), u64(SET4_LEN + i * 8)));
+// 0.139 : cmp r8,5 ; ja ; tables longueurs / pointeurs. 0.141 : match par palier (8 paliers, Tier 0.5 = 7) :
+// mov edx,1 ; cmp rcx,7 ; ja ; lea r8,[JT] ; saut indexe ; blocs [mov edx,N] lea rcx,[liste] | mov rcx,r11 | mov ecx,4 ; xor edx,edx
+const SET4 = (() => {
+  const old = find([0x49, 0x83, 0xf8, 0x05, 0x77], (o) => same(o + 6, [0x48, 0x8d, 0x05]) && same(o + 13, [0x4a, 0x8b, 0x14, 0xc0, 0x48, 0x8d, 0x05]) && same(o + 24, [0x4a, 0x8b, 0x04, 0xc0]));
+  if (old.length) {
+    const LEN = relAt(old[0] + 9), PTR = relAt(old[0] + 20);
+    return Array.from({ length: 6 }, (_, i) => readBonuses(u64(PTR + i * 8), u64(LEN + i * 8)));
+  }
+  const hits = find([0x48, 0x83, 0xf9, 0x07, 0x77], (o) => same(o + 6, [0x4c, 0x8d, 0x05]) && same(o + 13, [0x49, 0x63, 0x0c, 0x88, 0x4c, 0x01, 0xc1, 0xff, 0xe1]) && same(o - 5, [0xba, 0x01, 0x00, 0x00, 0x00]));
+  if (!hits.length) die("table des bonus 4 pieces introuvable"); // deux copies de la fonction en 0.141, meme table
+  const JT = relAt(hits[0] + 9);
+  const fn = decodeFn(toTextVA(hits[0]));
+  const r11 = fn.find((i) => /^lea r11,\[/.test(i.t));
+  return Array.from({ length: 8 }, (_, i) => {
+    const blk = decode(JT + i32At(off(JT + i * 4)), 0x18);
+    let n = 1, va = null;
+    for (const x of blk) {
+      if (/^mov edx,/.test(x.t)) n = Number(x.imm);
+      else if (/^xor edx,edx/.test(x.t)) n = 0;
+      else if (/^lea rcx,\[/.test(x.t)) va = x.rip;
+      else if (x.t === "mov rcx,r11") { if (!r11) die("r11 des bonus 4 pieces introuvable"); va = r11.rip; }
+      if (x.mn === Mnemonic.Jmp) break;
+    }
+    return n && va ? readBonuses(va, n) : [];
+  });
+})();
 
 // --- Bonus 8 pieces : fonction par classe et palier, emulee -------------------------------------
-const fn8Hits = find([0x0f, 0xb6, 0xc2, 0xff, 0xc8, 0x83, 0xf8, 0x0a, 0x0f, 0x87], (o) => same(o + 14, [0x0f, 0x28, 0xf3]));
+// 0.139 : movaps xmm6,xmm3 juste apres le ja ; 0.141 : saut indexe par classe (lea rcx ; movsxd), Tier 0.5 (r8 = 7) traite avant
+const fn8Hits = find([0x0f, 0xb6, 0xc2, 0xff, 0xc8, 0x83, 0xf8, 0x0a, 0x0f, 0x87], (o) => same(o + 14, [0x0f, 0x28, 0xf3]) || (same(o + 14, [0x48, 0x8d, 0x0d]) && same(o + 21, [0x48, 0x63, 0x04, 0x81]) && same(o + 30, [0x49, 0x83, 0xf8, 0x05])));
 if (fn8Hits.length !== 1) die("fonction 8 pieces : " + fn8Hits.length + " candidats");
 const FN8 = fnAt(toTextVA(fn8Hits[0])).start;
 // Appelant : movss xmm3,[1.0] ; jmp ; movss xmm3,[1.5] ; ... ; call FN8. Juste avant : seuils.
@@ -404,6 +437,33 @@ const tiers = Array.from({ length: 6 }, (_, i) => ({
   starMult: [0, 1, 2, 3, 4, 5].map((s) => clean(1 + starMult(i, s))),
   set4: asObj(SET4[i]), set4Label: SET4[i].map(bonusLabel),
 }));
+
+// --- Tier 0.5 (0.141, Scholomance, gear/t05.rs) : pieces fixes par classe, hors formule des paliers -----
+// Fonction des etoiles : cmp rax,7 ; ... ; lea r8,[T] ; mov rcx,[r8+classe*8] -> fiche de 0x228 octets :
+// 8 pieces de 0x40 {nom &str, bonus de base +0x10, 2e liste +0x20, objet u32 +0x30, affichage u32 +0x34, emplacement u8 +0x38},
+// nom du set &str +0x200, armes +0x210/+0x218 (0x50 octets, meme debut). Les etoiles combinent les deux listes
+// (0x14603b5c0, non emulee) : la 2e liste est donnee telle quelle (max). Pas de bonus 4 pieces (Tier 0.5 : liste vide) ;
+// bonus 8 pieces : statique paresseux construit a l'execution (0x148ac2e00), non lu.
+const t05 = (() => {
+  const i7 = star.findIndex((i, n) => /^cmp rax,7$/.test(i.t) && /^jne /.test(star[n + 1].t));
+  if (i7 < 0) return null;
+  const T = star[idx(star, /^lea r8,\[rel /, i7)].rip;
+  const keyOf = Object.fromEntries(Object.entries(classes).map(([k, c]) => [c.id, k]));
+  const item = (o) => {
+    const id = u32(o + 0x30);
+    return { itemId: id, name: tr("t05." + id, strAt(o)), base: asObj(readBonuses(u64(o + 0x10), u64(o + 0x18))), max: asObj(readBonuses(u64(o + 0x20), u64(o + 0x28))) };
+  };
+  const out = { tier: 7, rarity: tr("rarity.7"), set4: asObj(SET4[7] || []), set8: null, classes: {} };
+  for (const cls of CLASS_IDS) {
+    const p = u64(T + (cls - 1) * 8);
+    if (!p) continue;
+    const key = keyOf[cls];
+    const pieces = Array.from({ length: 8 }, (_, i) => ({ idx: i, slot: b[off(p + i * 0x40 + 0x38)], ...item(p + i * 0x40) }));
+    const weapons = Array.from({ length: u64(p + 0x218) }, (_, i) => item(u64(p + 0x210) + i * 0x50));
+    out.classes[key] = { name: tr("set." + key + ".7", strAt(p + 0x200)), pieces, weapons, totalsBase: asObj(merge(pieces.map((x) => readBonuses(u64(p + x.idx * 0x40 + 0x10), u64(p + x.idx * 0x40 + 0x18))))) };
+  }
+  return out;
+})();
 // --- Butin des boss par zone (lu sur 0.139.0) -------------------------------------------------
 // Table de butin d'un boss : fn(classe dl, zone r8, boss r9) commence par cmp r8,NZ ; setb al ; cmp r9,NB ; setb cl.
 // Boss final (octet drapeau) : toutes les armes de la classe. Autres boss : les boss non finaux des zones de meme
@@ -413,19 +473,35 @@ const drops = (() => {
   if (lootHits.length !== 1) { console.error("gear-extract : table de butin : " + lootHits.length + " candidats, drops = null"); return null; }
   const NZ = b[lootHits[0] + 3], NB = b[lootHits[0] + 10];
   const L = decodeFn(toTextVA(lootHits[0]));
-  const iZ = idx(L, /^imul rcx,r8,[0-9A-F]+h?$/);
+  // registres libres (imul rcx,r8 / imul rax,r8 en 0.141 ; mov rcx,[...+88h] / add r12,[...+88h])
+  const iZ = idx(L, /^imul r[a-z0-9]+,r8,[0-9A-F]+h?$/);
   const hexImm = (t) => { const m = /,([0-9A-F]+)(h?)$/.exec(t); return parseInt(m[1], m[2] ? 16 : 10); };
   const negDisp = (t) => { const m = /-([0-9A-F]+)(h?)\]$/.exec(t); return parseInt(m[1], m[2] ? 16 : 10); };
   const ZSTRIDE = hexImm(L[iZ].t);
-  const ZONES = L[idx(L, /^lea rax,\[/, iZ)].rip;
-  const iBp = idx(L, /^mov rcx,\[rcx\+rax\+[0-9A-F]+h\]$/, iZ);
+  const ZONES = L[idx(L, /^lea r[a-z0-9]+,\[rel /, iZ)].rip;
+  const iBp = idx(L, /^(mov|add) r[a-z0-9]+,\[r[a-z0-9]+\+r[a-z0-9]+\+[0-9A-F]+h\]$/, iZ);
   const BOSS_PTR = parseInt(/\+([0-9A-F]+)h\]$/.exec(L[iBp].t)[1], 16);
-  const iBs = idx(L, /^imul r10,r9,[0-9A-F]+h?$/, iBp);
+  const iBs = idx(L, /^imul r[a-z0-9]+,r9,[0-9A-F]+h?$/, iZ);
   const BSTRIDE = hexImm(L[iBs].t);
-  const iTier = idx(L, /^lea r11,\[/, iBs);
-  const TIER_VA = L[iTier].rip, CHANCE_VA = L[idx(L, /^lea r11,\[/, iTier + 1)].rip;
-  const FINAL = parseInt(/\+([0-9A-F]+)h\],0$/.exec(L[idx(L, /^cmp byte \[rcx\+r10\+[0-9A-F]+h\],0$/, iTier)].t)[1], 16);
-  const zoneTier = Array.from({ length: NZ }, (_, z) => u64(TIER_VA + z * 8));
+  // palier de zone : table lea r11 (0.139) ; en 0.141, fonction zone -> palier (match sur la cle de zone), emulee
+  const iTier = L.findIndex((i, n) => n > iBp && (/^lea r11,\[/.test(i.t) || i.mn === Mnemonic.Call));
+  let zoneTier, CHANCE_VA, iFin;
+  if (L[iTier].mn !== Mnemonic.Call) {
+    const TIER_VA = L[iTier].rip;
+    CHANCE_VA = L[idx(L, /^lea r11,\[/, iTier + 1)].rip;
+    zoneTier = Array.from({ length: NZ }, (_, z) => u64(TIER_VA + z * 8));
+    iFin = iTier;
+  } else {
+    const ZT = L[iTier].br;
+    zoneTier = Array.from({ length: NZ }, (_, z) => {
+      const r = E.run({ start: ZT, maxSteps: 2000, calls: emuCalls, regs: { RCX: BigInt(z) } });
+      return Number(r.api.regs[r.api.Register.RAX]);
+    });
+    const iCh = L.findIndex((i, n) => n > iTier && /^lea r[a-z0-9]+,\[rel /.test(i.t) && /^movss xmm\d+,\[r[a-z0-9]+\+rax\*4\]$/.test(L[n + 1].t));
+    CHANCE_VA = L[iCh].rip;
+    iFin = iCh;
+  }
+  const FINAL = parseInt(/\+([0-9A-F]+)h\],0$/.exec(L[idx(L, /^cmp byte \[r[a-z0-9]+(\+r[a-z0-9]+)?\+[0-9A-F]+h\],0$/, iFin)].t)[1], 16);
   const NT = Math.max(...zoneTier) + 1;
   const chance = f32s(CHANCE_VA, NT).map(clean);
   // cle de zone : premiere chaine en minuscules du bloc
@@ -443,6 +519,15 @@ const drops = (() => {
     const list = [];
     for (const z of zones) if (z.tier === t) for (const bo of z.bosses) if (!bo.final) list.push(bo);
     list.forEach((bo, pos) => { bo.pieces = [...Array(8).keys()].filter((i) => i % list.length === pos); });
+  }
+  // Tier 0.5 (0.141, Scholomance) : cmp rax,7 ; ... ; call fn(classe, id du boss) -> 2 pieces fixes par boss,
+  // fiches {id u32, piece +8, piece +0x10} chargees par lea rdi,[fiche]. Remplace la repartition generique.
+  const iT05 = L.findIndex((i) => /^cmp rax,7$/.test(i.t));
+  if (iT05 >= 0) {
+    const F = decodeFn(L[nextCall(L, iT05)].br);
+    const fixed = {};
+    for (const i of F) if (/^lea rdi,\[rel /.test(i.t)) fixed[u32(i.rip)] = [u32(i.rip + 8), u32(i.rip + 0x10)];
+    for (const z of zones) if (z.tier === 7) for (const bo of z.bosses) if (!bo.final && fixed[bo.id]) bo.pieces = fixed[bo.id];
   }
   // Tirage (0x145ee3370 sur 0.139.0) : (chance + bonus de la partie + echecs * k) * mult heroique > aleatoire.
   // movzx ecx,byte [rsi+niveau] ; lea edx,[rcx-6] ; cmp dl,0FBh ; setb r8b : niveaux 1..5 lus dans une table.
@@ -470,7 +555,35 @@ const drops = (() => {
         return { level: h + 1, lootMult: clean(f32(e + lootOff)), xpMult: clean(f32(e + xpOff)), affixes: aff.map((s) => (s == null ? null : tr(s, s))) };
       }),
     };
-  } else console.error("gear-extract : table heroique : " + heroHits.length + " candidats, heroic = null");
+  } else {
+    // 0.141 : le tirage a change de forme ; on lit les accesseurs du niveau heroique (un par champ) :
+    // lea eax,[rcx-6] ; cmp al,0FBh ; ... ; lea rax,[table] ; ... ; movss xmm0,[normal] ; ret ; movss xmm0,[rax-K] ; ret
+    const getters = find([0x8d, 0x41, 0xfa, 0x3c, 0xfb, 0x0f, 0x92, 0xc2, 0x0f, 0xb6, 0xc1, 0x48, 0x8d, 0x0c, 0x40, 0xc1, 0xe1, 0x04, 0x48, 0x8d, 0x05], () => true).map((o) => {
+      const G = decode(toTextVA(o), 0x38);
+      const iN = idx(G, /^movss xmm0,\[rel /), iK = idx(G, /^movss xmm0,\[rax-[0-9A-F]+h?\]$/);
+      return { HT: G[idx(G, /^lea rax,\[rel /)].rip, NH: 0x100 - b[o + 4], normal: f32(G[iN].rip), k: negDisp(G[iK].t) };
+    });
+    const g = (k) => getters.find((x) => x.k === k);
+    const stride = 48, xp = g(8), loot = g(4); // xp +40, butin +44 dans la fiche de 48 octets (comme 0.139)
+    if (xp && loot && xp.HT === loot.HT) heroic = {
+      normal: { lootMult: clean(loot.normal), xpMult: clean(xp.normal) },
+      levels: Array.from({ length: xp.NH }, (_, h) => {
+        const e = xp.HT + h * stride;
+        const aff = [P.str(off(e), 200), P.str(off(e + 16), 200)];
+        return { level: h + 1, lootMult: clean(f32(e + stride - loot.k)), xpMult: clean(f32(e + stride - xp.k)), affixes: aff.map((s) => (s == null ? null : tr(s, s))) };
+      }),
+    };
+    else console.error("gear-extract : table heroique : " + heroHits.length + " candidats, heroic = null");
+    // tirage : appelant de la fonction de butin qui charge le mult. heroique ([r-4]) juste avant, puis movss xmm9,[k]
+    const LF = fnAt(toTextVA(lootHits[0])).start;
+    for (const o of find([0xe8], (q) => toTextVA(q) + 5 + i32At(q + 1) === LF)) {
+      const C = decodeFn(toTextVA(o));
+      const ic = C.findIndex((i) => i.ip === toTextVA(o));
+      if (ic < 0 || !C.slice(Math.max(0, ic - 12), ic).some((i) => /^movss xmm\d+,\[r[a-z0-9]+-4\]$/.test(i.t))) continue;
+      const ip = C.findIndex((i, n) => n > ic && /^movss xmm9,\[rel /.test(i.t));
+      if (ip > 0) { pity = clean(f32(C[ip].rip)); break; }
+    }
+  }
   const bonusText = ["Bosses are 5% more likely to drop each piece.", "Bosses are 10% more likely to drop each piece."].filter((s) => b.indexOf(Buffer.from(s)) >= 0);
   return {
     source: "fonction de butin (cmp r8," + NZ + " ; cmp r9," + NB + ") et tirage du boss, lecture statique",
@@ -504,7 +617,7 @@ const data = {
   },
   armorSlots: ARMOR_BASE.map((l, i) => ({ idx: i, slot: SLOT_IDS[i], slotName: tr("slot." + SLOT_IDS[i]), base: asObj(l) })),
   themes: THEMES.map(asObj),
-  tiers, classes, drops,
+  tiers, classes, t05, drops,
 };
 fs.writeFileSync(out, JSON.stringify(data));
 console.log("ecrit", out, (fs.statSync(out).size / 1024).toFixed(0) + " Ko", "version", VER, Object.keys(classes).length, "classes");

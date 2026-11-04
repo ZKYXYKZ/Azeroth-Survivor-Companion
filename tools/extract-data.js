@@ -11,7 +11,7 @@ const tr = (k) => ({ en: en[k] || k, fr: fr[k] || en[k] || k });
 const CLASSES = [
   ["warrior", ["Arms", "Fury", "Protection"], 11],
   ["paladin", ["Holy", "Protection", "Retribution"], 11],
-  ["hunter", ["Beast Mastery", "Marksmanship", "Survival"], 11],
+  ["hunter", ["Beast Mastery", "Marksmanship", "Survival"], 12],
   ["rogue", ["Assassination", "Combat", "Subtlety"], 11],
   ["priest", ["Discipline", "Holy", "Shadow"], 11],
   ["shaman", ["Elemental", "Enhancement", "Restoration"], 12],
@@ -48,29 +48,27 @@ const TALENT_STRIDE = 176; // 160 en 0.119, passe a 176 en 0.135.1 (struct talen
 const talentArrays = findArrays(TALENT_STRIDE, isTalent, rd.raw, rd.raw + rd.rs).filter((g) => g.items.length >= 12);
 if (talentArrays.length !== 27) throw new Error("expected 27 talent trees, got " + talentArrays.length);
 
-const floatsOf = (off) => {
+// Effet de talent : 64 octets en 0.141 (etiquette a +0). Il contient des pointeurs 64 bits (bas 0x4xxxxxxx,
+// haut 1), parfois des noms de sort (&str : pointeur + longueur) : on les saute, sinon ils passent pour des nombres.
+const dwordsOf = (off) => {
   const out = [];
-  for (let q = 4; q < 44; q += 4) {
+  for (let q = 4; q < 64; q += 4) {
     const u = buf.readUInt32LE(off + q);
-    if (u > 0x30000000 && u < 0x48000000) out.push({ at: q, v: buf.readFloatLE(off + q) });
+    if (u >= 0x40000000 && u < 0x50000000 && buf.readUInt32LE(off + q + 4) === 1) { const nm = str(off + q, 80); q += nm ? 12 : 4; continue; }
+    out.push({ at: q, u, v: buf.readFloatLE(off + q) });
   }
   return out;
 };
 const perRank = (effOff, tag, desc) => {
   if (!/\{v\}/.test(desc)) return null;
-  if (tag === 0x2f) return { v: buf.readFloatLE(effOff + 4), pct: /\{v\}%/.test(desc) };
-  if (tag === 0x30) return { v: buf.readFloatLE(effOff + 32), pct: /\{v\}%/.test(desc) };
-  if (tag === 0x2a) return null; // effet code en dur dans le jeu, valeur absente des donnees
-  if (tag === 1 || /\{v\}(th|st|nd|rd)\b/.test(desc)) return { v: buf.readUInt32LE(effOff + 4), pct: false, flat: true };
-  const fl = floatsOf(effOff);
-  if (/\{v\}%/.test(desc)) {
-    const f = fl.find((x) => x.v > 0 && x.v <= 5);
-    return f ? { v: f.v, pct: true } : null;
-  }
-  if (/\{v\} sec/.test(desc)) {
-    const f = fl.find((x) => x.v >= 1 && x.v <= 120);
-    return f ? { v: f.v, pct: false } : null;
-  }
+  const dw = dwordsOf(effOff);
+  // les nombres deja ecrits dans le texte (duree, plafond) ne sont pas la valeur par rang
+  const lit = (desc.match(/\d+(\.\d+)?/g) || []).map(Number);
+  const fl = dw.filter((x) => x.u > 0x30000000 && x.u < 0x47000000 && !lit.some((n) => Math.abs(n - x.v) < 1e-4));
+  const ints = dw.filter((x) => x.u >= 1 && x.u <= 1000 && !lit.includes(x.u));
+  if (/\{v\}(th|st|nd|rd)\b/.test(desc)) { const i = ints.find((x) => x.at >= 48) || ints[0]; return i ? { v: i.u, pct: false, flat: true } : null; }
+  if (/\{v\}%/.test(desc)) { const f = fl.find((x) => x.v > 0 && x.v <= 5) || dw.find((x) => x.u > 0x30000000 && x.u < 0x47000000 && x.v > 0 && x.v <= 5); return f ? { v: f.v, pct: true } : null; }
+  if (/\{v\} sec/.test(desc)) { const f = fl.find((x) => x.v >= 1 && x.v <= 120); return f ? { v: f.v, pct: false } : null; }
   const f = fl[0];
   return f ? { v: f.v, pct: false } : null;
 };
@@ -101,7 +99,7 @@ for (const [cls, trees, nSpells] of CLASSES) {
       if (/^Capstone\./.test(desc)) tal.capstone = true;
       if (HARD_V[key] !== undefined) tal.v = HARD_V[key];
       for (const l of ["en", "fr"]) tal.desc[l] = tal.desc[l].split("{v2}").join("10/20/30");
-      if (val) {
+      if (val && HARD_V[key] === undefined) {
         let v = val.pct ? val.v * 100 : val.v;
         v = Math.round(v * 1000) / 1000;
         tal.v = v;
@@ -135,6 +133,8 @@ const abilities = abil.items.map((o) => {
 });
 let a = 0;
 for (const [i, [, , n]] of CLASSES.entries()) { classes[i].spells = abilities.slice(a, a + n); a += n; }
+// Piege explosif retire du jeu en 0.140 (Ordre de tuer le remplace) mais reste dans la table des sorts
+for (const c of classes) c.spells = c.spells.filter((s) => s.key !== "explosive_trap");
 const racials = abilities.slice(a, a + 8);
 const extra = abilities.slice(a + 8);
 
@@ -154,7 +154,7 @@ const jewel = (o, prefix) => {
 };
 const rt = ringsTrinkets.items.map((o) => jewel(o, "jewel."));
 const data = {
-  version: "0.139.0",
+  version: "0.141.0",
   rarity: [0, 1, 2, 3, 4].map((i) => tr("rarity." + i)),
   classes,
   racials,

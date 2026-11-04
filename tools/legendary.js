@@ -8,12 +8,12 @@ const P = E.P;
 // callback de rendu du jeu (0x1460e6d50 en 0.135.1) : plus simple et fiable que d'emuler le vrai
 // systeme de localisation Rust (format fmt::Arguments complexe).
 const LOC_EN = locDir ? JSON.parse(fs.readFileSync(path.join(locDir, "loc-1.json"), "utf8")) : {};
-const ABIL = 0x7322758; // 0x729e408 en 0.119, 0x7105910 en 0.135.1, deplace en 0.139 (table d'abilites, toujours stride 120)
-const N = 114; // 113 en 0.119, +1 sort (rockbiter/stormstrike ajoutes au Chaman)
-const START = 0x145ddd60c; // 0x145c6a237 en 0.135.1 ; sur le sub rsp du prologue
-const TAIL = 0x145ddf4c5; // 0x145c6bcce en 0.135.1 ; juste avant l'epilogue
-// Familles a code propre : leur nom n'est pas dans la pile a la sortie (0.134, colliers du Chaman)
-const FAMILIES = { rockbiter: "Heart of the Earthbreaker", stormstrike: "Eye of the Tempest", fire_nova: "Cinderheart Pendant", frost_shock: "Winter's Embrace", earth_shock: "Earthshatter Seal", flame_shock: "Emberwake Pendant", demonic_empowerment: "The Legionlord's Medallion" };
+const ABIL = 0x73a26d8; // 0x729e408 en 0.119, 0x7105910 en 0.135.1, 0x7322758 en 0.139 (table d'abilites, toujours stride 120)
+const N = 115; // 113 en 0.119, 114 en 0.139 (Chaman a 12 sorts), +1 en 0.141 (kill_command, Chasseur a 12 sorts)
+const START = 0x145e0baec; // 0x145c6a237 en 0.135.1, 0x145ddd60c en 0.139 ; sur le sub rsp du prologue
+const TAIL = 0x145e0dd9f; // 0x145c6bcce en 0.135.1, 0x145ddf4c5 en 0.139 ; juste avant l'epilogue
+// Familles a code propre : leur nom n'est pas dans la pile a la sortie (0.134, colliers du Chaman), Packlord (0.141, kill_command)
+const FAMILIES = { rockbiter: "Heart of the Earthbreaker", stormstrike: "Eye of the Tempest", fire_nova: "Cinderheart Pendant", frost_shock: "Winter's Embrace", earth_shock: "Earthshatter Seal", flame_shock: "Emberwake Pendant", demonic_empowerment: "The Legionlord's Medallion", kill_command: "Heart of the Packlord" };
 const str = (addr, len) => {
   const o = P.toOff(BigInt(addr));
   return o < 0 ? null : P.buf.toString("utf8", o, o + Number(len));
@@ -27,12 +27,12 @@ for (let i = 0; i < N; i++) {
     const r = E.run({
       start: START,
       stopAt: new Set([TAIL]),
-      follow: new Set([0x145d70ab0]), // lit le type du sort, nouvelle en 0.137
+      // 0x145d70ab0 (0.139, lit le type du sort) est integree a la fonction en 0.141
       regs: { RDX: va, RCX: 0x100000000800n },
       calls: {
-        // 0x146114bf0 (0.135.1) fait les deux roles vus en 0.119 (0x145fc4880 grow + 0x145f66f30 init) :
+        // 0x146114bf0 (0.135.1), 0x146326b00 (0.139), 0x1463a7490 (0.141) fait les deux roles vus en 0.119 (0x145fc4880 grow + 0x145f66f30 init) :
         // reserve/agrandit le Vec<Effect> passe par pointeur dans RCX.
-        0x146326b00: (api) => {
+        0x1463a7490: (api) => {
           const v = api.regs[api.Register.RCX];
           const cap = api.rdInt(v, 8), ptr = api.rdInt(v + 8n, 8), len = api.rdInt(v + 16n, 8);
           const ncap = cap * 2n > 4n ? cap * 2n : 4n;
@@ -42,16 +42,16 @@ for (let i = 0; i < N; i++) {
           api.wrInt(v + 8n, 8, np);
           api.regs[api.Register.RAX] = np;
         },
-        // 0x145c90340 : interning de chaine (deduplication Rust) avec cache TLS. On ne peut pas
+        // 0x145c90340, 0x145e913a0 (0.139), 0x145e788b0 (0.141) : interning de chaine (deduplication Rust) avec cache TLS. On ne peut pas
         // emuler le cache fidelement ; renvoyer 0 (pas trouve) fait retomber le code appelant sur
         // la chaine d'origine (RDX/RSI deja corrects), resultat identique, juste pas deduplique.
-        0x145e913a0: (api) => { api.regs[api.Register.RAX] = 0n; },
-        // 0x1460e6d50 : resout une cle de localisation format_args!() (ex. "ability.{}.name" avec
+        0x145e788b0: (api) => { api.regs[api.Register.RAX] = 0n; },
+        // 0x1460e6d50, 0x1462f8c40 (0.139), 0x146378290 (0.141) : resout une cle de localisation format_args!() (ex. "ability.{}.name" avec
         // la cle du sort en argument). RCX=dest String{ptr,len,cap}, R8=tableau d'arguments
         // (ici juste la cle du sort, en [R8]={ptr,len}). On lit cette cle, on resout nous-memes
         // via la loc anglaise (meme resultat que spellName() de legendary-render.js), et on ecrit
         // le resultat comme une String Rust dans [RCX].
-        0x1462f8c40: (api) => {
+        0x146378290: (api) => {
           const R = api.Register;
           const argPtr = api.rdInt(api.regs[R.R8], 8), argLen = api.rdInt(api.regs[R.R8] + 8n, 8);
           let argKey = "";
@@ -70,13 +70,13 @@ for (let i = 0; i < N; i++) {
         0x1400021d0: () => {},
         // Allocations de Vec<u8> (cles de famille longues, Chaman 0.134) : profilage vide, alloc, try_reserve.
         0x140002200: () => {},
-        0x146325eeb: (api) => {
+        0x1463a5541: (api) => { // memcpy (0x146325eeb en 0.139)
           const R = api.Register, n = Number(api.regs[R.R8]);
           api.wr(api.regs[R.RCX], Buffer.from(api.rd(api.regs[R.RDX], n)));
           api.regs[R.RAX] = api.regs[R.RCX];
         },
         0x1400021c0: (api) => { api.regs[api.Register.RAX] = api.alloc(Number(api.regs[api.Register.RCX]) || 1); },
-        0x1400223d0: (api) => {
+        0x1400e57c0: (api) => { // allocation brute d'un Vec (0x1400223d0 en 0.139)
           const R = api.Register, n = api.regs[R.RDX], out = api.regs[R.RCX];
           const size = api.rdInt(api.regs[R.RSP] + 0x28n, 8);
           api.wrInt(out, 4, 0n);
