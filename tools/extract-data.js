@@ -154,7 +154,7 @@ const jewel = (o, prefix) => {
 };
 const rt = ringsTrinkets.items.map((o) => jewel(o, "jewel."));
 const data = {
-  version: "0.141.0",
+  version: "0.143.2",
   rarity: [0, 1, 2, 3, 4].map((i) => tr("rarity." + i)),
   classes,
   racials,

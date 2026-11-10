@@ -6,11 +6,12 @@ const P = load(exe);
 const { buf, str } = P;
 const leg = JSON.parse(fs.readFileSync(legJson, "utf8"));
 const L = { en: JSON.parse(fs.readFileSync(path.join(locDir, "loc-1.json"), "utf8")), fr: JSON.parse(fs.readFileSync(path.join(locDir, "loc-7.json"), "utf8")) };
-const ABIL = 0x73a26d8; // 0x7105910 en 0.135.1, 0x7322758 en 0.139
+const LOC8 = require("./locate.js")(P);
+const ABIL = LOC8.abilities(); // table des sorts trouvee par signature (115 en 0.141)
 const abil = {};
 const bySpellId = {};
-for (let i = 0; i < 115; i++) { // 114 en 0.139
-  const o = ABIL + i * 120;
+for (let i = 0; i < ABIL.n; i++) {
+  const o = ABIL.off + i * 120;
   const key = str(o, 40);
   abil[key] = { key, spell: buf.readUInt32LE(o + 64), kind: buf[o + 0x75], sub: buf.readUInt32LE(o + 0x68) };
   bySpellId[abil[key].spell] = key;
@@ -174,6 +175,9 @@ for (const r of leg) {
   out[r.key] = { family: { en: r.family, fr: L.fr[r.family] || r.family }, icon: r.icon, lines };
 }
 fs.writeFileSync(outJson, JSON.stringify(out, null, 1));
+// garde-fou : une etiquette d'effet inconnue (enum decale par une mise a jour) donne "A hidden power"
+const hidden = Object.entries(out).filter(([, x]) => x.lines.en.includes("A hidden power")).map(([k]) => k);
+if (hidden.length) { console.error("etiquettes d'effet inconnues (enum decale ?) : " + hidden.join(", ")); process.exitCode = 1; }
 for (const k of ["flamestrike", "hurricane", "cleave", "execute", "holy_shock", "pw_shield", "renew", "magma_totem", "chain_lightning", "rend", "divine_shield", "polymorph", "bloodthirst", "whirlwind"]) {
   const x = out[k];
   if (x) console.log(k, "|", x.family.fr, "\n   ", x.lines.fr.join("\n    "), "\n   ", x.lines.en.join(" || "));
@@ -181,20 +185,34 @@ for (const k of ["flamestrike", "hurricane", "cleave", "execute", "holy_shock", 
 
 if (jewelJson) {
   const rd = P.sec(".rdata");
-  const find = (key, name) => { for (let p = rd.raw; p < rd.raw + rd.rs; p += 8) if (str(p, 40) === key && str(p + 16, 60) === name) return p; return -1; };
+  // tables trouvees par signature : suite la plus longue d'entrees {cle, nom, icone, ...} au pas donne, unique
+  const run = (stride, ok) => {
+    const runs = [];
+    for (let p = rd.raw; p < rd.raw + rd.rs - stride; p += 8) {
+      if (!ok(p) || ok(p - stride)) continue;
+      let n = 0;
+      while (ok(p + n * stride)) n++;
+      if (n >= 10) runs.push({ p, n });
+    }
+    if (runs.length !== 1) throw new Error("table de bijoux au pas " + stride + " : " + runs.length + " candidats");
+    return runs[0];
+  };
+  const named = (p) => { const k = str(p, 40), ic = str(p + 32, 60); return !!(k && /^[a-z0-9_]+$/.test(k) && str(p + 16, 60) && ic && /^[A-Za-z0-9_]+$/.test(ic)); };
   const jw = { rings: {}, trinkets: {}, amulets: {} };
-  const rb = find("accuria", "Band of Accuria");
-  for (let i = 0; i < 23; i++) {
-    const o = rb + i * 72;
+  // anneaux et bijoux : 72 octets, gabarit +48, valeur f32 +64, stat +68, sorte +69 (0 anneau, 1 bijou)
+  const RB = run(72, (p) => named(p) && /\{v\}/.test(str(p + 48, 200) || "") && buf[p + 69] <= 1);
+  for (let i = 0; i < RB.n; i++) {
+    const o = RB.p + i * 72;
     const v = buf.readFloatLE(o + 64);
     const tpl = str(o + 48, 200);
     const line = {};
     for (const lang of ["en", "fr"]) line[lang] = t(lang, tpl, { v: num(tpl.includes("{v}%") ? v * 100 : v), max: "" }).replace(/,? \+\{h\}[^,]*$/, "").replace(/ \{max\}% (at most|au maximum)\.?/, "");
-    jw[i < 9 ? "rings" : "trinkets"][str(o, 40)] = line;
+    jw[buf[o + 69] === 0 ? "rings" : "trinkets"][str(o, 40)] = line;
   }
-  const ab = find("mark_of_fordring", "Mark of Fordring");
-  for (let i = 0; i < 16; i++) {
-    const o = ab + i * 80;
+  // amulettes : 80 octets, effets {ptr, n} +48, paliers +64/+72
+  const AB = run(80, (p) => { if (!named(p)) return false; const n = buf.readBigUInt64LE(p + 56); return n >= 1n && n <= 8n && P.toOff(buf.readBigUInt64LE(p + 48)) >= 0 && buf.readBigUInt64LE(p + 64) < 16n; });
+  for (let i = 0; i < AB.n; i++) {
+    const o = AB.p + i * 80;
     const ep = P.toOff(buf.readBigUInt64LE(o + 48));
     const n = Number(buf.readBigUInt64LE(o + 56));
     const lines = { en: [], fr: [] };

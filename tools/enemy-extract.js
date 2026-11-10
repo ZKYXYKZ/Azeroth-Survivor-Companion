@@ -2,14 +2,14 @@
 // Lecture statique : chaque constante est lue dans l'exe a partir de l'instruction qui l'utilise
 // (adresse VA de l'instruction, operande rip-relatif ou immediat). Si une instruction ne correspond
 // plus (autre build), la valeur passe a null et l'adresse est listee dans "missing".
-// Usage : node tools/enemy-extract.js [exe]
+// Usage : node tools/enemy-extract.js [exe] [sortie]
 const fs = require("fs");
 const path = require("path");
 const load = require("./pe.js");
 const { Decoder, DecoderOptions, Formatter, FormatterSyntax } = require("iced-x86");
 
 const exe = process.argv[2] || "C:/Users/ludov/Downloads/AzerothSurvivors/AzerothSurvivors/AzerothSurvivors.exe";
-const out = path.join(__dirname, "..", "AS-Companion", "web", "enemies.json");
+const out = process.argv[3] || path.join(__dirname, "..", "AS-Companion", "web", "enemies.json");
 const P = load(exe);
 const { buf } = P;
 const fmt = new Formatter(FormatterSyntax.Nasm);
@@ -70,7 +70,15 @@ for (let z = zoneStart; z > 0; z += 240) {
 }
 
 // ---------- Heroique : table de 5 lignes de 48 octets (2 &str + 4 f32) ----------
-const hBase = target(0x145f56841); // lea rdx,[table] ; ligne h = base + 48*h - 48
+// table trouvee par motif (0.143) : accesseurs du niveau heroique lea eax,[rcx-6] ; cmp al,0FBh ; setb dl ; movzx eax,cl ;
+// lea rcx,[rax+rax*2] ; shl ecx,4 ; lea rax,[table] (comme gear-extract.js) ; ligne h = base + 48*h - 48
+const hBase = (() => {
+  const pat = Buffer.from([0x8d, 0x41, 0xfa, 0x3c, 0xfb, 0x0f, 0x92, 0xc2, 0x0f, 0xb6, 0xc1, 0x48, 0x8d, 0x0c, 0x40, 0xc1, 0xe1, 0x04, 0x48, 0x8d, 0x05]);
+  const text = P.sec(".text"), set = new Set();
+  for (let at = buf.indexOf(pat, text.raw); at >= 0 && at < text.raw + text.rs; at = buf.indexOf(pat, at + 1)) set.add(Number(P.toVA(at + pat.length)) + 4 + buf.readInt32LE(at + pat.length));
+  if (set.size !== 1) { missing.push("table heroique : " + set.size + " candidats"); return null; }
+  return [...set][0];
+})();
 const heroic = [];
 if (hBase) for (let h = 1; h <= 5; h++) {
   const row = P.toOff(BigInt(hBase + 48 * h - 48));

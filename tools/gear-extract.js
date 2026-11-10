@@ -143,8 +143,12 @@ const THEME_MULT = f32s(themeMap.table, 6);
 const K = f32(armorMap.k);
 const THEMES = Array.from({ length: 8 }, (_, i) => readBonuses(THEME_VA + i * 16, 2));
 
-// bonus du niveau legendaire : mov rax,0x10000000B (count 1, armes) ; mov r13,<echo> (armures)
-const iLeg = idx(item, /^mov r13,[0-9A-F]+h/, iTheme);
+// bonus du niveau legendaire : mov rax,0x10000000B (count 1, armes) ; mov r13,<echo> (armures ; r14 en 0.143)
+// registre libre : deux imm64 consecutifs, un bonus count puis un bonus d'un autre tag
+const immBonus = (x) => x.imm !== null && x.imm > 0xffffffffn && Number(x.imm & 0xffffffffn) < STATS.length;
+const legHits = item.map((x, i) => i).filter((i) => i > iTheme && immBonus(item[i]) && immBonus(item[i - 1]) && Number(item[i - 1].imm & 0xffffffffn) === COUNT && Number(item[i].imm & 0xffffffffn) !== COUNT);
+if (legHits.length !== 1) die("bonus legendaires : " + legHits.length + " candidats");
+const iLeg = legHits[0];
 const bonusFromImm = (q) => ({ t: Number(q & 0xffffffffn), v: (() => { const t = Buffer.alloc(8); t.writeBigUInt64LE(q); return Number(q & 0xffffffffn) === COUNT ? t.readUInt32LE(4) : t.readFloatLE(4); })() });
 const LEG_ARMOR = bonusFromImm(item[iLeg].imm);
 const LEG_WEAPON = bonusFromImm(item[iLeg - 1].imm);
@@ -162,28 +166,39 @@ if (classAccessors.length !== 2) die("accesseurs de classe introuvables");
 const [CLASS_TABLE, PVP_TABLE] = classAccessors;
 const CLASS_IDS = [1, 2, 3, 4, 5, 7, 8, 9, 11]; // Blizzard, voir le masque 0x5DF de 0x145be5e60 (0.135.1)
 
-// --- Etoiles : mulss xmm0,[T1+i*4] ; jbe ; lea r,[T2] ; addss xmm0,[r+j*4] ----------------------------
-// registres libres : [rdx+rcx*4] puis lea rcx en 0.139, [r8+rdx*4] puis lea rdx en 0.141 (prefixe REX eventuel)
-const starHits = find([0x0f, 0x59, 0x04], (o) => {
-  if (b[o - 1] !== 0xf3 && !(b[o - 1] >= 0x40 && b[o - 1] <= 0x4f && b[o - 2] === 0xf3)) return false;
-  if (b[o + 4] !== 0x76 || (b[o + 6] & 0xf0) !== 0x40 || b[o + 7] !== 0x8d || (b[o + 8] & 0xc7) !== 0x05) return false;
-  const q = o + 13; // addss xmm0,[..*4] : f3 [REX] 0f 58 04 xx
-  return b[q] === 0xf3 && (same(q + 1, [0x0f, 0x58, 0x04]) || ((b[q + 1] & 0xf0) === 0x40 && same(q + 2, [0x0f, 0x58, 0x04])));
-});
-if (starHits.length !== 1) die("fonction des etoiles : " + starHits.length + " candidats");
-const STAR2_VA = relAt(starHits[0] + 9);
-const star = decodeFn(toTextVA(starHits[0]));
-const iStar = idx(star, /^mulss xmm0,\[r[a-z0-9]+\+r[a-z0-9]+\*4\]/);
-const STAR1_VA = star[iStar - 1].rip;
-if (!STAR1_VA) die("table etoiles introuvable");
+// --- Etoiles : lea rA,[T1] ; [movss x,[rA+i*4]] ; mulss ; jbe ; lea rB,[T2] ; [movss x,[rB+j*4]] ; addss ----------
+// registres et forme libres (mulss xmm0,[mem] en 0.141 ; xmm2 et deux copies, l'une via movss, en 0.143). Les tables
+// doivent etre les memes pour toutes les copies, et la fonction de remplissage (call apres cmp bl,4) aussi.
+const scaled = /^(movss|mulss|addss) xmm\d+,\[(r[a-z0-9]+)\+r[a-z0-9]+\*4\]$/;
+const starCand = find([0x76], (o) => (b[o + 2] === 0x48 || b[o + 2] === 0x4c) && b[o + 3] === 0x8d && (b[o + 4] & 0xc7) === 0x05 &&
+  b.subarray(o - 16, o).indexOf(Buffer.from([0x0f, 0x59])) >= 0 && b.subarray(o + 9, o + 22).indexOf(Buffer.from([0x0f, 0x58])) >= 0);
+const starHits = [];
+for (const o of starCand) {
+  const L = decodeFn(toTextVA(o)), j = L.findIndex((i) => i.ip === toTextVA(o));
+  if (j < 3 || !/^jbe /.test(L[j].t)) continue;
+  const reg = (i) => (scaled.exec(L[i] ? L[i].t : "") || [])[2];
+  const pre = [j - 1, j - 2].find((i) => reg(i) && /^lea /.test(L[i - 1].t) && L[i - 1].rip && L[i - 1].t.startsWith("lea " + reg(i) + ","));
+  const post = [j + 2].find((i) => reg(i) && L[j + 1].t.startsWith("lea " + reg(i) + ",") && L[j + 1].rip);
+  if (pre == null || post == null) continue;
+  if (!L.slice(j - 3, j).some((i) => /^mulss /.test(i.t)) || !L.slice(j + 2, j + 4).some((i) => /^addss /.test(i.t))) continue;
+  const iCap = L.findIndex((i, n) => n > j && /^cmp bl,4$/.test(i.t));
+  starHits.push({ T1: L[pre - 1].rip, T2: L[j + 1].rip, fill: iCap > 0 ? L[nextCall(L, iCap)].br : null, L, j });
+}
+const uniq = (xs, what) => { const s = [...new Set(xs.filter((x) => x != null))]; if (s.length !== 1) die(what + " : " + s.length + " candidats"); return s[0]; };
+const STAR1_VA = uniq(starHits.map((h) => h.T1), "table etoiles 1-4");
+const STAR2_VA = uniq(starHits.map((h) => h.T2), "table 5e etoile");
 const STAR_PER = f32s(STAR1_VA, 6), STAR_FIFTH = f32s(STAR2_VA, 6);
-const iCap = idx(star, /^cmp bl,4/, iStar);
-const fill = decodeFn(star[nextCall(star, iCap)].br);
+const fill = decodeFn(uniq(starHits.map((h) => h.fill), "fonction de la 5e etoile"));
 // 5e etoile : complete avec les stats absentes de la piece, prises sur le legendaire amene a 5*
 const iFrac = idx(fill, /^movss xmm0,\[r[a-z0-9]+\+r[a-z0-9]+\*4\]/); // [rdx+rcx*4] en 0.139, [rdx+rax*4] en 0.141
 const FILL_FRAC = f32s(fill[iFrac - 1].rip, 6);
-const fillImm = fill[idx(fill, /^mov dword \[rbp\+[0-9A-F]+h\],3[EF][0-9A-F]{6}h/)].imm;
-const LEG_STAR5 = (() => { const t = Buffer.alloc(4); t.writeUInt32LE(Number(fillImm)); return t.readFloatLE(0); })();
+// multiplicateur du legendaire a 5* : mov dword [rbp+X],imm (0.141) ou movss xmmN,[k] juste avant un call (0.143)
+const LEG_STAR5 = (() => {
+  const iImm = fill.findIndex((i) => /^mov dword \[rbp\+[0-9A-F]+h\],3[EF][0-9A-F]{6}h/.test(i.t));
+  if (iImm >= 0) { const t = Buffer.alloc(4); t.writeUInt32LE(Number(fill[iImm].imm)); return t.readFloatLE(0); }
+  const ks = fill.filter((i, n) => /^movss xmm\d+,\[rel /.test(i.t) && fill[n + 1] && fill[n + 1].mn === Mnemonic.Call).map((i) => f32(i.rip)).filter((v) => v > 0 && v <= 1);
+  return uniq(ks, "multiplicateur 5e etoile du legendaire");
+})();
 
 // --- Bonus 4 pieces : un seul par palier, communs a toutes les classes -------------------------
 // 0.139 : cmp r8,5 ; ja ; tables longueurs / pointeurs. 0.141 : match par palier (8 paliers, Tier 0.5 = 7) :
@@ -346,7 +361,7 @@ const withStars = (cls, slot, tier, s, weaponBase) => {
 const VER = (() => {
   const s = b.toString("latin1", rdata.raw, rdata.raw + rdata.rs);
   let best = null;
-  for (const x of s.matchAll(/(?<![0-9.])0\.1[0-9]{2}\.[0-9]{1,2}(?![0-9.])/g)) {
+  for (const x of s.matchAll(/(?<![0-9A-Za-z.])0\.1[0-9]{2}\.[0-9]{1,2}(?![0-9.])/g)) { // pas dans un hash (…e0.143.29) ; 0.143.2 suivi de WOW_…
     const n = x[0].split(".").map(Number);
     if (!best || n[1] > best[1] || (n[1] === best[1] && n[2] > best[2])) best = n;
   }
@@ -445,9 +460,23 @@ const tiers = Array.from({ length: 6 }, (_, i) => ({
 // (0x14603b5c0, non emulee) : la 2e liste est donnee telle quelle (max). Pas de bonus 4 pieces (Tier 0.5 : liste vide) ;
 // bonus 8 pieces : statique paresseux construit a l'execution (0x148ac2e00), non lu.
 const t05 = (() => {
-  const i7 = star.findIndex((i, n) => /^cmp rax,7$/.test(i.t) && /^jne /.test(star[n + 1].t));
-  if (i7 < 0) return null;
-  const T = star[idx(star, /^lea r8,\[rel /, i7)].rip;
+  // table trouvee par signature de donnees (le code qui la lit a deja change de fonction en 0.143) : 11 pointeurs,
+  // nuls hors CLASS_IDS, fiches avec nom de set &str +0x200, 8 pieces nommees, emplacements <= 32 (robe : 20), armes <= 4
+  const ptr = (o) => { const v = b.readBigUInt64LE(o); return v > P.ib && P.toOff(v) >= 0 ? P.toOff(v) : -1; };
+  const isT05 = (o) => {
+    for (let c = 1; c <= 11; c++) {
+      const q = ptr(o + (c - 1) * 8);
+      if (!CLASS_IDS.includes(c)) { if (b.readBigUInt64LE(o + (c - 1) * 8) !== 0n) return false; continue; }
+      if (q < 0 || P.str(q + 0x200, 60) == null || b.readBigUInt64LE(q + 0x218) > 4n) return false;
+      for (let i = 0; i < 8; i++) if (P.str(q + i * 0x40, 80) == null || b[q + i * 0x40 + 0x38] > 32) return false;
+    }
+    return true;
+  };
+  const t05Hits = [];
+  for (let o = rdata.raw; o < rdata.raw + rdata.rs - 88; o += 8) if (ptr(o) >= 0 && b.readBigUInt64LE(o + 40) === 0n && isT05(o)) t05Hits.push(o);
+  if (t05Hits.length > 1) die("table Tier 0.5 : " + t05Hits.length + " candidats");
+  if (!t05Hits.length) return null;
+  const T = Number(P.toVA(t05Hits[0]));
   const keyOf = Object.fromEntries(Object.entries(classes).map(([k, c]) => [c.id, k]));
   const item = (o) => {
     const id = u32(o + 0x30);

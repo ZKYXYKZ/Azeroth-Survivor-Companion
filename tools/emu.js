@@ -179,6 +179,15 @@ module.exports = function makeEmu(exePath) {
           else throw new Error("imul1");
           break;
         }
+        case Mnemonic.Mul: { // rdx:rax = rax * op (taille d'un Vec : debordement teste par jo/seto)
+          if (sz0 !== 8) throw new Error("mul" + bits);
+          const p = getFull(Register.RAX) * readOp(ins, 0);
+          regs[Register.RAX] = p & M64; regs[Register.RDX] = p >> 64n;
+          flags.cf = flags.of = p >> 64n ? 1 : 0;
+          break;
+        }
+        case Mnemonic.Seto: case Mnemonic.Setno: writeOp(ins, 0, (mn === Mnemonic.Seto) === !!flags.of ? 1n : 0n); break;
+        case Mnemonic.Jo: case Mnemonic.Jno: if ((mn === Mnemonic.Jo) === !!flags.of) jumped = Number(ins.nearBranch64); break;
         case Mnemonic.Sete: case Mnemonic.Setne: case Mnemonic.Setbe: case Mnemonic.Seta: case Mnemonic.Setb: case Mnemonic.Setae:
         case Mnemonic.Setl: case Mnemonic.Setg: case Mnemonic.Setle: case Mnemonic.Setge: case Mnemonic.Setnp: case Mnemonic.Setp:
           writeOp(ins, 0, cond(ins.conditionCode) ? 1n : 0n); break;
@@ -213,7 +222,12 @@ module.exports = function makeEmu(exePath) {
             jumped = target;
             break;
           }
-          const h = opts.calls && opts.calls[target];
+          // Resolveur optionnel : rend une fonction de remplacement, "follow" pour executer la cible, ou rien
+          let h = opts.calls && opts.calls[target];
+          if (!h && opts.onCall) {
+            h = opts.onCall(target, ip);
+            if (h === "follow") { depth.push(next); regs[Register.RSP] -= 8n; jumped = target; break; }
+          }
           if (!h) throw new Error("call 0x" + target.toString(16) + " at 0x" + ip.toString(16));
           h(api);
           break;
