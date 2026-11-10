@@ -7,11 +7,11 @@
    "en": "Arms Warrior"
   },
   "author": "AS Companion",
-  "race": "scourge",
-  "code": "SB1;warrior;Guerrier Armes;4235101513531/5051132000000/00000000000000;mortal_strike:5,execute:5,whirlwind:4,shield_slam:3,thunder_clap:3,bloodthirst:2;cleave,demo_shout,rend;quick_strike,dragonslayer,accuria,blooddrinker;hoj,blackhand,soulstone,lifegiving;leg:mortal_strike,vek_nilash,onyxia_tooth,south_seas_kelp;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;warrior;Guerrier Armes;4235101513531/5051132000000/00000000000000;mortal_strike:5,cleave:5,whirlwind:4,shield_slam:3,thunder_clap:3,bloodthirst:2;demo_shout,execute,rend;quick_strike,dragonslayer,blooddrinker,accuria;chosen,tep,blackhand,earthstrike;leg:mortal_strike,leg:cleave,south_seas_kelp,malice_stone;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Frappe mortelle, Exécution et Tourbillon en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Mortal Strike, Execute and Whirlwind first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Optimisé au simulateur calé sur les parties partagées : Frappe mortelle, Enchaînement et Tourbillon en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
+   "en": "Tuned on the simulator calibrated with shared runs: Mortal Strike, Cleave and Whirlwind first, with a shield or heal and a defensive ring to last to the end."
   }
  },
  {
@@ -22,8 +22,8 @@
    "en": "Fury Warrior"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;warrior;Guerrier Fureur;4125130400000/5132133313051/00000000000000;whirlwind:5,bloodthirst:5,shield_slam:4,rend:3,mortal_strike:3,battle_shout:2;cleave,execute,thunder_clap;quick_strike,dragonslayer,spell_power,blooddrinker;blackhand,earthstrike,onyxia_blood,lifegiving;south_seas_kelp,leg:rend,enlightenment,leg:shield_slam;50,0,1,3,20,2,1",
+  "race": "orc",
+  "code": "SB1;warrior;Guerrier Fureur;4125130400000/5132133313051/00000000000000;whirlwind:5,bloodthirst:5,shield_slam:4,rend:3,mortal_strike:3,battle_shout:2;cleave,execute,thunder_clap;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,hoj,tep;leg:bloodthirst,leg:whirlwind,prestor,leg:shield_slam;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Tourbillon gratuit toutes les 3 s grâce à l'apogée, Rafale fait frapper deux fois Tourbillon et Sanguinaire. Plaies profondes et Traumatisme en complément.",
    "en": "A free Whirlwind every 3 sec from the capstone, Flurry makes Whirlwind and Bloodthirst strike twice. Deep Wounds and Trauma on the side."
@@ -37,8 +37,8 @@
    "en": "Protection Warrior"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;warrior;Guerrier Protection;0515130000000/5000000000000/55303133301031;shield_slam:5,whirlwind:5,mortal_strike:4,execute:3,bloodrage:3,demo_shout:2;bloodthirst,rend,thunder_clap;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,hoj,soulstone,earthstrike;leg:shield_slam,enlightenment,onyxia_tooth,steadfast_might;50,0,1,3,20,2,1",
+  "race": "gnome",
+  "code": "SB1;warrior;Guerrier Protection;0515130000000/5000000000000/55303133301031;shield_slam:5,thunder_clap:5,mortal_strike:4,execute:3,bloodrage:3,demo_shout:2;bloodthirst,rend,whirlwind;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:shield_slam,leg:mortal_strike,onyxia_tooth,enlightenment;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Défi donne +100 % de dégâts par tranche de 10 % de réduction des dégâts : tout ce qui réduit les dégâts subis augmente les dégâts (Spécialisation bouclier, Déviation, Médaillon de puissance inébranlable). L'Elfe de la nuit apporte 5 % de réduction.",
    "en": "Defiance gives +100% damage per 10% damage reduction: everything that reduces damage taken raises your damage (Shield Specialization, Deflection, Medallion of Steadfast Might). Night Elves bring 5% reduction."
@@ -52,9 +52,9 @@
    "en": "Holy Paladin"
   },
   "author": "AS Companion",
-  "race": "human",
-  "raceAlt": "gnome",
-  "code": "SB1;paladin;Paladin Sacré;5105135314021/00000000000000/5531105000000;holy_shock:5,holy_wrath:5,consecration:4,exorcism:4,judgement:3,hammer_of_wrath:3;holy_light,holy_shield,redemption;accuria,quick_strike,dragonslayer,spell_power;chosen,earthstrike,hoj,tep;leg:holy_wrath,leg:holy_shock,fire_lord,malice_stone;50,0,1,3,20,2,1",
+  "race": "dwarf",
+  "raceAlt": "troll",
+  "code": "SB1;paladin;Paladin Sacré;5105135314021/00000000000000/5531105000000;holy_shock:5,holy_wrath:5,consecration:4,exorcism:4,judgement:3,holy_shield:3;hammer_of_wrath,holy_light,redemption;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,tep,earthstrike;leg:consecration,leg:holy_shock,leg:holy_wrath,darkmoon;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Horion sacré dès le départ (rebonds), ses critiques font tomber Colère divine, et l'apogée en lance une toutes les 14 s. Sceau d'autorité ajoute Jugement.",
    "en": "Holy Shock from the start (leaping bolts), its crits call down Holy Wrath, and the capstone adds one every 14 sec. Seal of Command adds Judgement."
@@ -68,9 +68,9 @@
    "en": "Protection Paladin"
   },
   "author": "AS Companion",
-  "race": "human",
-  "raceAlt": "troll",
-  "code": "SB1;paladin;Paladin Protection;0000000000000/35301133331131/5504105000000;consecration:5,holy_wrath:5,exorcism:4,hammer_of_justice:3,hammer_of_wrath:3,holy_shield:2;holy_light,holy_shock,redemption;quick_strike,spell_power,dragonslayer,blooddrinker;blackhand,tep,soulstone,lifegiving;leg:consecration,malice_stone,onyxia_tooth,leg:holy_wrath;50,0,1,3,20,2,1",
+  "race": "dwarf",
+  "raceAlt": "scourge",
+  "code": "SB1;paladin;Paladin Protection;0000000000000/35301133331131/5504105000000;hammer_of_justice:5,consecration:5,exorcism:4,holy_wrath:3,hammer_of_wrath:3,holy_shield:2;holy_light,holy_shock,redemption;quick_strike,dragonslayer,blooddrinker,spell_power;hoj,earthstrike,tep,blackhand;leg:consecration,talvash,onyxia_tooth,leg:hammer_of_wrath;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Marteau de la justice consacre le sol, chaque Consécration pose un bouclier et +20 % de dégâts tant qu'il tient. Les dégâts suivent la vie max. Le Nain ajoute un bouclier de 30 % de vie toutes les 45 s.",
    "en": "Hammer of Justice hallows the ground, every Consecration raises a shield and +20% damage while it holds. Damage scales with max health. Dwarves add a 30% health shield every 45 sec."
@@ -84,12 +84,11 @@
    "en": "Retribution Paladin"
   },
   "author": "AS Companion",
-  "race": "human",
-  "raceAlt": "troll",
-  "code": "SB1;paladin;Paladin Vindicte;5105135000000/00000000000000/5531105313031;consecration:5,holy_wrath:5,judgement:4,exorcism:3,redemption:3,holy_shock:3;hammer_of_wrath,holy_light,holy_shield;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,hoj,chosen,lifegiving;leg:consecration,onyxia_tooth,leg:judgement,south_seas_kelp;50,0,1,3,20,2,1",
+  "race": "dwarf",
+  "code": "SB1;paladin;Paladin Vindicte;5105135000000/00000000000000/5531105313031;exorcism:5,judgement:5,holy_wrath:4,consecration:3,redemption:3,holy_shield:3;hammer_of_wrath,holy_light,holy_shock;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,chosen,earthstrike;leg:judgement,leg:consecration,leg:exorcism,malice_stone;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Exorcisme dès le départ avec éclaboussure, L'art de la guerre en relance sur les critiques. Beaucoup de critique (Conviction, Puissance sacrée), Jugement et Horion sacré en plus.",
-   "en": "Exorcism from the start with a splash, The Art of War fires more on crits. Plenty of crit (Conviction, Holy Power), plus Judgement and Holy Shock."
+   "fr": "Optimisé au simulateur calé sur les parties partagées : Exorcisme, Jugement et Colère divine en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
+   "en": "Tuned on the simulator calibrated with shared runs: Exorcism, Judgement and Holy Wrath first, with a shield or heal and a defensive ring to last to the end."
   }
  },
  {
@@ -100,8 +99,8 @@
    "en": "Beast Mastery Hunter"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;hunter;Chasseur Maîtrise des bêtes;5032155013331/5500151200000/0000000000000;aimed_shot:5,immolation_trap:5,hunters_mark:4,volley:3,multi_shot:3,arcane_shot:2;auto_shot,concussive_shot,frost_trap;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,soulstone,hoj,lifegiving;leg:immolation_trap,leg:aimed_shot,leg:volley,onyxia_tooth;50,0,1,3,20,2,1",
+  "race": "orc",
+  "code": "SB1;hunter;Chasseur Maîtrise des bêtes;5032155013331/5500151200000/0000000000000;multi_shot:5,hunters_mark:5,immolation_trap:4,volley:3,aimed_shot:3,arcane_shot:2;auto_shot,concussive_shot,frost_trap;quick_strike,dragonslayer,blooddrinker,spell_power;hoj,blackhand,tep,earthstrike;leg:immolation_trap,leg:aimed_shot,leg:volley,leg:hunters_mark;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Loup puis raptor : les familiers font près de la moitié des dégâts (+160 % avec Furie libérée et Discipline bestiale), et leurs morsures lancent des Flèches multiples gratuites.",
    "en": "Wolf then raptor: pets deal close to half the damage (+160% with Unleashed Fury and Bestial Discipline), and their bites fire free Multi-Shots."
@@ -115,11 +114,11 @@
    "en": "Marksmanship Hunter"
   },
   "author": "AS Companion",
-  "race": "orc",
-  "code": "SB1;hunter;Chasseur Précision;5032145000000/5500155213031/0000000000000;aimed_shot:5,hunters_mark:5,immolation_trap:4,volley:3,multi_shot:3,arcane_shot:2;auto_shot,concussive_shot,frost_trap;quick_strike,dragonslayer,accuria,spell_power;earthstrike,blackhand,onyxia_blood,lifegiving;leg:immolation_trap,leg:volley,leg:aimed_shot,south_seas_kelp;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;hunter;Chasseur Précision;5032145000000/5500155213031/0000000000000;aimed_shot:5,auto_shot:5,immolation_trap:4,volley:3,multi_shot:3,arcane_shot:2;concussive_shot,frost_trap,hunters_mark;quick_strike,dragonslayer,blooddrinker,accuria;hoj,chosen,blackhand,earthstrike;leg:immolation_trap,leg:aimed_shot,onyxia_tooth,leg:volley;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Visée, Marque du chasseur et Piège d'immolation en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Aimed Shot, Hunter's Mark and Immolation Trap first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Visée dès le départ, relancée à chaque victime, et une Visée gratuite tous les 6 tirs. Tir automatique perce. Le loup de Maîtrise des bêtes vient en renfort.",
+   "en": "Aimed Shot from the start, reset on kills, and a free Aimed Shot every 6th shot. Auto Shot pierces. The Beast Mastery wolf helps out."
   }
  },
  {
@@ -131,7 +130,7 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;hunter;Chasseur Survie;5032145000000/0000000000000/5232133213501;immolation_trap:5,hunters_mark:4,aimed_shot:4,volley:4,frost_trap:3,concussive_shot:3;arcane_shot,kill_command,multi_shot;quick_strike,dragonslayer,spell_power,accuria;blackhand,hoj,star_of_mystaria,soulstone;leg:immolation_trap,leg:volley,onyxia_tooth,leg:frost_trap;50,0,1,3,20,2,1",
+  "code": "SB1;hunter;Chasseur Survie;5032145000000/0000000000000/5232133213501;immolation_trap:5,hunters_mark:4,aimed_shot:4,volley:4,frost_trap:3,concussive_shot:3;arcane_shot,kill_command,multi_shot;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,tep,earthstrike;leg:immolation_trap,leg:volley,malice_stone,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Pièges à vos pieds : on se bat au contact, d'où la Tauren et ses points de vie. Moins de dégâts que Maîtrise des bêtes dans nos essais, à réserver aux zones faciles.",
    "en": "Traps at your feet: you fight in melee range, hence Tauren and its health. Less damage than Beast Mastery in our tests, best kept for easy zones."
@@ -145,8 +144,8 @@
    "en": "Assassination Rogue"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;rogue;Voleur Assassinat;2530155513001/5001000000000/0514130000000;rupture:5,backstab:5,eviscerate:4,blade_flurry:3,ghostly_strike:3,seal_fate:2;gouge,kidney_shot,sinister_strike;quick_strike,dragonslayer,devoured,blooddrinker;earthstrike,blackhand,soulstone,lifegiving;leg:rupture,enlightenment,vek_nilash,leg:backstab;50,0,1,3,20,2,1",
+  "race": "orc",
+  "code": "SB1;rogue;Voleur Assassinat;2530155513001/5001000000000/0514130000000;rupture:5,sinister_strike:5,eviscerate:4,blade_flurry:3,ghostly_strike:3,seal_fate:2;backstab,gouge,kidney_shot;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,chosen,blackhand,hoj;leg:sinister_strike,leg:rupture,onyxia_tooth,prestor;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Poisons et saignements partout, et les ennemis empoisonnés explosent en nuage toxique. Initiative de Finesse donne 30 % de chance et Tromper la mort sauve une fois.",
    "en": "Poisons and bleeds everywhere, and poisoned enemies burst in a toxic cloud. Subtlety's Initiative gives 30% luck and Cheat Death saves you once."
@@ -160,8 +159,8 @@
    "en": "Combat Rogue"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;rogue;Voleur Combat;5530150000000/5035155303001/0100000000000;sinister_strike:5,eviscerate:5,seal_fate:4,gouge:3,adrenaline_rush:3,slice_and_dice:2;backstab,blade_flurry,kidney_shot;dragonslayer,accuria,archimtiros,blooddrinker;blackhand,lifegiving,earthstrike,soulstone;leg:sinister_strike,onyxia_tooth,south_seas_kelp,darkmoon;50,0,1,3,20,2,1",
+  "race": "human",
+  "code": "SB1;rogue;Voleur Combat;5530150000000/5035155303001/0100000000000;sinister_strike:5,eviscerate:5,seal_fate:4,gouge:3,adrenaline_rush:3,slice_and_dice:2;backstab,blade_flurry,kidney_shot;dragonslayer,accuria,blooddrinker,quick_strike;blackhand,hoj,earthstrike,tep;leg:sinister_strike,south_seas_kelp,vek_nilash,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Optimisé au simulateur calé sur les parties partagées : Attaque pernicieuse, Éviscération et Scelle le destin en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
    "en": "Tuned on the simulator calibrated with shared runs: Sinister Strike, Eviscerate and Seal Fate first, with a shield or heal and a defensive ring to last to the end."
@@ -175,8 +174,8 @@
    "en": "Subtlety Rogue"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;rogue;Voleur Finesse;5530150000000/1000000000000/0515133313501;eviscerate:5,backstab:5,rupture:4,gouge:3,ghostly_strike:3,kidney_shot:2;blade_flurry,sinister_strike,slice_and_dice;quick_strike,dragonslayer,accuria,seal_damned;earthstrike,hoj,tep,blackhand;leg:rupture,onyxia_tooth,south_seas_kelp,leg:backstab;50,0,1,3,20,2,1",
+  "race": "gnome",
+  "code": "SB1;rogue;Voleur Finesse;5530150000000/1000000000000/0515133313501;backstab:5,eviscerate:5,rupture:4,gouge:3,ghostly_strike:3,kidney_shot:2;blade_flurry,sinister_strike,slice_and_dice;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,tep,earthstrike;leg:rupture,leg:backstab,south_seas_kelp,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Attaque sournoise dès le départ avec éclaboussure, Suriner gratuit toutes les 6 s étourdit autour de vous et Sales coups ajoute +24 % sur les étourdis. 30 % de chance avec Initiative.",
    "en": "Backstab from the start with a splash, a free Gouge every 6 sec stuns around you and Dirty Deeds adds +24% on stunned enemies. 30% luck from Initiative."
@@ -190,8 +189,8 @@
    "en": "Discipline Priest"
   },
   "author": "AS Companion",
-  "race": "human",
-  "code": "SB1;priest;Prêtre Discipline;0532150515211/5053113200000/0000000000000;devouring_plague:5,holy_nova:5,sw_pain:4,mind_flay:4,holy_fire:3,pw_shield:2;psychic_scream,renew,smite;quick_strike,dragonslayer,accuria,blooddrinker;earthstrike,chosen,onyxia_blood,lifegiving;leg:devouring_plague,onyxia_tooth,enlightenment,steadfast_might;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;priest;Prêtre Discipline;0532150515211/5053113200000/0000000000000;smite:5,pw_shield:5,sw_pain:4,mind_flay:4,holy_fire:3,holy_nova:2;mind_blast,psychic_scream,renew;quick_strike,accuria,blooddrinker,dragonslayer;earthstrike,hoj,blackhand,tep;leg:sw_pain,leg:smite,onyxia_tooth,vek_nilash;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Pénitence gratuite toutes les 3 s, Mot de pouvoir : Bouclier dès le départ qui explose en se brisant et se relève aussitôt. Résolution silencieuse donne 24 % de chance.",
    "en": "A free Penance every 3 sec, Power Word: Shield from the start that bursts when it breaks and comes back at once. Silent Resolve gives 24% luck."
@@ -205,11 +204,11 @@
    "en": "Holy Priest"
   },
   "author": "AS Companion",
-  "race": "scourge",
-  "code": "SB1;priest;Prêtre Sacré;0505150400000/5053113511231/0000000000000;holy_nova:5,devouring_plague:5,holy_fire:4,sw_pain:3,pw_shield:3,renew:2;mind_flay,psychic_scream,smite;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,earthstrike,soulstone,lifegiving;enlightenment,leg:holy_fire,leg:holy_nova,onyxia_tooth;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;priest;Prêtre Sacré;0505150400000/5053113511231/0000000000000;smite:5,holy_nova:5,holy_fire:4,sw_pain:3,pw_shield:3,renew:2;devouring_plague,mind_flay,psychic_scream;dragonslayer,quick_strike,blooddrinker,accuria;blackhand,tep,hoj,earthstrike;leg:holy_nova,leg:sw_pain,onyxia_tooth,leg:smite;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Nova sacrée, Peste dévorante et Flammes sacrées en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Holy Nova, Devouring Plague and Holy Fire first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Châtiment touche 2 ennemis et chaque critique déclenche un Nova sacré gratuit : tout mise sur le critique (Spécialisation sacrée, Troll).",
+   "en": "Smite hits 2 enemies and every crit sets off a free Holy Nova: everything goes into crit (Holy Specialization, Troll)."
   }
  },
  {
@@ -221,10 +220,10 @@
   },
   "author": "AS Companion",
   "race": "troll",
-  "code": "SB1;priest;Prêtre Ombre;5005150000000/4000000000000/2305155013321;sw_pain:5,devouring_plague:5,mind_flay:4,holy_nova:4,psychic_scream:2,pw_shield:2;holy_fire,renew,smite;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,earthstrike,hoj,soulstone;leg:sw_pain,leg:devouring_plague,leg:holy_nova,malice_stone;50,0,1,3,20,2,1",
+  "code": "SB1;priest;Prêtre Ombre;5005150000000/4000000000000/2305155013321;sw_pain:5,mind_blast:5,mind_flay:4,holy_nova:4,psychic_scream:2,pw_shield:2;holy_fire,renew,smite;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:sw_pain,leg:mind_blast,onyxia_tooth,malice_stone;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Mot de l'ombre : Douleur, Peste dévorante et Fouet mental en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Shadow Word: Pain, Devouring Plague and Mind Flay first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Mot de l'ombre : Douleur dès le départ, ses dégâts réguliers lancent des Attaques mentales gratuites et la douleur saute d'un ennemi mort au suivant.",
+   "en": "Shadow Word: Pain from the start, its ticks fire free Mind Blasts and the pain jumps from a dead enemy to the next."
   }
  },
  {
@@ -235,12 +234,11 @@
    "en": "Elemental Shaman"
   },
   "author": "AS Companion",
-  "race": "orc",
-  "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Élémentaire;5533105215231/0502000000000/0503000000000;magma_totem:5,stormstrike:5,fire_nova:3,lightning_bolt:3,earth_shock:3,frost_shock:3;chain_lightning,healing_wave,searing_totem;quick_strike,dragonslayer,spell_power,accuria;blackhand,soulstone,tep,hoj;leg:magma_totem,south_seas_kelp,leg:lightning_bolt,mark_of_fordring;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;shaman;Chaman Élémentaire;5533105215231/0502000000000/0503000000000;chain_lightning:5,lightning_bolt:5,fire_nova:3,stormstrike:3,earth_shock:3,lightning_shield:3;frost_shock,healing_wave,searing_totem;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:chain_lightning,south_seas_kelp,onyxia_tooth,vek_nilash;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Totem de magma, Courroux des tempêtes et Nova de feu en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Magma Totem, Stormstrike and Fire Nova first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Chaîne d'éclairs dès le départ, une seconde toutes les 3 s, qui rebondit sur 3 ennemis de plus sans rien perdre. +35 % aux sorts de Nature. Étreinte de la terre et Garde-tempête réduisent les dégâts subis, Bouclier de foudre actif.",
+   "en": "Chain Lightning from the start, a second one every 3 sec, jumping to 3 more enemies with no loss. +35% to Nature spells. Earth's Grasp and Stormguard cut damage taken while Lightning Shield is up."
   }
  },
  {
@@ -251,12 +249,11 @@
    "en": "Enhancement Shaman"
   },
   "author": "AS Companion",
-  "race": "tauren",
-  "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Amélioration;5533040000000/2533133313301/0000000000000;flame_shock:5,fire_nova:5,rockbiter:4,frost_shock:3,earth_shock:3,stormstrike:3;chain_lightning,lightning_bolt,lightning_shield;blooddrinker,accuria,dragonslayer,quick_strike;earthstrike,hoj,chosen,lifegiving;leg:flame_shock,leg:fire_nova,fire_lord,jeklik;50,0,1,3,20,2,1",
+  "race": "troll",
+  "code": "SB1;shaman;Chaman Amélioration;5533040000000/2533133313301/0000000000000;rockbiter:5,stormstrike:5,flame_shock:4,frost_shock:3,earth_shock:3,lightning_shield:3;chain_lightning,fire_nova,lightning_bolt;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,hoj,tep;leg:rockbiter,vek_nilash,onyxia_tooth,south_seas_kelp;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Spé des horions, faite pour le set des éléments (8 pièces : un ennemi qui meurt sous Horion de flammes explose pour 15 % de sa vie max à 8 m). Horion de flammes à 20 m et Horions résonnants pour le poser sur 3 ennemis de plus, Arme Langue de feu pour des Novas de feu gratuites, Arme Givrefeu pour des Horions de givre gratuits et Éléments fracassants qui renforcent l'horion suivant. Se joue à distance.",
-   "en": "The shock spec, made for the Elements set (8 pieces: an enemy dying with Flame Shock explodes for 15% of its max health within 8 yd). Flame Shock at 20 yd and Resonant Shocks to spread it to 3 more enemies, Flametongue Weapon for free Fire Novas, Frostbrand for free Frost Shocks and Shattering Elements boosting the next shock. Played at range."
+   "fr": "Optimisé au simulateur calé sur les parties partagées : Arme Croque-roc, Courroux des tempêtes et Horion de flammes en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
+   "en": "Tuned on the simulator calibrated with shared runs: Rockbiter Weapon, Stormstrike and Flame Shock first, with a shield or heal and a defensive ring to last to the end."
   }
  },
  {
@@ -267,12 +264,11 @@
    "en": "Totem Shaman"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "raceAlt": "gnome",
-  "code": "SB1;shaman;Chaman Totems;5503112200000/0000000000000/0533135014331;magma_totem:5,fire_nova:5,stormstrike:4,flame_shock:3,earth_shock:3,lightning_shield:2;chain_lightning,frost_shock,searing_totem;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,onyxia_blood,tep,soulstone;leg:magma_totem,enlightenment,animated_chain,south_seas_kelp;50,0,1,3,20,2,1",
+  "race": "orc",
+  "code": "SB1;shaman;Chaman Totems;5503112200000/0000000000000/0533135014331;magma_totem:5,searing_totem:5,stormstrike:4,flame_shock:3,earth_shock:3,lightning_shield:2;chain_lightning,fire_nova,frost_shock;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,tep,earthstrike;leg:magma_totem,malice_stone,vek_nilash,south_seas_kelp;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Totem de magma, Nova de feu et Courroux des tempêtes en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Magma Totem, Fire Nova and Stormstrike first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Arbre Restauration joué en totems : chaque totem en pose un second, Totem de magma dès le départ et un Totem incendiaire gratuit toutes les 14 s. Réincarnation sauve une fois toutes les 2 min, Guérison ancestrale au maximum (9 % de réduction des dégâts) contre le pic qui tue le round suivant.",
+   "en": "The Restoration tree played with totems: every totem drops a second one, Magma Totem from the start and a free Searing Totem every 14 sec. Reincarnation saves you every 2 min, Ancestral Healing maxed (9% less damage taken) against the burst that kills next."
   }
  },
  {
@@ -283,8 +279,9 @@
    "en": "Arcane Mage"
   },
   "author": "AS Companion",
-  "race": "human",
-  "code": "SB1;mage;Mage Arcanes;5531115013231/0000000000000/5435030000000;blizzard:5,pyroblast:5,arcane_missiles:3,blast_wave:3,arcane_explosion:3,ice_barrier:2;fireball,flamestrike,polymorph;quick_strike,accuria,seal_damned,blooddrinker;hoj,tep,soulstone,lifegiving;leg:blizzard,leg:pyroblast,south_seas_kelp,enlightenment;50,0,1,3,20,2,1",
+  "race": "troll",
+  "raceAlt": "tauren",
+  "code": "SB1;mage;Mage Arcanes;5531115013231/0000000000000/5435030000000;arcane_missiles:5,arcane_explosion:5,blizzard:3,blast_wave:3,pyroblast:3,ice_barrier:2;fireball,flamestrike,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,chosen,hoj;leg:blizzard,leg:arcane_missiles,south_seas_kelp,leg:blast_wave;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Projectiles des arcanes dès le départ, qui rebondissent, et des sorts qui frappent deux fois en cascade : tout ce qui fait doubler (Main de justice, Pierre de malveillance) vaut double. 60 % de chance avec le Gnome.",
    "en": "Arcane Missiles from the start, leaping between enemies, and spells that strike twice in cascades: anything that doubles casts (Hand of Justice, Malice Stone) is worth double. 60% luck with a Gnome."
@@ -298,8 +295,8 @@
    "en": "Fire Mage"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;mage;Mage Feu;5035034000000/5025123315031/0000000000000;pyroblast:5,blizzard:5,flamestrike:4,blast_wave:4,fire_blast:3,ice_barrier:3;arcane_missiles,frostbolt,polymorph;quick_strike,dragonslayer,accuria,blooddrinker;hoj,chosen,lifegiving,blackhand;leg:pyroblast,leg:flamestrike,leg:blizzard,mark_of_fordring;50,0,1,3,20,2,1",
+  "race": "scourge",
+  "code": "SB1;mage;Mage Feu;5035034000000/5025123315031/0000000000000;pyroblast:5,flamestrike:5,blizzard:4,blast_wave:4,fire_blast:3,ice_barrier:3;arcane_missiles,frostbolt,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:blizzard,leg:flamestrike,leg:pyroblast,leg:fire_blast;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Explosion pyrotechnique dès le départ, les ennemis tués au feu explosent, Embrasement et Chaleur continue sur les critiques. L’Amulette de l’Enfer : Choc de flammes est la priorité absolue : à Gurubashi, améliorée 11 fois, elle a triplé le DPS (466 k contre 150 k). Subtilité des arcanes (40 % de chance) et Esprit des arcanes en appoint.",
    "en": "Pyroblast from the start, enemies killed by fire explode, Ignite and Hot Streak on crits. The Amulet of the Inferno: Flamestrike is the top priority: at Gurubashi, upgraded 11 times, it tripled DPS (466k vs 150k). Arcane Subtlety (40% luck) and Arcane Mind on the side."
@@ -313,11 +310,12 @@
    "en": "Frost Mage"
   },
   "author": "AS Companion",
-  "race": "troll",
-  "code": "SB1;mage;Mage Givre;5035034000000/0000000000000/0535133113321;blizzard:5,frostbolt:4,pyroblast:4,flamestrike:4,blast_wave:3,ice_barrier:3;fireball,frost_nova,polymorph;quick_strike,dragonslayer,seal_damned,blooddrinker;blackhand,tep,lifegiving,soulstone;leg:blizzard,leg:flamestrike,mark_of_fordring,onyxia_tooth;50,0,1,3,20,2,1",
+  "race": "gnome",
+  "raceAlt": "tauren",
+  "code": "SB1;mage;Mage Givre;5035034000000/0000000000000/0535133113321;frostbolt:5,blizzard:4,pyroblast:4,flamestrike:4,blast_wave:3,ice_barrier:3;fireball,frost_nova,polymorph;quick_strike,dragonslayer,blooddrinker,accuria;earthstrike,blackhand,chosen,hoj;leg:blizzard,south_seas_kelp,enlightenment,eye_of_hakkar;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Blizzard, Éclair de givre et Explosion pyrotechnique en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Blizzard, Frostbolt and Pyroblast first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Optimisé au simulateur calé sur les parties partagées : Éclair de givre, Blizzard et Explosion pyrotechnique en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
+   "en": "Tuned on the simulator calibrated with shared runs: Frostbolt, Blizzard and Pyroblast first, with a shield or heal and a defensive ring to last to the end."
   }
  },
  {
@@ -328,8 +326,9 @@
    "en": "Affliction Warlock"
   },
   "author": "AS Companion",
-  "race": "gnome",
-  "code": "SB1;warlock;Démoniste Affliction;2535101513131/00000000000000/0551130500000;corruption:5,curse_of_agony:5,rain_of_fire:4,soul_fire:3,immolate:3,death_coil:2;demonic_empowerment,fear,hellfire;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,earthstrike,tep,lifegiving;leg:curse_of_agony,leg:corruption,leg:rain_of_fire,enlightenment;50,0,1,3,20,2,1",
+  "race": "orc",
+  "raceAlt": "troll",
+  "code": "SB1;warlock;Démoniste Affliction;2535101513131/00000000000000/0551130500000;corruption:5,curse_of_agony:5,rain_of_fire:4,soul_fire:3,immolate:3,death_coil:2;demonic_empowerment,fear,hellfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,chosen,hoj;leg:curse_of_agony,leg:corruption,leg:rain_of_fire,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Corruption dès le départ, les ennemis morts sous vos dégâts sur la durée explosent et Contagion propage Corruption et Agonie. Suppression donne 25 % de chance, 45 % avec le Gnome.",
    "en": "Corruption from the start, enemies dying under your damage over time explode and Contagion spreads Corruption and Agony. Suppression gives 25% luck, 45% with a Gnome."
@@ -343,9 +342,8 @@
    "en": "Demonology Warlock"
   },
   "author": "AS Companion",
-  "race": "orc",
-  "raceAlt": "troll",
-  "code": "SB1;warlock;Démoniste Démonologie;0535110500000/55053033102301/0000000000000;curse_of_agony:5,corruption:4,rain_of_fire:4,death_coil:3,immolate:3,demonic_empowerment:3;drain_life,fear,hellfire;quick_strike,dragonslayer,dark_iron,blooddrinker;hoj,onyxia_blood,lifegiving,soulstone;leg:curse_of_agony,leg:rain_of_fire,leg:corruption,jeklik;50,0,1,3,20,2,1",
+  "race": "gnome",
+  "code": "SB1;warlock;Démoniste Démonologie;0535110500000/55053033102301/0000000000000;demonic_empowerment:5,shadow_bolt:4,rain_of_fire:4,death_coil:3,immolate:3,curse_of_agony:3;drain_life,fear,hellfire;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:rain_of_fire,leg:curse_of_agony,leg:immolate,leg:death_coil;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Une armée : diablotin et chasseur corrompu permanents, démons mineurs toutes les 4 s, gangregarde toutes les 30 s (plus vite avec les temps de recharge). Les démons font l'essentiel des dégâts.",
    "en": "An army: permanent Imp and Felhunter, lesser demons every 4 sec, a Felguard every 30 sec (faster with cooldown reduction). Demons deal most of the damage."
@@ -359,8 +357,9 @@
    "en": "Destruction Warlock"
   },
   "author": "AS Companion",
-  "race": "gnome",
-  "code": "SB1;warlock;Démoniste Destruction;1535100500000/00000000000000/1550130514321;curse_of_agony:5,soul_fire:5,rain_of_fire:4,immolate:4,searing_pain:3,shadow_bolt:2;demonic_empowerment,drain_life,fear;quick_strike,accuria,devoured,blooddrinker;hoj,blackhand,tep,lifegiving;leg:rain_of_fire,leg:curse_of_agony,leg:searing_pain,leg:immolate;50,0,1,3,20,2,1",
+  "race": "human",
+  "raceAlt": "troll",
+  "code": "SB1;warlock;Démoniste Destruction;1535100500000/00000000000000/1550130514321;shadow_bolt:5,immolate:5,rain_of_fire:4,soul_fire:4,searing_pain:3,curse_of_agony:2;demonic_empowerment,drain_life,fear;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:rain_of_fire,leg:immolate,leg:curse_of_agony,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Trait de l'ombre qui se divise, Immolation dès le départ et Conflagration qui fait exploser les ennemis immolés, une seconde Pluie de feu toutes les 13 s.",
    "en": "Shadow Bolt splitting on impact, Immolate from the start and Conflagrate blowing up immolated enemies, a second Rain of Fire every 13 sec."
@@ -374,12 +373,12 @@
    "en": "Balance Druid"
   },
   "author": "AS Companion",
-  "race": "nightelf",
+  "race": "tauren",
   "raceAlt": "troll",
-  "code": "SB1;druid;Druide Équilibre;5050153313521/00000000000000/5105132000000;hurricane:5,faerie_fire:5,moonfire:4,insect_swarm:4,wrath:3,rejuvenation:2;entangling_roots,regrowth,swipe;quick_strike,dragonslayer,seal_damned,blooddrinker;tep,chosen,lifegiving,soulstone;leg:hurricane,leg:moonfire,leg:insect_swarm,vek_nilash;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Équilibre;5050153313521/00000000000000/5105132000000;starfire:5,moonfire:5,faerie_fire:4,insect_swarm:4,wrath:3,rejuvenation:2;entangling_roots,regrowth,swipe;quick_strike,dragonslayer,blooddrinker,accuria;hoj,blackhand,earthstrike,tep;leg:moonfire,leg:insect_swarm,leg:starfire,onyxia_tooth;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Ouragan, Lucioles et Éclat lunaire en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Hurricane, Faerie Fire and Moonfire first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Éclat lunaire dès le départ, deux tréants, une Colère stellaire gratuite toutes les 4 s et d'autres sur 18 % des sorts. Esprit serein de Restauration ajoute 17,5 % de dégâts.",
+   "en": "Moonfire from the start, two treants, a free Starfire every 4 sec and more on 18% of spells. Restoration's Tranquil Spirit adds 17.5% damage."
   }
  },
  {
@@ -392,10 +391,10 @@
   "author": "AS Companion",
   "race": "tauren",
   "raceAlt": "troll",
-  "code": "SB1;druid;Druide Félin;0000000000000/50351313135001/5105135000000;hurricane:5,faerie_fire:5,starfire:3,shred:3,insect_swarm:2,entangling_roots:2;rejuvenation,swipe,wrath;quick_strike,dragonslayer,accuria,blooddrinker;star_of_mystaria,blackhand,soulstone,hoj;leg:hurricane,leg:shred,malice_stone,onyxia_tooth;50,0,1,3,20,2,1",
+  "code": "SB1;druid;Druide Félin;0000000000000/50351313135001/5105135000000;shred:5,swipe:5,starfire:3,hurricane:3,insect_swarm:2,entangling_roots:2;faerie_fire,rejuvenation,wrath;quick_strike,dragonslayer,blooddrinker,spell_power;blackhand,hoj,earthstrike,tep;leg:shred,leg:hurricane,darkmoon,south_seas_kelp;50,0,1,3,20,2,1",
   "notes": {
-   "fr": "Optimisé au simulateur calé sur les parties partagées : Ouragan, Lucioles et Feu stellaire en priorité, avec un bouclier ou un soin et un anneau défensif pour tenir jusqu'au bout.",
-   "en": "Tuned on the simulator calibrated with shared runs: Hurricane, Faerie Fire and Starfire first, with a shield or heal and a defensive ring to last to the end."
+   "fr": "Forme de félin : +10 % de dégâts et de critique, Lambeau et Balayage dès le départ, chaque coup fait saigner et les critiques encore plus.",
+   "en": "Cat Form: +10% damage and crit, Shred and Swipe from the start, every hit bleeds and crits bleed even more."
   }
  },
  {
@@ -406,9 +405,9 @@
    "en": "Feral Bear Druid"
   },
   "author": "AS Companion",
-  "race": "tauren",
-  "raceAlt": "troll",
-  "code": "SB1;druid;Druide Ours;0000000000000/50351333131210/5105135000000;hurricane:5,starfire:4,swipe:4,shred:3,wrath:2,regrowth:2;faerie_fire,insect_swarm,thorns;quick_strike,dragonslayer,devoured,blooddrinker;hoj,blackhand,tep,soulstone;leg:shred,leg:hurricane,leg:starfire,onyxia_tooth;50,0,1,3,20,2,1",
+  "race": "nightelf",
+  "raceAlt": "orc",
+  "code": "SB1;druid;Druide Ours;0000000000000/50351333131210/5105135000000;swipe:5,shred:4,hurricane:4,starfire:3,wrath:2,regrowth:2;faerie_fire,insect_swarm,thorns;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,earthstrike,hoj,tep;leg:shred,leg:hurricane,leg:swipe,vek_nilash;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Forme d'ours sacré : +25 % de vie, -10 % de dégâts subis, un Balayage gratuit toutes les 3 s qui soigne à chaque ennemi touché. Le plus solide de tous.",
    "en": "Dire Bear Form: +25% health, 10% less damage taken, a free Swipe every 3 sec that heals for every enemy hit. The toughest of all."
@@ -422,9 +421,9 @@
    "en": "Restoration Druid"
   },
   "author": "AS Companion",
-  "race": "tauren",
-  "raceAlt": "troll",
-  "code": "SB1;druid;Druide Restauration;2350151300000/00000000000000/5055005015131;hurricane:5,starfire:5,faerie_fire:4,shred:3,rejuvenation:3,regrowth:2;insect_swarm,moonfire,wrath;quick_strike,dragonslayer,accuria,blooddrinker;blackhand,earthstrike,chosen,lifegiving;leg:hurricane,leg:shred,onyxia_tooth,leg:starfire;50,0,1,3,20,2,1",
+  "race": "nightelf",
+  "raceAlt": "gnome",
+  "code": "SB1;druid;Druide Restauration;2350151300000/00000000000000/5055005015131;rejuvenation:5,regrowth:5,faerie_fire:4,shred:3,hurricane:3,starfire:2;insect_swarm,moonfire,wrath;quick_strike,dragonslayer,blooddrinker,accuria;blackhand,hoj,chosen,earthstrike;leg:rejuvenation,leg:hurricane,leg:shred,south_seas_kelp;50,0,1,3,20,2,1",
   "notes": {
    "fr": "Tranquillité : chaque soin frappe les ennemis à 12 m pour 300 % du soin. Récupération et Rétablissement servent d'armes, et le surplus de soin devient un bouclier.",
    "en": "Tranquility: every heal strikes enemies within 12 yd for 300% of the healing. Rejuvenation and Regrowth become weapons, and overhealing turns into a shield."
