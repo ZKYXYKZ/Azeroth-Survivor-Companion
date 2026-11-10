@@ -1,9 +1,9 @@
 {
- "version": "0.139",
+ "version": "0.143",
  "notes": {
-  "units": "t = minutes de partie (state+0xE88 / 60). m = minutes depuis la mort du boss final (mode sans fin choisi). n = joueurs du lobby coop (state+0xE50), coop = state+0xF46.",
-  "D": "D = zone.diff * S, S = facteur d'etat (state+0xF14) d'origine non retrouvee (lu partout a cote de zone.diff, sans doute 1 hors modificateurs).",
-  "H": "H = heroic[h-1].hp ou .dmg, 1 hors heroique (h = state+0x3F7).",
+  "units": "t = minutes de partie (state+0x1030 / 60), horloge des monstres (voir hyper). m = minutes depuis la mort du boss final (mode sans fin choisi), jamais accelere. n = joueurs du lobby coop.",
+  "D": "D = zone.diff * S, S = facteur d'etat (state+0x10B8), 1 a la creation de la partie ; ecriture non retrouvee (sans doute le curseur Enemy health, dont le texte dit horde, elites, gardiens et boss : exactement les lecteurs de S).",
+  "H": "H = heroic[h-1].hp ou .dmg, 1 hors heroique.",
   "coopFactor": "coopFactor(a, b) = b * (1 + a * kZone * (n-1)), kZone = coopZoneK[index<3 ? 1 : 0] ; 1 hors coop."
  },
  "horde": {
@@ -38,8 +38,8 @@
    "rate": "rate = slow * base * endless * clamp(adaptK * (killed/adaptTau) / max(base*slow*endless, 0.001), adaptMin, adaptMax) * (coop ? 1 + coopRate*kZone*(n-1) : 1)",
    "base": "base = rateMul * (rateC0 + rateT1*t + rateT2*t^2)",
    "slow": "slow = 1 sans boss ; slowBoss tant qu'un boss est en vie ; slowFinalBoss pour le boss final",
-   "endless": "endless = endlessRate0 + endlessRateT*m apres le boss final en mode sans fin, sinon 1",
-   "killed": "killed : somme des def.cost des monstres non elites tues, amortie exp(-dt/adaptTau) (state+0xEC8)",
+   "endless": "mode sans fin choisi : endlessRate0 + endlessRateT*m quand m court (meme condition que m), endlessRateBeforeKill sinon ; 1 hors sans fin",
+   "killed": "killed : somme des def.cost des monstres non elites tues, amortie exp(-dt/adaptTau)",
    "cap": "aucune apparition si vivants >= aliveCap * (coop ? 1 + coopCap*kZone*(n-1) : 1)",
    "minAlive": "si vivants < min(minAliveMax, (minAlive0 + minAliveT*t) * slow) * (coop ? 1 + coopRate*kZone*(n-1) : 1) : jusqu'a topUpMax apparitions immediates",
    "elite": "un elite toutes les max(eliteIntervalMin, eliteInterval0 + eliteIntervalT*t) secondes (Heroique I : par paires)",
@@ -53,6 +53,7 @@
   "slowFinalBoss": 0.3,
   "endlessRate0": 1.5,
   "endlessRateT": 0.1,
+  "endlessRateBeforeKill": 1.5,
   "adaptTau": 12,
   "adaptK": 1.25,
   "adaptMin": 1,
@@ -95,11 +96,11 @@
  "guardians": {
   "count": 4,
   "formula": {
-   "hp": "3 * max(curveA, curveB) * endlessHpBase^m * (1 + slain*perSlainHp[heroic>=wardensLevel]) * H.hp * coopFactor(coopHp, coopHpBase)",
+   "hp": "hpMul * max(curveA, curveB) * endlessHpBase^m * (1 + slain*perSlainHp[heroic>=wardensLevel]) * H.hp * coopFactor(coopHp, coopHpBase)",
    "curveA": "aHp * bossCurve(t) * D ; bossCurve = interpolation lineaire (at, hp) des boss non finaux de la zone, prolongee apres le dernier ; avant le premier : (earlyC0 + earlyT*t/at0) * hp0",
    "curveB": "bHp * def.hp * D * (1 + bT1*t + bT2*t^2) (def = monstre de la zone attribue au repaire)",
    "dmg": "def.dmg * sqrt(D) * (1 + dT1*t + dT2*t^2) * dMul * endlessDmgBase^m * (1 + slain*perSlainDmg[heroic>=wardensLevel]) * H.dmg",
-   "refill": "un repaire vide se remplit apres refill[heroic>=wardensLevel] secondes",
+   "refill": "un repaire vide se remplit apres refill[heroic>=wardensLevel] secondes (divise par hyper.lairRefillDiv en Hyper)",
    "liveRescale": "a chaque gardien tue, les gardiens vivants sont recalcules en gardant leur fraction de PV"
   },
   "hpMul": 3,
@@ -135,7 +136,7 @@
   "formula": {
    "hp": "scale * boss.hp * hpMul * D * endlessHpBase^m * H.hp * coopFactor(coopHp, coopHpBase) ; scale = 1, councilScale pour le boss rappele (Heroique V)",
    "dmg": "boss.dmg * sqrt(D) * endlessDmgBase^m * H.dmg",
-   "timing": "boss.at en minutes ; aucune montee pendant le combat trouvee"
+   "timing": "boss.at en minutes (x hyper.bossAtFactor en Hyper) ; Scholomance : le boss suivant attend qu'aucun boss ne soit en vie ; mode sans fin : un des 5 boss toutes les hyper.endlessBossInterval secondes ; aucune montee pendant le combat trouvee"
   },
   "hpMul": 5.75,
   "endlessHpBase": 1.22,
@@ -143,6 +144,24 @@
   "coopHp": 1.04,
   "coopHpBase": 0.8,
   "councilScale": 0.6
+ },
+ "hyper": {
+  "flag": "state+0x464",
+  "formula": {
+   "clock": "tHyper = timeFactor*min(t, cap) + max(0, t - cap), cap = zone.bosses[4].at * capFactor (capFallback sans boss final) : l'horloge des monstres va timeFactor fois plus vite jusqu'a la minute Hyper du boss final, puis garde son avance",
+   "clockUsedBy": "PV et degats de la horde et des gardiens (t des polynomes et de la rampe de croissance), debit d'apparition (base), minimum de vivants, monstres disponibles (at <= t), intervalles et taille des elites et des vagues ; pas m (sans fin)",
+   "bosses": "boss.at * bossAtFactor ; en sans fin, retour d'un boss toutes les endlessBossInterval[1] s au lieu de endlessBossInterval[0]",
+   "lairs": "delai des repaires de gardiens / lairRefillDiv"
+  },
+  "timeFactor": 2,
+  "capFactor": 0.5,
+  "capFallback": 10,
+  "bossAtFactor": 0.5,
+  "endlessBossInterval": [
+   300,
+   150
+  ],
+  "lairRefillDiv": 2
  },
  "coopZoneK": [
   1,
@@ -200,9 +219,13 @@
   "health": null,
   "damage": null,
   "speed": null,
-  "note": "4 curseurs du menu Difficulte (runmods.rs) : valeurs non retrouvees"
+  "healthState": "state+0x10B8",
+  "note": "4 curseurs du menu Run Options (runmods.rs) : textes seulement dans les traductions (aucune reference code), valeurs non retrouvees. Les fonctions d'apparition, de debit et de tic ne lisent aucun autre facteur d'etat que S."
  },
- "stateScaleF14": null,
+ "stateScale": {
+  "offset": "state+0x10B8",
+  "initial": 1
+ },
  "zones": {
   "elwynn": {
    "index": 0,
@@ -1904,8 +1927,158 @@
     }
    ]
   },
-  "aq": {
+  "scholomance": {
    "index": 10,
+   "diff": 4,
+   "growth": 0.28,
+   "length": 46,
+   "enemies": [
+    {
+     "id": 10481,
+     "weight": 17,
+     "hp": 30,
+     "dmg": 5,
+     "speed": 1.6,
+     "cost": 1,
+     "at": 0,
+     "elite": false
+    },
+    {
+     "id": 10678,
+     "weight": 17,
+     "hp": 24,
+     "dmg": 5,
+     "speed": 1.3,
+     "cost": 1,
+     "at": 0.5,
+     "elite": false
+    },
+    {
+     "id": 10485,
+     "weight": 16,
+     "hp": 36,
+     "dmg": 6,
+     "speed": 1.7,
+     "cost": 1.2,
+     "at": 1.2,
+     "elite": false
+    },
+    {
+     "id": 10475,
+     "weight": 19,
+     "hp": 38,
+     "dmg": 8,
+     "speed": 3.2,
+     "cost": 2,
+     "at": 2,
+     "elite": false
+    },
+    {
+     "id": 10491,
+     "weight": 16,
+     "hp": 900,
+     "dmg": 28,
+     "speed": 2,
+     "cost": 12,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 10495,
+     "weight": 14,
+     "hp": 1100,
+     "dmg": 30,
+     "speed": 2.4,
+     "cost": 13,
+     "at": 4,
+     "elite": true
+    },
+    {
+     "id": 10488,
+     "weight": 15,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 11551,
+     "weight": 10,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 10498,
+     "weight": 14,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    },
+    {
+     "id": 11582,
+     "weight": 25,
+     "hp": 1300,
+     "dmg": 35,
+     "speed": 2.6,
+     "cost": 15,
+     "at": null,
+     "elite": true
+    }
+   ],
+   "bosses": [
+    {
+     "id": 10506,
+     "name": "Kirtonos the Herald",
+     "at": 4,
+     "hp": 8480,
+     "dmg": 27,
+     "final": false
+    },
+    {
+     "id": 10508,
+     "name": "Ras Frostwhisper",
+     "at": 8,
+     "hp": 10650,
+     "dmg": 35,
+     "final": false
+    },
+    {
+     "id": 11261,
+     "name": "Doctor Theolen Krastinov",
+     "at": 12,
+     "hp": 20430,
+     "dmg": 44,
+     "final": false
+    },
+    {
+     "id": 10504,
+     "name": "Lord Alexei Barov",
+     "at": 16,
+     "hp": 30430,
+     "dmg": 52,
+     "final": false
+    },
+    {
+     "id": 1853,
+     "name": "Darkmaster Gandling",
+     "at": 20,
+     "hp": 60870,
+     "dmg": 64,
+     "final": true
+    }
+   ]
+  },
+  "aq": {
+   "index": 11,
    "diff": 3.26,
    "growth": 0.32,
    "length": 120,
@@ -2075,7 +2248,7 @@
    ]
   },
   "naxx": {
-   "index": 11,
+   "index": 12,
    "diff": 6.25,
    "growth": 0.4,
    "length": 44,
