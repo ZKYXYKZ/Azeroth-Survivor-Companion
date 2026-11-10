@@ -1043,6 +1043,7 @@ class Companion : Form
 
     DateTime dpsLog = DateTime.MinValue;
     int minuteKills;
+    bool runHyper;
     static readonly Regex TakenLine = new Regex(@"^\S+ \S+\s+(.+?) (?:hits|crits) you for (\d+)", RegexOptions.Compiled);
     Dictionary<string, int> spellHits = new Dictionary<string, int>(), spellCrits = new Dictionary<string, int>(), spellKills = new Dictionary<string, int>();
     Dictionary<string, string> lastHit = new Dictionary<string, string>();
@@ -2089,6 +2090,8 @@ class Companion : Form
                 if (S(G(j, "kind")) == "frienddown") runAllyDowned++;
                 break;
             case "ready":
+                // mode Hyper (0.143) : boss deux fois plus tôt, montée des mobs deux fois plus rapide
+                runHyper = B(G(j, "hyper"));
                 runDowned = 0;
                 runAllyDowned = 0;
                 recordedIndex = -1;
@@ -2452,7 +2455,7 @@ class Companion : Form
             Dictionary<string, object> run = new Dictionary<string, object> {
                 { "v", 1 }, { "runId", Guid.NewGuid().ToString("N").Substring(0, 16) }, { "client", CurrentVersion }, { "install", install }, { "startedAt", runStarted.ToUniversalTime().ToString("o") }, { "endedAt", DateTime.UtcNow.ToString("o") },
                 { "class", S(heroClass["key"]) }, { "race", G(r, "race") }, { "spec", G(r, "spec") },
-                { "zone", G(r, "bg") }, { "difficulty", null }, { "coop", coopSize > 1 ? coopSize : 1 },
+                { "zone", G(r, "bg") }, { "difficulty", null }, { "hyper", runHyper }, { "coop", coopSize > 1 ? coopSize : 1 },
                 { "result", G(r, "result") }, { "time", G(r, "time") }, { "level", G(r, "level") }, { "kills", G(r, "kills") },
                 { "dps", G(r, "dps") }, { "damage", G(r, "damage") }, { "taken", G(r, "taken") },
                 { "build", BuildCode(build) },
@@ -2667,6 +2670,7 @@ class Companion : Form
         r["jewels"] = jewels.Keys.Concat(amulet != null ? new[] { amulet } : new string[0]).ToArray();
         r["luck"] = Math.Round(Luck());
         r["dmg"] = spellDmg.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => (object)Math.Round(kv.Value));
+        r["hyper"] = runHyper;
         r["killsBy"] = spellKills.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => (object)kv.Value);
         if (recordedIndex >= 0 && recordedIndex < runs.Count && S(G(runs[recordedIndex], "result")) == "victory")
         {

@@ -52,6 +52,7 @@ function clean(r, ip) {
     spec: typeof r.spec === "string" && new RegExp("^" + cls + "-[0-2]$").test(r.spec) ? r.spec : null,
     zone: keyOf(ZONE_OF, r.zone),
     difficulty: num(r.difficulty, 0, 10),
+    hyper: r.hyper === true,
     coop: Math.round(num(r.coop, 1, 5) || 1),
     role: r.role === "host" || r.role === "guest" ? r.role : null,
     group: typeof r.group === "string" && /^[0-9a-f]{16}$/.test(r.group) ? r.group : null,

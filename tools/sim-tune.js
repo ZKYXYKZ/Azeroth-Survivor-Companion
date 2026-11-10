@@ -146,9 +146,23 @@ log("fenêtres", samples.length, "parties", new Set(samples.map((s) => s.w.runId
 const installs = [...new Set(solo.map((x) => x.run.install))].sort();
 const FOLDS = 3;
 const base = [], tuned = [];
+// Part de chaque sort hors echantillon : un facteur n'est garde que s'il predit mieux la part reelle du sort
+const shareErr = {};
+const shareOf = (s, cal, k) => { const v = (cal && cal.spells[k]) || 1; let t = 0; for (const [x, y] of Object.entries(s.rows)) t += y * ((cal && cal.spells[x]) || 1); return t > 0 ? (s.rows[k] * v) / t : 0; };
 for (let f = 0; f < FOLDS; f++) {
   const test = new Set(installs.filter((_, i) => i % FOLDS === f));
   const cal = fit((i) => !test.has(i));
+  for (const sm of samples) {
+    if (!test.has(sm.w.install) || !(sm.w.named > 0)) continue;
+    for (const k of Object.keys(sm.rows)) {
+      const real = (sm.w.real[k] || 0) / sm.w.named;
+      if (real <= 0.01 || !cal.spells[k]) continue;
+      const e = (shareErr[k] = shareErr[k] || { raw: 0, cal: 0, n: 0 });
+      e.raw += Math.abs(Math.log(shareOf(sm, null, k) / real));
+      e.cal += Math.abs(Math.log(shareOf(sm, cal, k) / real));
+      e.n++;
+    }
+  }
   const list = solo.filter((x) => x.run.build && test.has(x.run.install));
   base.push(...score(list, null));
   tuned.push(...score(list, cal));
@@ -174,10 +188,20 @@ const zonesOf = (cal) => {
   return z;
 };
 const full = fit(() => true);
+const kept = Object.keys(full.spells).filter((k) => shareErr[k] && shareErr[k].cal < shareErr[k].raw);
+log("facteurs validés par la part hors échantillon", kept.length + "/" + Object.keys(full.spells).length, "écartés :", Object.keys(full.spells).filter((k) => !kept.includes(k)).map((k) => k + " " + full.spells[k]).join(", "));
+for (const k of Object.keys(full.spells)) if (!kept.includes(k)) delete full.spells[k];
+// Correction par spe apres la zone : DPS affiche et comparaisons entre spes, sans effet sur le choix des sorts d'une spe
+const specsOf = (cal, zones) => {
+  const sp = {};
+  for (const p of score(solo.filter((x) => x.run.build), cal)) (sp[p.spec] = sp[p.spec] || []).push(Math.log(p.real / (p.s * (zones[p.zone] || 1))));
+  for (const k of Object.keys(sp)) sp[k] = +Math.exp(med(sp[k]) * sp[k].length / (sp[k].length + SHRINK)).toFixed(3);
+  return sp;
+};
 log("sorts calés", Object.keys(full.spells).length, "talents à procs", Object.keys(full.talents).length);
 log(Object.entries(full.spells).sort((a, b) => a[1] - b[1]).map(([k, v]) => k + " " + v + " (" + full.n.spells[k] + ")").join(", "));
 log(Object.entries(full.talents).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + " " + v + " (" + full.n.talents[k] + ")").join(", "));
 if (WRITE) {
-  fs.writeFileSync(path.join(__dirname, "..", "AS-Companion", "web", "simcal.json"), JSON.stringify({ spells: full.spells, talents: full.talents, zones: zonesOf(full) }, null, 1) + "\n");
+  fs.writeFileSync(path.join(__dirname, "..", "AS-Companion", "web", "simcal.json"), JSON.stringify((() => { const zones = zonesOf(full); return { spells: full.spells, talents: full.talents, zones, specs: specsOf(full, zones) }; })(), null, 1) + "\n");
   log("simcal.json écrit");
 }

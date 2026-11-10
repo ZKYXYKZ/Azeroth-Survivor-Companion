@@ -1,7 +1,7 @@
 {
  "Guerrier Armes": {
-  "gain": 1.686,
-  "race": "troll",
+  "gain": 0.563,
+  "race": "scourge",
   "alt": "",
   "talents": {
    "imp_heroic": 4,
@@ -29,11 +29,11 @@
     5
    ],
    [
-    "cleave",
+    "execute",
     5
    ],
    [
-    "execute",
+    "whirlwind",
     4
    ],
    [
@@ -41,7 +41,7 @@
     3
    ],
    [
-    "whirlwind",
+    "thunder_clap",
     3
    ],
    [
@@ -56,21 +56,21 @@
    "blooddrinker"
   ],
   "trinkets": [
-   "blackhand",
    "hoj",
+   "blackhand",
    "soulstone",
    "lifegiving"
   ],
   "amulets": [
    "leg:mortal_strike",
-   "leg:cleave",
-   "south_seas_kelp",
-   "leg:shield_slam"
+   "vek_nilash",
+   "onyxia_tooth",
+   "south_seas_kelp"
   ]
  },
  "Chasseur Maîtrise des bêtes": {
-  "gain": 0.65,
-  "race": "orc",
+  "gain": 0.573,
+  "race": "troll",
   "alt": "",
   "talents": {
    "imp_hawk": 5,
@@ -105,7 +105,7 @@
     4
    ],
    [
-    "auto_shot",
+    "volley",
     3
    ],
    [
@@ -120,25 +120,25 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "spell_power",
+   "accuria",
    "blooddrinker"
   ],
   "trinkets": [
-   "hoj",
    "blackhand",
-   "earthstrike",
+   "soulstone",
+   "hoj",
    "lifegiving"
   ],
   "amulets": [
    "leg:immolation_trap",
    "leg:aimed_shot",
-   "leg:auto_shot",
-   "darkmoon"
+   "leg:volley",
+   "onyxia_tooth"
   ]
  },
  "Prêtre Discipline": {
-  "gain": 0.312,
-  "race": "nightelf",
+  "gain": 0.439,
+  "race": "human",
   "alt": "",
   "talents": {
    "wand_spec": 5,
@@ -170,11 +170,11 @@
     5
    ],
    [
-    "smite",
+    "sw_pain",
     4
    ],
    [
-    "mind_blast",
+    "mind_flay",
     4
    ],
    [
@@ -193,20 +193,20 @@
    "blooddrinker"
   ],
   "trinkets": [
-   "blackhand",
-   "hoj",
-   "tep",
+   "earthstrike",
+   "chosen",
+   "onyxia_blood",
    "lifegiving"
   ],
   "amulets": [
    "leg:devouring_plague",
-   "south_seas_kelp",
-   "leg:holy_fire",
-   "leg:smite"
+   "onyxia_tooth",
+   "enlightenment",
+   "steadfast_might"
   ]
  },
  "Mage Arcanes": {
-  "gain": 0.761,
+  "gain": 0.929,
   "race": "human",
   "alt": "",
   "talents": {
@@ -238,7 +238,7 @@
     5
    ],
    [
-    "arcane_explosion",
+    "arcane_missiles",
     3
    ],
    [
@@ -246,7 +246,7 @@
     3
    ],
    [
-    "frostbolt",
+    "arcane_explosion",
     3
    ],
    [
@@ -256,27 +256,27 @@
   ],
   "rings": [
    "quick_strike",
-   "dragonslayer",
    "accuria",
+   "seal_damned",
    "blooddrinker"
   ],
   "trinkets": [
+   "hoj",
    "tep",
-   "star_of_mystaria",
    "soulstone",
    "lifegiving"
   ],
   "amulets": [
    "leg:blizzard",
    "leg:pyroblast",
-   "malice_stone",
-   "onyxia_tooth"
+   "south_seas_kelp",
+   "enlightenment"
   ]
  },
  "Druide Équilibre": {
-  "gain": 1.121,
-  "race": "tauren",
-  "alt": "dwarf",
+  "gain": 0.806,
+  "race": "nightelf",
+  "alt": "troll",
   "talents": {
    "imp_wrath": 5,
    "imp_moonfire": 5,
@@ -293,8 +293,8 @@
    "natures_focus": 5,
    "swiftmend": 1,
    "reflection": 3,
-   "tranquil_spirit": 3,
-   "natural_weapons": 2
+   "tranquil_spirit": 2,
+   "imp_starfire": 3
   },
   "spells": [
    [
@@ -306,11 +306,11 @@
     5
    ],
    [
-    "starfire",
+    "moonfire",
     4
    ],
    [
-    "moonfire",
+    "insect_swarm",
     4
    ],
    [
@@ -325,33 +325,33 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "accuria",
+   "seal_damned",
    "blooddrinker"
   ],
   "trinkets": [
    "tep",
-   "hoj",
+   "chosen",
    "lifegiving",
    "soulstone"
   ],
   "amulets": [
    "leg:hurricane",
    "leg:moonfire",
-   "leg:starfire",
-   "steadfast_might"
+   "leg:insect_swarm",
+   "vek_nilash"
   ]
  },
  "Guerrier Fureur": {
-  "gain": 2.968,
-  "race": "tauren",
+  "gain": 0.259,
+  "race": "troll",
   "alt": "",
   "talents": {
-   "imp_heroic": 5,
+   "imp_heroic": 4,
    "deflection": 1,
    "tactical_mastery": 5,
    "deep_wounds": 1,
    "anger_management": 3,
-   "two_hand_spec": 5,
+   "two_hand_spec": 4,
    "cruelty": 5,
    "booming_voice": 1,
    "unbridled_wrath": 3,
@@ -363,15 +363,16 @@
    "flurry": 1,
    "death_wish": 3,
    "imp_berserker": 5,
-   "bladestorm": 1
+   "bladestorm": 1,
+   "imp_rend": 2
   },
   "spells": [
    [
-    "bloodthirst",
+    "whirlwind",
     5
    ],
    [
-    "whirlwind",
+    "bloodthirst",
     5
    ],
    [
@@ -383,7 +384,7 @@
     3
    ],
    [
-    "execute",
+    "mortal_strike",
     3
    ],
    [
@@ -399,21 +400,21 @@
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
-   "chosen",
+   "earthstrike",
+   "onyxia_blood",
    "lifegiving"
   ],
   "amulets": [
-   "leg:bloodthirst",
+   "south_seas_kelp",
+   "leg:rend",
    "enlightenment",
-   "leg:shield_slam",
-   "leg:whirlwind"
+   "leg:shield_slam"
   ]
  },
  "Chasseur Précision": {
-  "gain": 0.644,
-  "race": "troll",
-  "alt": "human",
+  "gain": 0.169,
+  "race": "orc",
+  "alt": "",
   "talents": {
    "imp_hawk": 5,
    "imp_monkey": 3,
@@ -465,21 +466,21 @@
    "spell_power"
   ],
   "trinkets": [
-   "hoj",
-   "blackhand",
    "earthstrike",
+   "blackhand",
+   "onyxia_blood",
    "lifegiving"
   ],
   "amulets": [
    "leg:immolation_trap",
+   "leg:volley",
    "leg:aimed_shot",
-   "malice_stone",
    "south_seas_kelp"
   ]
  },
  "Prêtre Sacré": {
-  "gain": 0.938,
-  "race": "dwarf",
+  "gain": 0.113,
+  "race": "scourge",
   "alt": "",
   "talents": {
    "wand_spec": 5,
@@ -502,11 +503,11 @@
   },
   "spells": [
    [
-    "devouring_plague",
+    "holy_nova",
     5
    ],
    [
-    "holy_nova",
+    "devouring_plague",
     5
    ],
    [
@@ -534,21 +535,21 @@
   ],
   "trinkets": [
    "blackhand",
-   "onyxia_blood",
+   "earthstrike",
    "soulstone",
    "lifegiving"
   ],
   "amulets": [
-   "leg:devouring_plague",
+   "enlightenment",
+   "leg:holy_fire",
    "leg:holy_nova",
-   "onyxia_tooth",
-   "leg:sw_pain"
+   "onyxia_tooth"
   ]
  },
  "Mage Feu": {
-  "gain": 0.734,
+  "gain": 0.31,
   "race": "troll",
-  "alt": "nightelf",
+  "alt": "",
   "talents": {
    "arcane_focus": 5,
    "imp_arcane_explosion": 3,
@@ -585,7 +586,7 @@
     4
    ],
    [
-    "frostbolt",
+    "fire_blast",
     3
    ],
    [
@@ -596,36 +597,36 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "spell_power",
+   "accuria",
    "blooddrinker"
   ],
   "trinkets": [
-   "blackhand",
-   "onyxia_blood",
-   "earthstrike",
-   "chosen"
+   "hoj",
+   "chosen",
+   "lifegiving",
+   "blackhand"
   ],
   "amulets": [
-   "leg:blizzard",
+   "leg:pyroblast",
    "leg:flamestrike",
-   "onyxia_tooth",
-   "prestor"
+   "leg:blizzard",
+   "mark_of_fordring"
   ]
  },
  "Druide Félin": {
-  "gain": 0.587,
-  "race": "nightelf",
-  "alt": "dwarf",
+  "gain": 0.605,
+  "race": "tauren",
+  "alt": "troll",
   "talents": {
    "ferocity_druid": 5,
    "feral_instinct": 3,
    "brutal_impact": 5,
    "rake": 1,
    "sharpened_claws": 3,
-   "predatory_strikes": 3,
+   "predatory_strikes": 1,
    "thick_hide": 3,
    "blood_frenzy": 1,
-   "savage_fury": 1,
+   "savage_fury": 3,
    "heart_of_wild": 5,
    "cat_form": 1,
    "imp_motw": 5,
@@ -641,48 +642,48 @@
     5
    ],
    [
-    "starfire",
+    "faerie_fire",
     5
    ],
    [
-    "swipe",
-    3
-   ],
-   [
-    "moonfire",
+    "starfire",
     3
    ],
    [
     "shred",
-    2
+    3
    ],
    [
     "insect_swarm",
+    2
+   ],
+   [
+    "entangling_roots",
     2
    ]
   ],
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "spell_power",
+   "accuria",
    "blooddrinker"
   ],
   "trinkets": [
-   "tep",
    "star_of_mystaria",
-   "hoj",
-   "soulstone"
+   "blackhand",
+   "soulstone",
+   "hoj"
   ],
   "amulets": [
    "leg:hurricane",
    "leg:shred",
-   "leg:starfire",
-   "leg:moonfire"
+   "malice_stone",
+   "onyxia_tooth"
   ]
  },
  "Guerrier Protection": {
-  "gain": 1.109,
-  "race": "human",
+  "gain": 0.539,
+  "race": "troll",
   "alt": "",
   "talents": {
    "deflection": 5,
@@ -713,11 +714,11 @@
     5
    ],
    [
-    "rend",
+    "mortal_strike",
     4
    ],
    [
-    "mortal_strike",
+    "execute",
     3
    ],
    [
@@ -736,20 +737,20 @@
    "blooddrinker"
   ],
   "trinkets": [
-   "hoj",
    "blackhand",
-   "tep",
-   "soulstone"
+   "hoj",
+   "soulstone",
+   "earthstrike"
   ],
   "amulets": [
    "leg:shield_slam",
-   "darkmoon",
-   "fire_lord",
-   "malice_stone"
+   "enlightenment",
+   "onyxia_tooth",
+   "steadfast_might"
   ]
  },
  "Chasseur Survie": {
-  "gain": 14.951,
+  "gain": 0.741,
   "race": "troll",
   "alt": "",
   "talents": {
@@ -790,11 +791,11 @@
     4
    ],
    [
-    "auto_shot",
+    "frost_trap",
     3
    ],
    [
-    "multi_shot",
+    "concussive_shot",
     3
    ]
   ],
@@ -802,24 +803,24 @@
    "quick_strike",
    "dragonslayer",
    "spell_power",
-   "seal_damned"
+   "accuria"
   ],
   "trinkets": [
    "blackhand",
-   "soulstone",
    "hoj",
-   "earthstrike"
+   "star_of_mystaria",
+   "soulstone"
   ],
   "amulets": [
    "leg:immolation_trap",
    "leg:volley",
-   "malice_stone",
-   "leg:aimed_shot"
+   "onyxia_tooth",
+   "leg:frost_trap"
   ]
  },
  "Prêtre Ombre": {
-  "gain": 0.453,
-  "race": "human",
+  "gain": 0.795,
+  "race": "troll",
   "alt": "",
   "talents": {
    "unbreakable_will": 5,
@@ -849,15 +850,15 @@
     5
    ],
    [
-    "mind_blast",
-    4
-   ],
-   [
-    "holy_fire",
+    "mind_flay",
     4
    ],
    [
     "holy_nova",
+    4
+   ],
+   [
+    "psychic_scream",
     2
    ],
    [
@@ -873,19 +874,19 @@
   ],
   "trinkets": [
    "blackhand",
+   "earthstrike",
    "hoj",
-   "tep",
    "soulstone"
   ],
   "amulets": [
    "leg:sw_pain",
    "leg:devouring_plague",
-   "leg:holy_fire",
-   "enlightenment"
+   "leg:holy_nova",
+   "malice_stone"
   ]
  },
  "Mage Givre": {
-  "gain": 1.612,
+  "gain": 1.112,
   "race": "troll",
   "alt": "",
   "talents": {
@@ -913,15 +914,15 @@
     5
    ],
    [
-    "flamestrike",
-    4
-   ],
-   [
     "frostbolt",
     4
    ],
    [
     "pyroblast",
+    4
+   ],
+   [
+    "flamestrike",
     4
    ],
    [
@@ -936,26 +937,26 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "accuria",
+   "seal_damned",
    "blooddrinker"
   ],
   "trinkets": [
    "blackhand",
-   "onyxia_blood",
+   "tep",
    "lifegiving",
    "soulstone"
   ],
   "amulets": [
    "leg:blizzard",
    "leg:flamestrike",
-   "enlightenment",
-   "south_seas_kelp"
+   "mark_of_fordring",
+   "onyxia_tooth"
   ]
  },
  "Druide Ours": {
-  "gain": 0.834,
+  "gain": 0.238,
   "race": "tauren",
-  "alt": "gnome",
+  "alt": "troll",
   "talents": {
    "ferocity_druid": 5,
    "feral_instinct": 3,
@@ -982,19 +983,19 @@
     5
    ],
    [
-    "faerie_fire",
-    4
-   ],
-   [
     "starfire",
     4
    ],
    [
     "swipe",
-    3
+    4
    ],
    [
     "shred",
+    3
+   ],
+   [
+    "wrath",
     2
    ],
    [
@@ -1005,93 +1006,25 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "spell_power",
+   "devoured",
    "blooddrinker"
   ],
   "trinkets": [
+   "hoj",
    "blackhand",
-   "chosen",
-   "onyxia_blood",
+   "tep",
    "soulstone"
   ],
   "amulets": [
-   "leg:hurricane",
-   "onyxia_tooth",
    "leg:shred",
-   "south_seas_kelp"
-  ]
- },
- "Paladin Sacré": {
-  "gain": 0.824,
-  "race": "human",
-  "alt": "scourge",
-  "talents": {
-   "divine_strength": 5,
-   "divine_intellect": 1,
-   "imp_seal": 5,
-   "divine_favor": 1,
-   "unyielding_faith": 3,
-   "holy_power": 5,
-   "lasting_judgement": 3,
-   "daybreak": 1,
-   "sanctified_light": 5,
-   "purifying_power": 1,
-   "lights_grace": 1,
-   "imp_might": 5,
-   "benediction": 5,
-   "imp_judgement": 3,
-   "deflection_pal": 1,
-   "seal_of_command": 1,
-   "conviction": 5
-  },
-  "spells": [
-   [
-    "consecration",
-    5
-   ],
-   [
-    "holy_wrath",
-    5
-   ],
-   [
-    "judgement",
-    4
-   ],
-   [
-    "redemption",
-    4
-   ],
-   [
-    "exorcism",
-    3
-   ],
-   [
-    "hammer_of_justice",
-    3
-   ]
-  ],
-  "rings": [
-   "quick_strike",
-   "dragonslayer",
-   "accuria",
-   "blooddrinker"
-  ],
-  "trinkets": [
-   "blackhand",
-   "onyxia_blood",
-   "soulstone",
-   "hoj"
-  ],
-  "amulets": [
-   "leg:holy_wrath",
-   "leg:consecration",
-   "talvash",
-   "enlightenment"
+   "leg:hurricane",
+   "leg:starfire",
+   "onyxia_tooth"
   ]
  },
  "Voleur Assassinat": {
-  "gain": 0.286,
-  "race": "human",
+  "gain": 0.77,
+  "race": "troll",
   "alt": "",
   "talents": {
    "imp_eviscerate": 2,
@@ -1105,12 +1038,12 @@
    "seal_fate": 3,
    "toxic_bloom": 1,
    "precision_rogue": 5,
-   "endurance_rogue": 1,
    "opportunity": 5,
    "elusiveness": 1,
    "initiative": 4,
    "cheat_death": 1,
-   "imp_ambush": 3
+   "imp_ambush": 3,
+   "endurance_rogue": 1
   },
   "spells": [
    [
@@ -1126,7 +1059,7 @@
     4
    ],
    [
-    "sinister_strike",
+    "blade_flurry",
     3
    ],
    [
@@ -1141,26 +1074,26 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "accuria",
+   "devoured",
    "blooddrinker"
   ],
   "trinkets": [
-   "tep",
-   "hoj",
+   "earthstrike",
+   "blackhand",
    "soulstone",
    "lifegiving"
   ],
   "amulets": [
    "leg:rupture",
    "enlightenment",
-   "onyxia_tooth",
-   "leg:ghostly_strike"
+   "vek_nilash",
+   "leg:backstab"
   ]
  },
  "Chaman Élémentaire": {
-  "gain": 1.104,
-  "race": "troll",
-  "alt": "",
+  "gain": 0.688,
+  "race": "orc",
+  "alt": "gnome",
   "talents": {
    "convection": 5,
    "concussion": 5,
@@ -1185,11 +1118,11 @@
     5
    ],
    [
-    "chain_lightning",
+    "stormstrike",
     5
    ],
    [
-    "searing_totem",
+    "fire_nova",
     3
    ],
    [
@@ -1197,7 +1130,7 @@
     3
    ],
    [
-    "fire_nova",
+    "earth_shock",
     3
    ],
    [
@@ -1208,24 +1141,24 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "accuria",
-   "spell_power"
+   "spell_power",
+   "accuria"
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
-   "earthstrike",
-   "tep"
+   "soulstone",
+   "tep",
+   "hoj"
   ],
   "amulets": [
    "leg:magma_totem",
-   "prestor",
-   "darkmoon",
-   "onyxia_tooth"
+   "south_seas_kelp",
+   "leg:lightning_bolt",
+   "mark_of_fordring"
   ]
  },
  "Démoniste Affliction": {
-  "gain": 0.973,
+  "gain": 0.927,
   "race": "gnome",
   "alt": "",
   "talents": {
@@ -1241,24 +1174,24 @@
    "siphon_life": 1,
    "fel_concentration": 3,
    "seed_of_corruption": 1,
-   "imp_shadow_bolt": 5,
    "cataclysm": 5,
    "aftermath": 1,
    "shadowburn": 1,
    "imp_searing_pain": 3,
-   "devastation": 5
+   "devastation": 5,
+   "intensity": 5
   },
   "spells": [
+   [
+    "corruption",
+    5
+   ],
    [
     "curse_of_agony",
     5
    ],
    [
     "rain_of_fire",
-    5
-   ],
-   [
-    "corruption",
     4
    ],
    [
@@ -1276,8 +1209,8 @@
   ],
   "rings": [
    "quick_strike",
+   "dragonslayer",
    "accuria",
-   "spell_power",
    "blooddrinker"
   ],
   "trinkets": [
@@ -1288,15 +1221,15 @@
   ],
   "amulets": [
    "leg:curse_of_agony",
-   "leg:rain_of_fire",
    "leg:corruption",
-   "leg:immolate"
+   "leg:rain_of_fire",
+   "enlightenment"
   ]
  },
  "Druide Restauration": {
-  "gain": 1.281,
-  "race": "nightelf",
-  "alt": "gnome",
+  "gain": 1.212,
+  "race": "tauren",
+  "alt": "troll",
   "talents": {
    "imp_wrath": 2,
    "natures_grasp": 3,
@@ -1325,11 +1258,11 @@
     5
    ],
    [
-    "moonfire",
+    "faerie_fire",
     4
    ],
    [
-    "insect_swarm",
+    "shred",
     3
    ],
    [
@@ -1348,22 +1281,22 @@
    "blooddrinker"
   ],
   "trinkets": [
-   "hoj",
+   "blackhand",
    "earthstrike",
-   "onyxia_blood",
+   "chosen",
    "lifegiving"
   ],
   "amulets": [
    "leg:hurricane",
-   "leg:moonfire",
-   "leg:starfire",
-   "leg:insect_swarm"
+   "leg:shred",
+   "onyxia_tooth",
+   "leg:starfire"
   ]
  },
  "Paladin Protection": {
-  "gain": 0.339,
+  "gain": 0.082,
   "race": "human",
-  "alt": "",
+  "alt": "troll",
   "talents": {
    "imp_devotion": 3,
    "redoubt": 5,
@@ -1394,7 +1327,7 @@
     5
    ],
    [
-    "redemption",
+    "exorcism",
     4
    ],
    [
@@ -1402,36 +1335,36 @@
     3
    ],
    [
-    "holy_shock",
+    "hammer_of_wrath",
     3
    ],
    [
-    "hammer_of_wrath",
+    "holy_shield",
     2
    ]
   ],
   "rings": [
    "quick_strike",
+   "spell_power",
    "dragonslayer",
-   "accuria",
    "blooddrinker"
   ],
   "trinkets": [
    "blackhand",
-   "earthstrike",
+   "tep",
    "soulstone",
    "lifegiving"
   ],
   "amulets": [
-   "leg:redemption",
    "leg:consecration",
-   "leg:hammer_of_justice",
+   "malice_stone",
+   "onyxia_tooth",
    "leg:holy_wrath"
   ]
  },
  "Voleur Combat": {
-  "gain": 1.068,
-  "race": "gnome",
+  "gain": 1.046,
+  "race": "troll",
   "alt": "",
   "talents": {
    "imp_eviscerate": 5,
@@ -1460,7 +1393,7 @@
     5
    ],
    [
-    "backstab",
+    "seal_fate",
     4
    ],
    [
@@ -1479,25 +1412,25 @@
   "rings": [
    "dragonslayer",
    "accuria",
-   "blooddrinker",
-   "seal_damned"
+   "archimtiros",
+   "blooddrinker"
   ],
   "trinkets": [
    "blackhand",
+   "lifegiving",
    "earthstrike",
-   "star_of_mystaria",
    "soulstone"
   ],
   "amulets": [
    "leg:sinister_strike",
+   "onyxia_tooth",
    "south_seas_kelp",
-   "leg:eviscerate",
-   "vek_nilash"
+   "darkmoon"
   ]
  },
  "Démoniste Démonologie": {
-  "gain": 1.008,
-  "race": "human",
+  "gain": 0.636,
+  "race": "orc",
   "alt": "troll",
   "talents": {
    "imp_corruption": 5,
@@ -1523,7 +1456,7 @@
     5
    ],
    [
-    "shadow_bolt",
+    "corruption",
     4
    ],
    [
@@ -1531,7 +1464,7 @@
     4
    ],
    [
-    "corruption",
+    "death_coil",
     3
    ],
    [
@@ -1546,26 +1479,26 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "accuria",
+   "dark_iron",
    "blooddrinker"
   ],
   "trinkets": [
-   "blackhand",
-   "earthstrike",
+   "hoj",
+   "onyxia_blood",
    "lifegiving",
    "soulstone"
   ],
   "amulets": [
    "leg:curse_of_agony",
    "leg:rain_of_fire",
-   "leg:immolate",
-   "leg:shadow_bolt"
+   "leg:corruption",
+   "jeklik"
   ]
  },
  "Paladin Vindicte": {
-  "gain": 0.465,
+  "gain": 0.678,
   "race": "human",
-  "alt": "orc",
+  "alt": "troll",
   "talents": {
    "divine_strength": 5,
    "divine_intellect": 1,
@@ -1599,15 +1532,15 @@
     4
    ],
    [
+    "exorcism",
+    3
+   ],
+   [
+    "redemption",
+    3
+   ],
+   [
     "holy_shock",
-    3
-   ],
-   [
-    "hammer_of_justice",
-    3
-   ],
-   [
-    "holy_shield",
     3
    ]
   ],
@@ -1619,21 +1552,89 @@
   ],
   "trinkets": [
    "blackhand",
-   "earthstrike",
-   "lifegiving",
-   "tep"
+   "hoj",
+   "chosen",
+   "lifegiving"
   ],
   "amulets": [
    "leg:consecration",
    "onyxia_tooth",
-   "enlightenment",
-   "leg:hammer_of_justice"
+   "leg:judgement",
+   "south_seas_kelp"
+  ]
+ },
+ "Voleur Finesse": {
+  "gain": 3.25,
+  "race": "troll",
+  "alt": "",
+  "talents": {
+   "malice": 5,
+   "deadly_poison": 1,
+   "lethality": 5,
+   "opportunity": 5,
+   "elusiveness": 1,
+   "initiative": 5,
+   "cheat_death": 1,
+   "imp_ambush": 3,
+   "serrated_blades": 3,
+   "setup": 3,
+   "preparation": 1,
+   "dirty_deeds": 3,
+   "deadliness": 5,
+   "shadow_dance": 1,
+   "ruthlessness": 3,
+   "imp_eviscerate": 5,
+   "precision_rogue": 1
+  },
+  "spells": [
+   [
+    "eviscerate",
+    5
+   ],
+   [
+    "backstab",
+    5
+   ],
+   [
+    "rupture",
+    4
+   ],
+   [
+    "gouge",
+    3
+   ],
+   [
+    "ghostly_strike",
+    3
+   ],
+   [
+    "kidney_shot",
+    2
+   ]
+  ],
+  "rings": [
+   "quick_strike",
+   "dragonslayer",
+   "accuria",
+   "seal_damned"
+  ],
+  "trinkets": [
+   "earthstrike",
+   "hoj",
+   "tep",
+   "blackhand"
+  ],
+  "amulets": [
+   "leg:rupture",
+   "onyxia_tooth",
+   "south_seas_kelp",
+   "leg:backstab"
   ]
  },
  "Chaman Totems": {
-  "gain": 1.223,
+  "gain": 1.265,
   "race": "troll",
-  "alt": "",
+  "alt": "gnome",
   "talents": {
    "convection": 5,
    "concussion": 5,
@@ -1660,7 +1661,7 @@
     5
    ],
    [
-    "searing_totem",
+    "fire_nova",
     5
    ],
    [
@@ -1683,25 +1684,25 @@
   "rings": [
    "quick_strike",
    "dragonslayer",
-   "devoured",
+   "accuria",
    "blooddrinker"
   ],
   "trinkets": [
    "blackhand",
-   "hoj",
-   "soulstone",
-   "onyxia_blood"
+   "onyxia_blood",
+   "tep",
+   "soulstone"
   ],
   "amulets": [
    "leg:magma_totem",
-   "leg:searing_totem",
-   "leg:flame_shock",
-   "prestor"
+   "enlightenment",
+   "animated_chain",
+   "south_seas_kelp"
   ]
  },
  "Démoniste Destruction": {
-  "gain": 0.303,
-  "race": "human",
+  "gain": 0.44,
+  "race": "gnome",
   "alt": "",
   "talents": {
    "suppression": 1,
@@ -1709,7 +1710,7 @@
    "imp_coa": 3,
    "imp_drain_life": 5,
    "nightfall": 1,
-   "shadow_mastery": 3,
+   "shadow_mastery": 5,
    "imp_shadow_bolt": 1,
    "cataclysm": 5,
    "intensity": 5,
@@ -1717,9 +1718,9 @@
    "imp_searing_pain": 3,
    "devastation": 5,
    "conflagrate": 1,
-   "emberstorm": 5,
+   "emberstorm": 4,
    "ruin": 3,
-   "bane": 3,
+   "bane": 2,
    "rain_of_chaos": 1
   },
   "spells": [
@@ -1728,7 +1729,7 @@
     5
    ],
    [
-    "immolate",
+    "soul_fire",
     5
    ],
    [
@@ -1736,11 +1737,11 @@
     4
    ],
    [
-    "soul_fire",
+    "immolate",
     4
    ],
    [
-    "drain_life",
+    "searing_pain",
     3
    ],
    [
@@ -1750,21 +1751,21 @@
   ],
   "rings": [
    "quick_strike",
-   "dragonslayer",
    "accuria",
+   "devoured",
    "blooddrinker"
   ],
   "trinkets": [
-   "earthstrike",
+   "hoj",
    "blackhand",
    "tep",
    "lifegiving"
   ],
   "amulets": [
-   "leg:immolate",
-   "leg:curse_of_agony",
    "leg:rain_of_fire",
-   "mark_of_fordring"
+   "leg:curse_of_agony",
+   "leg:searing_pain",
+   "leg:immolate"
   ]
  }
 }

@@ -739,10 +739,18 @@ const MC_JEWEL_RATE = 1.92;
 const MC_AOE = new Set(["nova", "ground", "totem", "chain", "cone", "mark", "special", "multi", undefined]);
 function mcLevelOfKills(k) { return Math.max(1, 2.04 * Math.pow(Math.max(0, k), 0.361)); }
 function mcKills(dps, minute, aoe) { return 4.7 * Math.pow(Math.max(1, dps), 0.402) * Math.pow(minute, 0.084) * Math.exp(0.21 * aoe); }
+// Spe d'un build : l'arbre qui a le plus de points (cle "classe-index" des parties partagees)
+function specOf(sc) {
+  const c = cls(sc.class);
+  let best = 0, idx = 0;
+  c.trees.forEach((t, i) => { const p = t.talents.reduce((a, x) => a + (sc.talents[x.key] || 0), 0); if (p > best) { best = p; idx = i; } });
+  return sc.class + "-" + idx;
+}
 function mcMinute(sc, owned, jew, level, minute, kps) {
   const state = Object.assign({}, sc, { kps, spells: Object.values(owned).map((o) => ({ key: o.key, rank: o.rank, ups: o.ups })), rings: jew.rings, trinkets: jew.trinkets, amulet: jew.amulet, amuletUps: jew.ups, jewelUps: jew.jewelUps, level });
   const r = simulate(state);
-  const dps = r.total * mcYield(minute + 1) * ((SIMDATA.cal && SIMDATA.cal.zones && SIMDATA.cal.zones[sc.zone]) || 1);
+  const cal = SIMDATA.cal || {};
+  const dps = r.total * mcYield(minute + 1) * ((cal.zones && cal.zones[sc.zone]) || 1) * ((cal.specs && cal.specs[specOf(sc)]) || 1);
   const aoe = r.total > 0 ? r.rows.filter((x) => MC_AOE.has(x.kind) && x.key !== "procs").reduce((a, x) => a + x.mix, 0) / r.total : 0;
   return { r, dps, aoe };
 }

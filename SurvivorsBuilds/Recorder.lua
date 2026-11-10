@@ -25,7 +25,7 @@ end
 
 local function start()
   local z = AZS_ZONE or {}
-  rec = { head = table.concat({ clean(z.class), clean(z.race), clean(z.zone), n(z.heroic), n(z.diff), n(z.len), clean(z.gender), clean(z.affixes) }, ","), samples = {}, units = {}, stats = {}, ranks = {}, meters = {}, bosses = {} }
+  rec = { head = table.concat({ clean(z.class), clean(z.race), clean(z.zone), n(z.heroic), n(z.diff), n(z.len), clean(z.gender), clean(z.affixes), z.hyper and "1" or "0" }, ","), samples = {}, units = {}, stats = {}, ranks = {}, meters = {}, bosses = {} }
   lastSample, lastStats, lastRanks, lastMeter, bossFight = -99, -99, -99, -99, nil
 end
 

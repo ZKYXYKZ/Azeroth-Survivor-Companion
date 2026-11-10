@@ -32,7 +32,7 @@ function parse(d, r) {
   const ranks = f[9].split(";").map((b) => { const [t, kv] = b.split(":"), o = { t: +t, r: {} }; for (const p of (kv || "").split(",")) { const [k, v] = p.split("="); if (k) o.r[k] = +v; } return o; });
   const meters = f[10].split(";").map((b) => { const [t, kv] = b.split(":"), o = { t: +t, m: {} }; for (const p of (kv || "").split(",")) { const [k, v] = p.split("="); if (k) o.m[k] = +v; } return o; });
   const head = f[1].split(",");
-  return { run: r, zone: head[2], heroic: +head[3], diff: +head[4], result: f[2], level: +f[3], kills: +f[4], time: +f[5], samples, stats, ranks, meters };
+  return { run: r, zone: head[2], heroic: +head[3], diff: +head[4], hyper: head[8] === "1" || r.hyper === true, result: f[2], level: +f[3], kills: +f[4], time: +f[5], samples, stats, ranks, meters };
 }
 
 function good() {
@@ -70,7 +70,8 @@ const statAt = (x, t) => x.stats.reduce((b, s) => (Math.abs(s.t - t) < Math.abs(
 const levelAt = (x, t) => { const a = x.samples.filter((s) => s.t <= t); return a.length ? a[a.length - 1].lvl : NaN; };
 
 const all = good();
-const solo = all.filter((x) => (x.run.coop || 1) === 1);
+// mode Hyper (0.143) : temps du jeu doublé, écarté du calage
+const solo = all.filter((x) => (x.run.coop || 1) === 1 && !x.hyper);
 console.log("chronologies retenues", all.length, "solo", solo.length, "coop", all.length - solo.length);
 
 console.log("\n# Niveau réel par minute (médiane solo / coop) et courbe du simulateur");
